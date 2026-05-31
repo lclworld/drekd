@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Efua KD — OBGYN Clerking Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1f35;
+    --navy-mid: #1a3350;
+    --navy-light: #2a4a6e;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a0;
+    --cream: #f9f6f0;
+    --cream-dark: #ede8de;
+    --text: #1a1a2e;
+    --muted: #8a9bb0;
+    --red-soft: #c0392b;
+    --green-soft: #27ae60;
+    --border: #d4cfc6;
+    --disabled-bg: #f0ede8;
+    --disabled-text: #c0b8ae;
+    --section-gap: 2rem;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--navy);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(13,31,53,0.4);
+  }
+  .app-header .brand { display: flex; flex-direction: column; }
+  .app-header .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 0.02em;
+  }
+  .app-header .brand-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .header-actions { display: flex; gap: 0.75rem; }
+  .btn {
+    padding: 0.5rem 1.1rem;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .btn-gold:hover { background: var(--gold-light); }
+  .btn-navy {
+    background: var(--navy);
+    color: white;
+    border: 1px solid var(--navy-light);
+  }
+  .btn-navy:hover { background: var(--navy-mid); }
+  .btn-sm { padding: 0.35rem 0.8rem; font-size: 0.72rem; }
+
+  /* TABS */
+  .tab-bar {
+    background: var(--navy-mid);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 1.5rem;
+    gap: 0;
+    position: sticky;
+    top: 68px;
+    z-index: 99;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 0.85rem 1.1rem;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .tab:hover { color: rgba(255,255,255,0.85); }
+  .tab.active {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
+  }
+
+  /* MAIN */
+  .main-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* SECTION */
+  .section-panel { display: none; }
+  .section-panel.active { display: block; }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+  }
+  .section-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* CARDS */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.4rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .card-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy-light);
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  /* FORM ELEMENTS */
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.9rem;
+  }
+  .field-grid-2 { grid-template-columns: 1fr 1fr; }
+  .field-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .field-full { grid-column: 1 / -1; }
+
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .field label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .field input, .field textarea, .field select {
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: white;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none;
+    border-color: var(--navy-light);
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+
+  /* TOGGLE FIELDS */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-label {
+    font-size: 0.85rem;
+    color: var(--text);
+    font-weight: 400;
+  }
+  .toggle-group { display: flex; gap: 0.4rem; align-items: center; }
+  .toggle-btn {
+    padding: 0.28rem 0.8rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 0.72rem;
+    cursor: pointer;
+    background: white;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.12s;
+    font-weight: 500;
+  }
+  .toggle-btn.yes.active { background: #e8f5e9; border-color: var(--green-soft); color: var(--green-soft); }
+  .toggle-btn.no.active { background: #fdecea; border-color: var(--red-soft); color: var(--red-soft); }
+  .toggle-btn.na.active { background: var(--cream-dark); border-color: var(--muted); color: var(--muted); }
+
+  /* Sub-fields that are always shown but dimmed when N/A */
+  .sub-fields {
+    margin-top: 0.75rem;
+    padding: 0.9rem;
+    background: var(--cream);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    transition: opacity 0.2s;
+  }
+  .sub-fields.dimmed { opacity: 0.38; pointer-events: none; }
+
+  /* CHARACTERIZE */
+  .characterize-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy-light);
+    margin-bottom: 0.75rem;
+  }
+
+  /* SCORE ROW */
+  .severity-row { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+  .severity-row label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+  .severity-row input[type=range] { flex: 1; accent-color: var(--navy); }
+  .severity-val { font-size: 0.85rem; font-weight: 600; color: var(--navy); min-width: 2rem; text-align: right; }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .data-table th {
+    background: var(--navy);
+    color: white;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.55rem 0.7rem;
+    text-align: left;
+    font-weight: 500;
+  }
+  .data-table td {
+    padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid var(--cream-dark);
+    vertical-align: top;
+  }
+  .data-table td input, .data-table td select {
+    width: 100%;
+    padding: 0.3rem 0.45rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    background: white;
+  }
+  .data-table td input:focus, .data-table td select:focus {
+    outline: none;
+    border-color: var(--navy-light);
+  }
+  .add-row-btn {
+    margin-top: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--navy-light);
+    cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: all 0.12s;
+  }
+  .add-row-btn:hover { background: var(--cream); border-color: var(--navy-light); }
+
+  /* OUTPUT MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,31,53,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-header {
+    background: var(--navy);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gold-light);
+  }
+  .modal-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .modal-tab {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: all 0.12s;
+  }
+  .modal-tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+  .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+  .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.75rem; justify-content: flex-end; }
+
+  /* COPY TEXT */
+  #copyText {
+    width: 100%;
+    min-height: 400px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    resize: vertical;
+  }
+
+  /* PRINT VIEW */
+  .print-view { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; line-height: 1.7; }
+  .print-view .pv-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--navy);
+  }
+  .print-view .pv-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+  }
+  .print-view .pv-header p { font-size: 0.72rem; color: var(--muted); }
+  .print-view .pv-section { margin-bottom: 1.25rem; }
+  .print-view .pv-section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--navy);
+    background: var(--cream-dark);
+    padding: 0.3rem 0.6rem;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid var(--gold);
+  }
+  .print-view .pv-row { display: flex; margin-bottom: 0.2rem; }
+  .print-view .pv-key { min-width: 200px; font-weight: 500; color: var(--navy-mid); }
+  .print-view .pv-val { flex: 1; }
+  .print-view .pv-block { margin-bottom: 0.4rem; }
+  .print-view .pv-block strong { color: var(--navy-mid); display: block; font-size: 0.78rem; }
+  .pv-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 0.4rem; }
+  .pv-table th { background: var(--navy); color: white; padding: 0.3rem 0.5rem; text-align: left; font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .pv-table td { padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--cream-dark); }
+
+  /* PROGRESS */
+  .progress-bar-wrap { height: 3px; background: var(--cream-dark); }
+  .progress-bar { height: 3px; background: var(--gold); transition: width 0.3s; }
+
+  /* PRINT STYLES */
+  @media print {
+    .app-header, .tab-bar, .modal-overlay { display: none !important; }
+    body { background: white; }
+    .print-content { display: block !important; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .field-grid-2, .field-grid-3 { grid-template-columns: 1fr; }
+    .main-content { padding: 1.25rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-name">Dr. Efua KD</span>
+    <span class="brand-sub">OBGYN Clerking Tool</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="clearAll()">New Patient</button>
+    <button class="btn btn-gold" onclick="openOutput()">Generate Output</button>
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar" style="width:10%"></div>
+</div>
+
+<nav class="tab-bar" id="tabBar">
+  <div class="tab active" data-tab="0">Biodata</div>
+  <div class="tab" data-tab="1">Complaints</div>
+  <div class="tab" data-tab="2">Direct Qs</div>
+  <div class="tab" data-tab="3">Systemic</div>
+  <div class="tab" data-tab="4">Index Preg.</div>
+  <div class="tab" data-tab="5">Past OB Hx</div>
+  <div class="tab" data-tab="6">Gynae Hx</div>
+  <div class="tab" data-tab="7">PMH / Drugs</div>
+  <div class="tab" data-tab="8">Family / Social</div>
+</nav>
+
+<main class="main-content">
+
+<!-- ===== TAB 0: BIODATA ===== -->
+<div class="section-panel active" id="tab-0">
+  <h2 class="section-title">Patient Biodata</h2>
+  <p class="section-desc">Identification & obstetric summary</p>
+
+  <div class="card">
+    <div class="card-title">Patient Identification</div>
+    <div class="field-grid">
+      <div class="field field-full"><label>Full Name</label><input type="text" id="pt_name" placeholder="Patient's full name"></div>
+      <div class="field"><label>Gravida</label><input type="number" id="pt_gravida" placeholder="G" min="0"></div>
+      <div class="field"><label>Para</label><input type="number" id="pt_para" placeholder="P" min="0"></div>
+      <div class="field"><label>Age</label><input type="number" id="pt_age" placeholder="Years"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dates & EDD</div>
+    <div class="field-grid">
+      <div class="field"><label>Last Menstrual Period (LMP)</label><input type="date" id="pt_lmp"></div>
+      <div class="field"><label>EDD (from LMP)</label><input type="date" id="pt_edd_lmp" placeholder="Auto or manual"></div>
+      <div class="field"><label>EDD (from Scan)</label><input type="date" id="pt_edd_scan"></div>
+      <div class="field"><label>Gestational Age (weeks)</label><input type="text" id="pt_ga" placeholder="e.g. 28+3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 1: COMPLAINTS ===== -->
+<div class="section-panel" id="tab-1">
+  <h2 class="section-title">Presenting Complaints & History</h2>
+  <p class="section-desc">Chief complaint and narrative</p>
+
+  <div class="card">
+    <div class="card-title">Presenting Complaints</div>
+    <div class="field">
+      <label>Complaints (list clearly)</label>
+      <textarea id="complaints" placeholder="e.g. 1. Lower abdominal pain × 2 days&#10;2. Vaginal bleeding × 1 day"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">History of Presenting Complaints</div>
+    <div class="field">
+      <label>Narrative</label>
+      <textarea id="hpc" style="min-height:120px" placeholder="Mrs. ___ is a G_P_ woman, ___ weeks gestation by LMP/scan who presents with..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: ON DIRECT QUESTIONING ===== -->
+<div class="section-panel" id="tab-2">
+  <h2 class="section-title">On Direct Questioning</h2>
+  <p class="section-desc">Symptom-by-symptom enquiry</p>
+
+  <!-- Lower Abdominal Pain -->
+  <div class="card">
+    <div class="card-title">Lower Abdominal Pain</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Lower Abdominal Pain</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setToggle(this,'lap','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setToggle(this,'lap','no')">No</button>
+        <button class="toggle-btn na" onclick="setToggle(this,'lap','na')">N/A</button>
+      </div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-lap">
+      <div class="characterize-title">SOCRATES Characterisation</div>
+      <div class="field-grid">
+        <div class="field"><label>Site</label><input type="text" data-key="lap_site" placeholder="Location"></div>
+        <div class="field"><label>Onset</label><input type="text" data-key="lap_onset" placeholder="Sudden / gradual, when"></div>
+        <div class="field"><label>Character</label><input type="text" data-key="lap_char" placeholder="Crampy / sharp / dull..."></div>
+        <div class="field"><label>Radiation</label><input type="text" data-key="lap_rad" placeholder="Does it radiate?"></div>
+        <div class="field"><label>Associated Factors</label><input type="text" data-key="lap_assoc" placeholder="Nausea, fever, etc."></div>
+        <div class="field"><label>Timing</label><input type="text" data-key="lap_timing" placeholder="Intermittent / constant"></div>
+        <div class="field"><label>Exacerbating Factors</label><input type="text" data-key="lap_exac" placeholder="What makes it worse?"></div>
+        <div class="field"><label>Relieving Factors</label><input type="text" data-key="lap_relief" placeholder="What makes it better?"></div>
+      </div>
+      <div class="severity-row">
+        <label>Severity (0–10)</label>
+        <input type="range" min="0" max="10" value="0" data-key="lap_severity" oninput="this.nextElementSibling.textContent=this.value">
+        <span class="severity-val">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loss of Liquor -->
+  <div class="card">
+    <div class="card-title">Loss of Liquor</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Loss of Liquor</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setToggle(this,'lol','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setToggle(this,'lol','no')">No</button>
+        <button class="toggle-btn na" onclick="setToggle(this,'lol','na')">N/A</button>
+      </div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-lol">
+      <div class="field-grid field-grid-3">
+        <div class="field"><label>Colour</label><input type="text" data-key="lol_colour" placeholder="Clear / blood-stained..."></div>
+        <div class="field"><label>Quantity</label><input type="text" data-key="lol_qty" placeholder="Trickle / gush / amount"></div>
+        <div class="field"><label>Smell</label><input type="text" data-key="lol_smell" placeholder="Offensive / normal"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fetal Movement -->
+  <div class="card">
+    <div class="card-title">Fetal Movement</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Can patient feel fetal movement?</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setToggle(this,'fm','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setToggle(this,'fm','no')">No</button>
+        <button class="toggle-btn na" onclick="setToggle(this,'fm','na')">N/A</button>
+      </div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-fm">
+      <div class="field"><label>Details / frequency</label><input type="text" data-key="fm_detail" placeholder="Good / reduced / none in last... hrs"></div>
+    </div>
+  </div>
+
+  <!-- Vaginal Bleeding -->
+  <div class="card">
+    <div class="card-title">Vaginal Bleeding</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Vaginal Bleeding</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setToggle(this,'vb','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setToggle(this,'vb','no')">No</button>
+        <button class="toggle-btn na" onclick="setToggle(this,'vb','na')">N/A</button>
+      </div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-vb">
+      <div class="field-grid field-grid-3">
+        <div class="field"><label>Quantity</label><input type="text" data-key="vb_qty" placeholder="e.g. soaked 2 pads"></div>
+        <div class="field"><label>Colour</label><input type="text" data-key="vb_colour" placeholder="Bright red / dark / brown"></div>
+        <div class="field"><label>Clots</label>
+          <select data-key="vb_clots"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vaginal Discharge -->
+  <div class="card">
+    <div class="card-title">Vaginal Discharge</div>
+    <div class="toggle-row">
+      <span class="toggle-label">Vaginal Discharge</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setToggle(this,'vd','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setToggle(this,'vd','no')">No</button>
+        <button class="toggle-btn na" onclick="setToggle(this,'vd','na')">N/A</button>
+      </div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-vd">
+      <div class="field-grid">
+        <div class="field"><label>Colour</label><input type="text" data-key="vd_colour" placeholder="White / yellow / green..."></div>
+        <div class="field"><label>Smell</label><input type="text" data-key="vd_smell" placeholder="Offensive / fishy / normal"></div>
+        <div class="field"><label>Quantity</label><input type="text" data-key="vd_qty" placeholder="Scant / moderate / copious"></div>
+        <div class="field"><label>Associated Itch</label>
+          <select data-key="vd_itch"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cause / RF / Complications -->
+  <div class="card">
+    <div class="card-title">Cause, Risk Factors & Complications</div>
+    <div class="field-grid">
+      <div class="field field-full"><label>Questions related to cause</label><textarea data-key="odq_cause" placeholder="Based on working diagnosis..."></textarea></div>
+      <div class="field field-full"><label>Questions related to risk factors</label><textarea data-key="odq_rf" placeholder="Specific to presentation..."></textarea></div>
+      <div class="field field-full"><label>Questions related to complications</label><textarea data-key="odq_comp" placeholder="Signs of systemic involvement, etc."></textarea></div>
+    </div>
+  </div>
+
+  <!-- Pregnancy Routine -->
+  <div class="card">
+    <div class="card-title">Routine Pregnancy Questions</div>
+    <div class="toggle-row"><span class="toggle-label">Recent malaria episode?</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setToggle(this,'mal','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setToggle(this,'mal','no')">No</button>
+      </div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-mal">
+      <div class="field"><label>Details (when, treatment)</label><input type="text" data-key="mal_detail"></div>
+    </div>
+    <div class="toggle-row" style="margin-top:0.5rem"><span class="toggle-label">On iron and folate supplements?</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setSimple(this,'ironfolate','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setSimple(this,'ironfolate','no')">No</button>
+      </div>
+    </div>
+    <div class="toggle-row"><span class="toggle-label">Dewormed during pregnancy?</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setSimple(this,'deworm','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setSimple(this,'deworm','no')">No</button>
+      </div>
+    </div>
+    <div class="toggle-row"><span class="toggle-label">Any recent fever?</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setToggle(this,'fever','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setToggle(this,'fever','no')">No</button>
+      </div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-fever">
+      <div class="field"><label>Details</label><input type="text" data-key="fever_detail"></div>
+    </div>
+    <div class="toggle-row" style="margin-top:0.5rem"><span class="toggle-label">Previous children with same partner?</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setSimple(this,'samefather','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setSimple(this,'samefather','no')">No</button>
+        <button class="toggle-btn na" onclick="setSimple(this,'samefather','na')">Primigravida</button>
+      </div>
+    </div>
+    <div class="field" style="margin-top:0.75rem"><label>Additional notes</label><textarea data-key="preg_routine_notes" placeholder="Any other routine pregnancy comments"></textarea></div>
+  </div>
+</div>
+
+<!-- ===== TAB 3: SYSTEMIC INQUIRY ===== -->
+<div class="section-panel" id="tab-3">
+  <h2 class="section-title">Systemic Inquiry</h2>
+  <p class="section-desc">Cardiorespiratory, GI, Urinary, CNS, MSK</p>
+
+  <!-- Cardiorespiratory -->
+  <div class="card">
+    <div class="card-title">Cardiorespiratory</div>
+    <div id="cr-toggles">
+      <!-- dyspnea, orthopnea, PND, cough, sputum, palpitations, facial oedema, pedal oedema, easy fatigue -->
+    </div>
+    <div class="sub-fields dimmed" id="sub-sputum" style="margin-top:0.5rem">
+      <div class="field-grid field-grid-3">
+        <div class="field"><label>Sputum Colour</label><input type="text" data-key="sputum_colour"></div>
+        <div class="field"><label>Sputum Smell</label><input type="text" data-key="sputum_smell"></div>
+        <div class="field"><label>Sputum Quantity</label><input type="text" data-key="sputum_qty"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GI -->
+  <div class="card">
+    <div class="card-title">Gastrointestinal</div>
+    <div id="gi-toggles"></div>
+    <div class="sub-fields dimmed" id="sub-epigast" style="margin-top:0.5rem">
+      <div class="characterize-title">Epigastric Pain — SOCRATES</div>
+      <div class="field-grid">
+        <div class="field"><label>Type / Character</label><input type="text" data-key="ep_char"></div>
+        <div class="field"><label>Onset</label><input type="text" data-key="ep_onset"></div>
+        <div class="field"><label>Radiation</label><input type="text" data-key="ep_rad"></div>
+        <div class="field"><label>Associated Factors</label><input type="text" data-key="ep_assoc"></div>
+        <div class="field"><label>Timing</label><input type="text" data-key="ep_timing"></div>
+        <div class="field"><label>Exacerbating</label><input type="text" data-key="ep_exac"></div>
+        <div class="field"><label>Relieving</label><input type="text" data-key="ep_relief"></div>
+      </div>
+      <div class="severity-row">
+        <label>Severity (0–10)</label>
+        <input type="range" min="0" max="10" value="0" data-key="ep_severity" oninput="this.nextElementSibling.textContent=this.value">
+        <span class="severity-val">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Urinary -->
+  <div class="card">
+    <div class="card-title">Urinary</div>
+    <div id="ur-toggles"></div>
+  </div>
+
+  <!-- CNS -->
+  <div class="card">
+    <div class="card-title">Central Nervous System</div>
+    <div id="cns-toggles"></div>
+  </div>
+
+  <!-- MSK -->
+  <div class="card">
+    <div class="card-title">Musculoskeletal</div>
+    <div id="msk-toggles"></div>
+  </div>
+</div>
+
+<!-- ===== TAB 4: INDEX PREGNANCY ===== -->
+<div class="section-panel" id="tab-4">
+  <h2 class="section-title">Index Pregnancy</h2>
+  <p class="section-desc">Current pregnancy details & booking results</p>
+
+  <div class="card">
+    <div class="card-title">Current Pregnancy Overview</div>
+    <div class="field-grid">
+      <div class="field"><label>Booking gestation (weeks)</label><input type="text" data-key="idx_booking_wks" placeholder="e.g. 12 weeks"></div>
+      <div class="field"><label>Was pregnancy planned?</label>
+        <select data-key="idx_planned"><option value="">—</option><option>Yes, planned & welcomed</option><option>Planned, mixed feelings</option><option>Unplanned, now welcomed</option><option>Unplanned, unwelcome</option></select>
+      </div>
+      <div class="field"><label>Confirmed by</label>
+        <select data-key="idx_confirmed_by"><option value="">—</option><option>UPT (home)</option><option>UPT (clinic)</option><option>Blood βhCG</option><option>Ultrasound</option></select>
+      </div>
+      <div class="field"><label>Quickening (weeks)</label><input type="text" data-key="idx_quickening" placeholder="e.g. 18 weeks"></div>
+    </div>
+    <div class="field" style="margin-top:0.9rem"><label>Number of scans & results</label><textarea data-key="idx_scans" placeholder="1st scan: ___ weeks — ___&#10;2nd scan: ___ weeks — ___"></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Booking Lab Results</div>
+    <div class="field-grid">
+      <div class="field"><label>Blood Group</label><input type="text" data-key="lab_bg" placeholder="e.g. B+"></div>
+      <div class="field"><label>Haemoglobin (g/dL)</label><input type="text" data-key="lab_hb"></div>
+      <div class="field"><label>Sickle Cell Status</label>
+        <select data-key="lab_sickle"><option value="">—</option><option>AA</option><option>AS</option><option>SS</option><option>SC</option><option>AC</option><option>Not done</option></select>
+      </div>
+      <div class="field"><label>2-hr Urine</label><input type="text" data-key="lab_urine" placeholder="Protein / Sugar result"></div>
+      <div class="field"><label>Retroviral Status</label>
+        <select data-key="lab_retro"><option value="">—</option><option>Non-reactive</option><option>Reactive</option><option>Declined</option><option>Not done</option></select>
+      </div>
+      <div class="field"><label>Hepatitis B</label>
+        <select data-key="lab_hepb"><option value="">—</option><option>Non-reactive</option><option>Reactive</option><option>Not done</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Interventions & Prophylaxis</div>
+    <div id="interv-toggles"></div>
+    <div class="field" style="margin-top:0.9rem"><label>ITN (insecticide-treated net) — in use?</label>
+      <select data-key="itn"><option value="">—</option><option>Yes, uses consistently</option><option>Yes, has but inconsistent</option><option>No</option></select>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 5: PAST OB HISTORY ===== -->
+<div class="section-panel" id="tab-5">
+  <h2 class="section-title">Past Obstetric History</h2>
+  <p class="section-desc">Previous pregnancies & deliveries</p>
+
+  <div class="card">
+    <div class="card-title">Summary</div>
+    <div class="field-grid field-grid-3">
+      <div class="field"><label>Gravida (confirm)</label><input type="text" data-key="pob_gravida" placeholder="G"></div>
+      <div class="field"><label>Para (confirm)</label><input type="text" data-key="pob_para" placeholder="P"></div>
+      <div class="field"><label>Reproductive wishes</label>
+        <select data-key="repro_wishes"><option value="">—</option><option>Wants more children</option><option>Family complete</option><option>Undecided</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Previous Deliveries</div>
+    <div style="overflow-x:auto">
+      <table class="data-table" id="childTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Sex</th>
+            <th>Current Age</th>
+            <th>ANC attended?</th>
+            <th>Mode of delivery</th>
+            <th>Birth weight</th>
+            <th>Events (PPH, PTL, etc.)</th>
+            <th>EBF (months)</th>
+            <th>Total BF (months)</th>
+            <th>Baby status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="childTableBody">
+        </tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" onclick="addChildRow()">+ Add child</button>
+  </div>
+</div>
+
+<!-- ===== TAB 6: GYNAE HISTORY ===== -->
+<div class="section-panel" id="tab-6">
+  <h2 class="section-title">Gynaecological History</h2>
+  <p class="section-desc">Menstruation · Sexual · Screening</p>
+
+  <!-- Menstruation -->
+  <div class="card">
+    <div class="card-title">Menstruation</div>
+    <div class="field-grid">
+      <div class="field"><label>Menarche (age)</label><input type="text" data-key="gyn_menarche" placeholder="e.g. 13 years"></div>
+      <div class="field"><label>Cycle length</label><input type="text" data-key="gyn_cycle" placeholder="e.g. 28 days"></div>
+      <div class="field"><label>Duration of flow</label><input type="text" data-key="gyn_flow_dur" placeholder="e.g. 5 days"></div>
+      <div class="field"><label>No. of pads/day</label><input type="text" data-key="gyn_pads" placeholder="e.g. 3–4"></div>
+    </div>
+    <div style="margin-top:1rem" id="menses-toggles"></div>
+    <div class="sub-fields dimmed" id="sub-dysmenorrhea" style="margin-top:0.5rem">
+      <div class="field"><label>Primary or Secondary dysmenorrhoea</label>
+        <select data-key="dysm_type"><option value="">—</option><option>Primary</option><option>Secondary</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sexual -->
+  <div class="card">
+    <div class="card-title">Sexual History</div>
+    <div class="field-grid">
+      <div class="field"><label>Coitarche (age at first intercourse)</label><input type="text" data-key="gyn_coitarche" placeholder="Age"></div>
+      <div class="field"><label>Lifetime sexual partners</label><input type="text" data-key="gyn_partners" placeholder="Number"></div>
+    </div>
+    <div style="margin-top:1rem" id="sexual-toggles"></div>
+    <div class="field" style="margin-top:0.9rem">
+      <label>Contraception — currently using?</label>
+      <select data-key="gyn_contraception"><option value="">—</option><option>None</option><option>Combined OCP</option><option>Progestogen-only pill</option><option>DMPA / injectable</option><option>Implant</option><option>IUD (copper)</option><option>IUS (hormonal)</option><option>Condom</option><option>Barrier (diaphragm)</option><option>Natural / rhythm</option><option>Partner vasectomy</option><option>Tubal ligation</option></select>
+    </div>
+    <div class="field" style="margin-top:0.6rem"><label>If no contraception — reason</label><input type="text" data-key="gyn_no_contra_reason" placeholder="Reason if none"></div>
+  </div>
+
+  <!-- Screening -->
+  <div class="card">
+    <div class="card-title">Screening & Previous Surgeries</div>
+    <div id="screening-toggles"></div>
+    <div class="sub-fields dimmed" id="sub-formalbreast" style="margin-top:0.5rem">
+      <div class="field"><label>Formal breast exam result</label><input type="text" data-key="fbe_result"></div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-pap" style="margin-top:0.5rem">
+      <div class="field"><label>Pap smear result</label><input type="text" data-key="pap_result"></div>
+    </div>
+    <div class="field" style="margin-top:0.9rem"><label>Previous gynaecological surgery (if any)</label><textarea data-key="gyn_prev_surgery" placeholder="Procedure, year, indication, outcome"></textarea></div>
+  </div>
+</div>
+
+<!-- ===== TAB 7: PMH / DRUGS ===== -->
+<div class="section-panel" id="tab-7">
+  <h2 class="section-title">Past Medical & Drug History</h2>
+  <p class="section-desc">Comorbidities · Admissions · Medications · Allergies</p>
+
+  <div class="card">
+    <div class="card-title">Medical Conditions</div>
+    <div id="pmh-toggles"></div>
+    <div class="field" style="margin-top:0.9rem"><label>Other conditions (specify)</label><textarea data-key="pmh_other" placeholder="Any other significant medical history..."></textarea></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Previous Admissions, Surgery & Transfusions</div>
+    <div id="adm-toggles"></div>
+    <div class="sub-fields dimmed" id="sub-admission" style="margin-top:0.5rem">
+      <div class="field"><label>Admission details</label><textarea data-key="adm_detail" placeholder="Year, reason, duration, outcome"></textarea></div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-surgery" style="margin-top:0.5rem">
+      <div class="field"><label>Surgery details</label><textarea data-key="surg_detail" placeholder="Procedure, year, indication"></textarea></div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-transfusion" style="margin-top:0.5rem">
+      <div class="field"><label>Transfusion details</label><input type="text" data-key="trans_detail" placeholder="Year, reason, units"></div>
+    </div>
+    <div class="toggle-row" style="margin-top:0.75rem"><span class="toggle-label">Would accept blood transfusion if needed?</span>
+      <div class="toggle-group">
+        <button class="toggle-btn yes" onclick="setSimple(this,'trans_accept','yes')">Yes</button>
+        <button class="toggle-btn no" onclick="setSimple(this,'trans_accept','no')">No</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Current Medications & Allergies</div>
+    <div class="field"><label>Current medications (name, dose, frequency)</label><textarea data-key="drugs_current" placeholder="e.g. Ferrous sulphate 200mg BD, Folic acid 5mg OD..."></textarea></div>
+    <div class="field" style="margin-top:0.9rem"><label>Herbal / traditional medications</label><textarea data-key="drugs_herbal" placeholder="Any herbs, tonics, etc."></textarea></div>
+    <div class="field" style="margin-top:0.9rem"><label>Allergies (drug / food / other)</label><textarea data-key="drugs_allergies" placeholder="Substance → reaction type"></textarea></div>
+  </div>
+</div>
+
+<!-- ===== TAB 8: FAMILY & SOCIAL ===== -->
+<div class="section-panel" id="tab-8">
+  <h2 class="section-title">Family & Social History</h2>
+  <p class="section-desc">Family health · Lifestyle · Partner details</p>
+
+  <div class="card">
+    <div class="card-title">Family History</div>
+    <div class="field-grid">
+      <div class="field"><label>Father — alive?</label>
+        <select data-key="fhx_father"><option value="">—</option><option>Alive, well</option><option>Alive, known condition</option><option>Deceased</option></select>
+      </div>
+      <div class="field"><label>Father — cause of death / condition</label><input type="text" data-key="fhx_father_cond"></div>
+      <div class="field"><label>Mother — alive?</label>
+        <select data-key="fhx_mother"><option value="">—</option><option>Alive, well</option><option>Alive, known condition</option><option>Deceased</option></select>
+      </div>
+      <div class="field"><label>Mother — cause of death / condition</label><input type="text" data-key="fhx_mother_cond"></div>
+      <div class="field"><label>Number of siblings</label><input type="text" data-key="fhx_siblings" placeholder="Number"></div>
+      <div class="field"><label>Siblings' health status</label><input type="text" data-key="fhx_siblings_status" placeholder="e.g. All well / 1 has HTN"></div>
+    </div>
+    <div style="margin-top:1rem" id="fhx-toggles"></div>
+    <div class="sub-fields dimmed" id="sub-fhx-dm" style="margin-top:0.5rem">
+      <div class="field"><label>Who has diabetes?</label><input type="text" data-key="fhx_dm_who" placeholder="e.g. Maternal aunt"></div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-fhx-htn" style="margin-top:0.5rem">
+      <div class="field"><label>Who has hypertension?</label><input type="text" data-key="fhx_htn_who"></div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-fhx-asthma" style="margin-top:0.5rem">
+      <div class="field"><label>Who has asthma?</label><input type="text" data-key="fhx_asthma_who"></div>
+    </div>
+    <div class="sub-fields dimmed" id="sub-twin" style="margin-top:0.5rem">
+      <div class="field"><label>Twin history — maternal or paternal side?</label>
+        <select data-key="fhx_twin_side"><option value="">—</option><option>Maternal side</option><option>Paternal side</option><option>Both sides</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Social History — Patient</div>
+    <div class="field-grid">
+      <div class="field"><label>Marital status</label>
+        <select data-key="soc_marital"><option value="">—</option><option>Married</option><option>Cohabiting</option><option>Single</option><option>Separated</option><option>Divorced</option><option>Widowed</option></select>
+      </div>
+      <div class="field"><label>Lives with</label><input type="text" data-key="soc_liveswith" placeholder="e.g. Husband and children"></div>
+      <div class="field"><label>Residential area</label><input type="text" data-key="soc_location" placeholder="Town / district"></div>
+      <div class="field"><label>Occupation</label><input type="text" data-key="soc_occ" placeholder="Patient's occupation"></div>
+      <div class="field"><label>Level of education</label>
+        <select data-key="soc_edu"><option value="">—</option><option>None</option><option>Primary</option><option>JHS / Middle</option><option>SHS / Secondary</option><option>Tertiary / University</option><option>Postgraduate</option></select>
+      </div>
+      <div class="field"><label>Smokes?</label>
+        <select data-key="soc_smoke"><option value="">—</option><option>No</option><option>Ex-smoker</option><option>Yes — active</option></select>
+      </div>
+      <div class="field"><label>Alcohol?</label>
+        <select data-key="soc_alcohol"><option value="">—</option><option>No</option><option>Occasional</option><option>Regular</option></select>
+      </div>
+      <div class="field"><label>Active NHIS?</label>
+        <select data-key="soc_nhis"><option value="">—</option><option>Yes, active</option><option>Expired</option><option>No</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Partner / Husband Details</div>
+    <div class="field-grid">
+      <div class="field"><label>Age</label><input type="text" data-key="partner_age" placeholder="Years"></div>
+      <div class="field"><label>Occupation</label><input type="text" data-key="partner_occ"></div>
+      <div class="field"><label>Health status</label><input type="text" data-key="partner_health" placeholder="e.g. Well / known conditions"></div>
+      <div class="field"><label>Other children</label>
+        <select data-key="partner_other_children"><option value="">—</option><option>No other children</option><option>Yes, with patient only</option><option>Yes, with other partner(s)</option></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- OUTPUT MODAL -->
+<div class="modal-overlay" id="outputModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Patient Clerking Output</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeOutput()">✕ Close</button>
+    </div>
+    <div class="modal-tabs">
+      <div class="modal-tab active" onclick="switchModalTab('print')">Print View</div>
+      <div class="modal-tab" onclick="switchModalTab('copy')">Copy Text</div>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div id="printViewContent" class="print-view"></div>
+      <textarea id="copyText" style="display:none"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-navy btn-sm" onclick="copyToClipboard()">Copy to Clipboard</button>
+      <button class="btn btn-gold btn-sm" onclick="window.print()">Print</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===========================
+// DATA STORE
+// ===========================
+const store = {};
+let childRows = 0;
+let toggleStates = {}; // key → 'yes'|'no'|'na'
+let simpleStates = {}; // key → value
+
+// ===========================
+// DYNAMIC TOGGLE RENDERING
+// ===========================
+const sectionToggles = {
+  'cr-toggles': [
+    {label:'Dyspnoea', key:'cr_dyspnoea'},
+    {label:'Orthopnoea', key:'cr_orthopnoea'},
+    {label:'Paroxysmal nocturnal dyspnoea (PND)', key:'cr_pnd'},
+    {label:'Cough', key:'cr_cough'},
+    {label:'Sputum', key:'cr_sputum', sub:'sub-sputum'},
+    {label:'Palpitations', key:'cr_palp'},
+    {label:'Facial oedema', key:'cr_facial_oedema'},
+    {label:'Pedal oedema', key:'cr_pedal_oedema'},
+    {label:'Easy fatigue', key:'cr_fatigue'},
+  ],
+  'gi-toggles': [
+    {label:'Nausea', key:'gi_nausea'},
+    {label:'Vomiting', key:'gi_vomiting'},
+    {label:'Diarrhoea', key:'gi_diarrhoea'},
+    {label:'Constipation', key:'gi_constipation'},
+    {label:'Anorexia', key:'gi_anorexia'},
+    {label:'Weight loss', key:'gi_wtloss'},
+    {label:'Epigastric pain', key:'gi_epigast', sub:'sub-epigast'},
+  ],
+  'ur-toggles': [
+    {label:'Dysuria', key:'ur_dysuria'},
+    {label:'Frequency', key:'ur_freq'},
+    {label:'Urgency', key:'ur_urgency'},
+    {label:'Incontinence', key:'ur_incont'},
+    {label:'Nocturia', key:'ur_nocturia'},
+    {label:'Polyuria', key:'ur_polyuria'},
+    {label:'Polydipsia', key:'ur_polydipsia'},
+  ],
+  'cns-toggles': [
+    {label:'Headaches', key:'cns_headache'},
+    {label:'Blurred vision', key:'cns_blurred'},
+    {label:'Vertigo', key:'cns_vertigo'},
+  ],
+  'msk-toggles': [
+    {label:'Muscle pain', key:'msk_muscle'},
+    {label:'Bone pain', key:'msk_bone'},
+    {label:'Waist pain', key:'msk_waist'},
+    {label:'Back pain', key:'msk_back'},
+  ],
+  'interv-toggles': [
+    {label:'IPT (malaria prophylaxis) received', key:'ipt'},
+    {label:'Tetanus toxoid given', key:'tt'},
+  ],
+  'menses-toggles': [
+    {label:'Dysmenorrhoea', key:'dysmenorrhoea', sub:'sub-dysmenorrhea'},
+    {label:'Menorrhagia', key:'menorrhagia'},
+    {label:'Clots during menstruation', key:'menses_clots'},
+    {label:'Intermenstrual bleeding (IMB)', key:'imb'},
+  ],
+  'sexual-toggles': [
+    {label:'Dyspareunia (pain during sex)', key:'dyspareunia'},
+    {label:'Postcoital bleeding', key:'pcb'},
+  ],
+  'screening-toggles': [
+    {label:'Self breast examination (SBE) performed', key:'sbe'},
+    {label:'Formal breast examination done', key:'fbe', sub:'sub-formalbreast'},
+    {label:'Pap smear done', key:'pap', sub:'sub-pap'},
+  ],
+  'pmh-toggles': [
+    {label:'Diabetes mellitus', key:'pmh_dm'},
+    {label:'Sickle cell disease', key:'pmh_scd'},
+    {label:'Hypertension', key:'pmh_htn'},
+    {label:'Asthma', key:'pmh_asthma'},
+  ],
+  'adm-toggles': [
+    {label:'Previous hospital admission', key:'prev_admission', sub:'sub-admission'},
+    {label:'Previous surgery', key:'prev_surgery', sub:'sub-surgery'},
+    {label:'Previous blood transfusion', key:'prev_transfusion', sub:'sub-transfusion'},
+  ],
+  'fhx-toggles': [
+    {label:'Family history of diabetes', key:'fhx_dm', sub:'sub-fhx-dm'},
+    {label:'Family history of hypertension', key:'fhx_htn', sub:'sub-fhx-htn'},
+    {label:'Family history of asthma', key:'fhx_asthma', sub:'sub-fhx-asthma'},
+    {label:'Family history of twin gestation', key:'fhx_twins', sub:'sub-twin'},
+  ],
+};
+
+function renderToggles() {
+  Object.entries(sectionToggles).forEach(([containerId, items]) => {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = items.map(item => `
+      <div class="toggle-row">
+        <span class="toggle-label">${item.label}</span>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="setToggle(this,'${item.key}','yes','${item.sub||''}')">Yes</button>
+          <button class="toggle-btn no" onclick="setToggle(this,'${item.key}','no','${item.sub||''}')">No</button>
+          <button class="toggle-btn na" onclick="setToggle(this,'${item.key}','na','${item.sub||''}')">N/A</button>
+        </div>
+      </div>
+    `).join('');
+  });
+}
+
+function setToggle(btn, key, val, subId) {
+  toggleStates[key] = val;
+  const group = btn.parentElement;
+  group.querySelectorAll('.toggle-btn').forEach(b => {
+    b.classList.remove('active');
+    if(b.classList.contains(val)) b.classList.add('active');
+  });
+  if (subId) {
+    const sub = document.getElementById(subId);
+    if (sub) sub.classList.toggle('dimmed', val !== 'yes');
+  }
+  updateProgress();
+}
+
+function setSimple(btn, key, val) {
+  simpleStates[key] = val;
+  const group = btn.parentElement;
+  group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ===========================
+// TABS
+// ===========================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const idx = tab.dataset.tab;
+    document.getElementById('tab-' + idx).classList.add('active');
+  });
+});
+
+// ===========================
+// CHILD TABLE
+// ===========================
+function addChildRow() {
+  childRows++;
+  const tbody = document.getElementById('childTableBody');
+  const tr = document.createElement('tr');
+  tr.dataset.row = childRows;
+  tr.innerHTML = `
+    <td style="text-align:center;font-weight:600;color:var(--navy)">${childRows}</td>
+    <td><select data-key="child${childRows}_sex"><option value="">—</option><option>M</option><option>F</option></select></td>
+    <td><input type="text" data-key="child${childRows}_age" placeholder="e.g. 3y"></td>
+    <td><select data-key="child${childRows}_anc"><option value="">—</option><option>Yes</option><option>No</option><option>Unknown</option></select></td>
+    <td><select data-key="child${childRows}_mod"><option value="">—</option><option>SVD</option><option>Caesarean section</option><option>Assisted VD (forceps)</option><option>Assisted VD (ventouse)</option><option>Unknown</option></select></td>
+    <td><input type="text" data-key="child${childRows}_bwt" placeholder="kg"></td>
+    <td><input type="text" data-key="child${childRows}_events" placeholder="PPH / PTL / nil..."></td>
+    <td><input type="text" data-key="child${childRows}_ebf" placeholder="months"></td>
+    <td><input type="text" data-key="child${childRows}_tbf" placeholder="months"></td>
+    <td><select data-key="child${childRows}_status"><option value="">—</option><option>Alive &amp; well</option><option>Alive, known condition</option><option>Deceased</option></select></td>
+    <td><button class="btn btn-sm" style="background:#fdecea;color:var(--red-soft);border:none;cursor:pointer" onclick="removeChildRow(this,${childRows})">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function removeChildRow(btn, rowNum) {
+  btn.closest('tr').remove();
+}
+
+// ===========================
+// PROGRESS
+// ===========================
+function updateProgress() {
+  const tabs = document.querySelectorAll('.tab').length;
+  const filledTabs = new Set();
+  document.querySelectorAll('[data-key]').forEach(el => {
+    if ((el.value || '').trim()) {
+      // rough estimation by section
+    }
+  });
+  // Simple: count filled data-key fields
+  let total = document.querySelectorAll('[data-key]').length;
+  let filled = [...document.querySelectorAll('[data-key]')].filter(e => (e.value||'').trim()).length;
+  let pct = Math.round((filled / Math.max(total,1)) * 100);
+  document.getElementById('progressBar').style.width = Math.max(5, pct) + '%';
+}
+
+document.addEventListener('input', updateProgress);
+document.addEventListener('change', updateProgress);
+
+// ===========================
+// COLLECT DATA
+// ===========================
+function collect() {
+  const d = {};
+  // data-key inputs
+  document.querySelectorAll('[data-key]').forEach(el => {
+    d[el.dataset.key] = (el.value || '').trim();
+  });
+  // named inputs
+  ['pt_name','pt_gravida','pt_para','pt_age','pt_lmp','pt_edd_lmp','pt_edd_scan','pt_ga',
+   'complaints','hpc'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) d[id] = (el.value || '').trim();
+  });
+  // toggles
+  Object.assign(d, toggleStates);
+  Object.assign(d, simpleStates);
+  // children table
+  d.children = [];
+  document.querySelectorAll('#childTableBody tr').forEach((tr, i) => {
+    const row = { num: i+1 };
+    tr.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.dataset.key.replace(/^child\d+_/, '');
+      row[key] = (el.value || '').trim();
+    });
+    d.children.push(row);
+  });
+  return d;
+}
+
+// ===========================
+// GENERATE OUTPUT
+// ===========================
+function v(val, fallback='—') { return (val && String(val).trim()) ? String(val).trim() : fallback; }
+function tv(key) { return toggleStates[key] || '—'; }
+function sv(key) { return simpleStates[key] || '—'; }
+
+function generateCopyText(d) {
+  const lines = [];
+  const hr = '─'.repeat(60);
+  const s = (t) => { lines.push(''); lines.push(`[ ${t.toUpperCase()} ]`); lines.push(hr); };
+
+  lines.push('DR. EFUA KD — OBGYN CLERKING');
+  lines.push('Generated: ' + new Date().toLocaleString());
+  lines.push(hr);
+
+  s('PATIENT BIODATA');
+  lines.push(`Name          : ${v(d.pt_name)}`);
+  lines.push(`Age           : ${v(d.pt_age)} years`);
+  lines.push(`Gravida / Para : G${v(d.pt_gravida)} P${v(d.pt_para)}`);
+  lines.push(`LMP           : ${v(d.pt_lmp)}`);
+  lines.push(`EDD (LMP)     : ${v(d.pt_edd_lmp)}`);
+  lines.push(`EDD (Scan)    : ${v(d.pt_edd_scan)}`);
+  lines.push(`Gestational Age: ${v(d.pt_ga)}`);
+
+  s('PRESENTING COMPLAINTS');
+  lines.push(v(d.complaints));
+
+  s('HISTORY OF PRESENTING COMPLAINTS');
+  lines.push(v(d.hpc));
+
+  s('ON DIRECT QUESTIONING');
+  lines.push(`Lower abdominal pain : ${tv('lap')}`);
+  if (tv('lap') === 'yes') {
+    lines.push(`  Site: ${v(d.lap_site)} | Onset: ${v(d.lap_onset)} | Character: ${v(d.lap_char)}`);
+    lines.push(`  Radiation: ${v(d.lap_rad)} | Associated: ${v(d.lap_assoc)} | Timing: ${v(d.lap_timing)}`);
+    lines.push(`  Exacerbating: ${v(d.lap_exac)} | Relieving: ${v(d.lap_relief)} | Severity: ${v(d.lap_severity)}/10`);
+  }
+  lines.push(`Loss of liquor        : ${tv('lol')}`);
+  if (tv('lol') === 'yes') lines.push(`  Colour: ${v(d.lol_colour)} | Qty: ${v(d.lol_qty)} | Smell: ${v(d.lol_smell)}`);
+  lines.push(`Fetal movement        : ${tv('fm')}  ${tv('fm')==='yes' ? v(d.fm_detail) : ''}`);
+  lines.push(`Vaginal bleeding      : ${tv('vb')}`);
+  if (tv('vb') === 'yes') lines.push(`  Qty: ${v(d.vb_qty)} | Colour: ${v(d.vb_colour)} | Clots: ${v(d.vb_clots)}`);
+  lines.push(`Vaginal discharge     : ${tv('vd')}`);
+  if (tv('vd') === 'yes') lines.push(`  Colour: ${v(d.vd_colour)} | Smell: ${v(d.vd_smell)} | Qty: ${v(d.vd_qty)} | Itch: ${v(d.vd_itch)}`);
+  lines.push(`Cause questions: ${v(d.odq_cause)}`);
+  lines.push(`Risk factor questions: ${v(d.odq_rf)}`);
+  lines.push(`Complication questions: ${v(d.odq_comp)}`);
+  lines.push(`Recent malaria: ${tv('mal')} ${tv('mal')==='yes'?v(d.mal_detail):''}`);
+  lines.push(`Iron & folate: ${sv('ironfolate')} | Dewormed: ${sv('deworm')} | Fever: ${tv('fever')} | Same father: ${sv('samefather')}`);
+
+  s('SYSTEMIC INQUIRY');
+  const crItems = sectionToggles['cr-toggles'];
+  lines.push('Cardiorespiratory:');
+  crItems.forEach(item => lines.push(`  ${item.label}: ${tv(item.key)}`));
+  if (tv('cr_sputum') === 'yes') lines.push(`  Sputum — Colour: ${v(d.sputum_colour)} | Smell: ${v(d.sputum_smell)} | Qty: ${v(d.sputum_qty)}`);
+  lines.push('Gastrointestinal:');
+  sectionToggles['gi-toggles'].forEach(item => lines.push(`  ${item.label}: ${tv(item.key)}`));
+  if (tv('gi_epigast') === 'yes') lines.push(`  Epigastric pain — Char: ${v(d.ep_char)} | Onset: ${v(d.ep_onset)} | Sev: ${v(d.ep_severity)}/10`);
+  lines.push('Urinary:');
+  sectionToggles['ur-toggles'].forEach(item => lines.push(`  ${item.label}: ${tv(item.key)}`));
+  lines.push('CNS:');
+  sectionToggles['cns-toggles'].forEach(item => lines.push(`  ${item.label}: ${tv(item.key)}`));
+  lines.push('Musculoskeletal:');
+  sectionToggles['msk-toggles'].forEach(item => lines.push(`  ${item.label}: ${tv(item.key)}`));
+
+  s('INDEX PREGNANCY');
+  lines.push(`Booking gestation: ${v(d.idx_booking_wks)} | Planned: ${v(d.idx_planned)} | Confirmed by: ${v(d.idx_confirmed_by)}`);
+  lines.push(`Quickening: ${v(d.idx_quickening)} weeks`);
+  lines.push(`Scans: ${v(d.idx_scans)}`);
+  lines.push(`Blood group: ${v(d.lab_bg)} | Hb: ${v(d.lab_hb)} g/dL | Sickle cell: ${v(d.lab_sickle)}`);
+  lines.push(`Urine: ${v(d.lab_urine)} | Retroviral: ${v(d.lab_retro)} | Hep B: ${v(d.lab_hepb)}`);
+  lines.push(`IPT: ${tv('ipt')} | TT: ${tv('tt')} | ITN: ${v(d.itn)}`);
+
+  s('PAST OBSTETRIC HISTORY');
+  lines.push(`G${v(d.pob_gravida)} P${v(d.pob_para)} | Reproductive wishes: ${v(d.repro_wishes)}`);
+  if (d.children && d.children.length) {
+    lines.push('');
+    d.children.forEach(c => {
+      lines.push(`Child ${c.num}: Sex: ${v(c.sex)} | Age: ${v(c.age)} | ANC: ${v(c.anc)} | MOD: ${v(c.mod)} | BWT: ${v(c.bwt)} kg`);
+      lines.push(`         Events: ${v(c.events)} | EBF: ${v(c.ebf)} mo | TBF: ${v(c.tbf)} mo | Status: ${v(c.status)}`);
+    });
+  }
+
+  s('GYNAECOLOGICAL HISTORY — MENSTRUATION');
+  lines.push(`Menarche: ${v(d.gyn_menarche)} | Cycle: ${v(d.gyn_cycle)} days | Flow: ${v(d.gyn_flow_dur)} days | Pads/day: ${v(d.gyn_pads)}`);
+  lines.push(`Dysmenorrhoea: ${tv('dysmenorrhoea')} ${tv('dysmenorrhoea')==='yes'?'('+v(d.dysm_type)+')':''}`);
+  lines.push(`Menorrhagia: ${tv('menorrhagia')} | Clots: ${tv('menses_clots')} | IMB: ${tv('imb')}`);
+  lines.push('SEXUAL HISTORY');
+  lines.push(`Coitarche: age ${v(d.gyn_coitarche)} | Partners: ${v(d.gyn_partners)}`);
+  lines.push(`Dyspareunia: ${tv('dyspareunia')} | Postcoital bleeding: ${tv('pcb')}`);
+  lines.push(`Contraception: ${v(d.gyn_contraception)} ${v(d.gyn_no_contra_reason)}`);
+  lines.push('SCREENING');
+  lines.push(`SBE: ${tv('sbe')} | FBE: ${tv('fbe')} ${tv('fbe')==='yes'?'→ '+v(d.fbe_result):''} | Pap smear: ${tv('pap')} ${tv('pap')==='yes'?'→ '+v(d.pap_result):''}`);
+  if (d.gyn_prev_surgery) lines.push(`Previous gynae surgery: ${v(d.gyn_prev_surgery)}`);
+
+  s('PAST MEDICAL HISTORY');
+  ['pmh_dm','pmh_scd','pmh_htn','pmh_asthma'].forEach(k => {
+    const labels = {pmh_dm:'Diabetes',pmh_scd:'Sickle cell',pmh_htn:'Hypertension',pmh_asthma:'Asthma'};
+    lines.push(`${labels[k]}: ${tv(k)}`);
+  });
+  if (d.pmh_other) lines.push(`Other: ${v(d.pmh_other)}`);
+  lines.push(`Previous admission: ${tv('prev_admission')} ${tv('prev_admission')==='yes'?v(d.adm_detail):''}`);
+  lines.push(`Previous surgery: ${tv('prev_surgery')} ${tv('prev_surgery')==='yes'?v(d.surg_detail):''}`);
+  lines.push(`Previous transfusion: ${tv('prev_transfusion')} | Would accept transfusion: ${sv('trans_accept')}`);
+  lines.push('DRUG HISTORY');
+  lines.push(`Current medications: ${v(d.drugs_current)}`);
+  lines.push(`Herbal: ${v(d.drugs_herbal)} | Allergies: ${v(d.drugs_allergies)}`);
+
+  s('FAMILY HISTORY');
+  lines.push(`Father: ${v(d.fhx_father)} ${v(d.fhx_father_cond,'')}`);
+  lines.push(`Mother: ${v(d.fhx_mother)} ${v(d.fhx_mother_cond,'')}`);
+  lines.push(`Siblings: ${v(d.fhx_siblings)} — ${v(d.fhx_siblings_status)}`);
+  lines.push(`FHx DM: ${tv('fhx_dm')} ${tv('fhx_dm')==='yes'?'('+v(d.fhx_dm_who)+')':''}`);
+  lines.push(`FHx HTN: ${tv('fhx_htn')} ${tv('fhx_htn')==='yes'?'('+v(d.fhx_htn_who)+')':''}`);
+  lines.push(`FHx Asthma: ${tv('fhx_asthma')} ${tv('fhx_asthma')==='yes'?'('+v(d.fhx_asthma_who)+')':''}`);
+  lines.push(`FHx Twins: ${tv('fhx_twins')} ${tv('fhx_twins')==='yes'?'('+v(d.fhx_twin_side)+')':''}`);
+
+  s('SOCIAL HISTORY');
+  lines.push(`Marital status: ${v(d.soc_marital)} | Lives with: ${v(d.soc_liveswith)} | Area: ${v(d.soc_location)}`);
+  lines.push(`Occupation: ${v(d.soc_occ)} | Education: ${v(d.soc_edu)}`);
+  lines.push(`Smokes: ${v(d.soc_smoke)} | Alcohol: ${v(d.soc_alcohol)} | NHIS: ${v(d.soc_nhis)}`);
+  lines.push('PARTNER');
+  lines.push(`Age: ${v(d.partner_age)} | Occupation: ${v(d.partner_occ)} | Health: ${v(d.partner_health)} | Other children: ${v(d.partner_other_children)}`);
+  lines.push('');
+  lines.push(hr);
+  lines.push('End of clerking — Dr. Efua KD, OBGYN');
+
+  return lines.join('\n');
+}
+
+function generatePrintView(d) {
+  function row(key, val) {
+    return `<div class="pv-row"><span class="pv-key">${key}</span><span class="pv-val">${val||'—'}</span></div>`;
+  }
+  function section(title, content) {
+    return `<div class="pv-section"><div class="pv-section-title">${title}</div>${content}</div>`;
+  }
+  function tval(key) { const t = toggleStates[key]; return t ? `<span style="font-weight:600;color:${t==='yes'?'var(--green-soft)':t==='no'?'var(--red-soft)':'var(--muted)'}">${t.toUpperCase()}</span>` : '—'; }
+
+  let html = `<div class="pv-header"><h2>Dr. Efua KD — OBGYN Clerking</h2><p>Generated ${new Date().toLocaleString()}</p></div>`;
+
+  html += section('Patient Biodata', `
+    ${row('Name', v(d.pt_name))}
+    ${row('Age', v(d.pt_age) + ' years')}
+    ${row('Gravida / Para', 'G' + v(d.pt_gravida) + ' P' + v(d.pt_para))}
+    ${row('LMP', v(d.pt_lmp))}
+    ${row('EDD (LMP)', v(d.pt_edd_lmp))}
+    ${row('EDD (Scan)', v(d.pt_edd_scan))}
+    ${row('Gestational Age', v(d.pt_ga))}
+  `);
+
+  html += section('Presenting Complaints', `<div style="white-space:pre-wrap">${v(d.complaints)}</div>`);
+  html += section('History of Presenting Complaints', `<div style="white-space:pre-wrap">${v(d.hpc)}</div>`);
+
+  let odq = '';
+  odq += row('Lower abdominal pain', tval('lap') + (toggleStates['lap']==='yes' ? ` — Site: ${v(d.lap_site)}, Character: ${v(d.lap_char)}, Severity: ${v(d.lap_severity)}/10` : ''));
+  odq += row('Loss of liquor', tval('lol') + (toggleStates['lol']==='yes' ? ` — Colour: ${v(d.lol_colour)}, Qty: ${v(d.lol_qty)}, Smell: ${v(d.lol_smell)}` : ''));
+  odq += row('Fetal movement', tval('fm') + (toggleStates['fm']==='yes' ? ` — ${v(d.fm_detail)}` : ''));
+  odq += row('Vaginal bleeding', tval('vb') + (toggleStates['vb']==='yes' ? ` — Qty: ${v(d.vb_qty)}, Colour: ${v(d.vb_colour)}, Clots: ${v(d.vb_clots)}` : ''));
+  odq += row('Vaginal discharge', tval('vd') + (toggleStates['vd']==='yes' ? ` — Colour: ${v(d.vd_colour)}, Smell: ${v(d.vd_smell)}, Qty: ${v(d.vd_qty)}, Itch: ${v(d.vd_itch)}` : ''));
+  odq += row('Iron & folate', sv('ironfolate')) + row('Dewormed', sv('deworm')) + row('Recent malaria', tval('mal')) + row('Recent fever', tval('fever')) + row('Same father prev children', sv('samefather'));
+  html += section('On Direct Questioning', odq);
+
+  // systemic
+  let sys = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">';
+  const allSys = [...sectionToggles['cr-toggles'], ...sectionToggles['gi-toggles'],
+    ...sectionToggles['ur-toggles'], ...sectionToggles['cns-toggles'], ...sectionToggles['msk-toggles']];
+  allSys.forEach(item => {
+    const t = toggleStates[item.key];
+    if (t && t !== 'na') sys += `<div><span style="font-size:0.78rem;color:var(--muted)">${item.label}:</span> ${tval(item.key)}</div>`;
+  });
+  sys += '</div>';
+  html += section('Systemic Inquiry', sys);
+
+  html += section('Index Pregnancy', `
+    ${row('Booking gestation', v(d.idx_booking_wks))}
+    ${row('Planned', v(d.idx_planned))}
+    ${row('Confirmed by', v(d.idx_confirmed_by))}
+    ${row('Quickening', v(d.idx_quickening) + ' weeks')}
+    ${row('Blood group', v(d.lab_bg))}
+    ${row('Haemoglobin', v(d.lab_hb) + ' g/dL')}
+    ${row('Sickle cell', v(d.lab_sickle))}
+    ${row('Urine', v(d.lab_urine))}
+    ${row('Retroviral', v(d.lab_retro))}
+    ${row('Hepatitis B', v(d.lab_hepb))}
+    ${row('IPT', tval('ipt'))} ${row('TT', tval('tt'))} ${row('ITN', v(d.itn))}
+    <div class="pv-block"><strong>Scans</strong><span style="white-space:pre-wrap">${v(d.idx_scans)}</span></div>
+  `);
+
+  // Children table
+  let childHtml = row('Gravida / Para', 'G' + v(d.pob_gravida) + ' P' + v(d.pob_para)) + row('Reproductive wishes', v(d.repro_wishes));
+  if (d.children && d.children.length) {
+    childHtml += `<table class="pv-table" style="margin-top:0.75rem">
+      <thead><tr><th>#</th><th>Sex</th><th>Age</th><th>ANC</th><th>Mode</th><th>BWT</th><th>Events</th><th>EBF</th><th>TBF</th><th>Status</th></tr></thead>
+      <tbody>
+      ${d.children.map(c => `<tr>
+        <td>${c.num}</td><td>${v(c.sex)}</td><td>${v(c.age)}</td><td>${v(c.anc)}</td>
+        <td>${v(c.mod)}</td><td>${v(c.bwt)}</td><td>${v(c.events)}</td>
+        <td>${v(c.ebf)}</td><td>${v(c.tbf)}</td><td>${v(c.status)}</td>
+      </tr>`).join('')}
+      </tbody>
+    </table>`;
+  }
+  html += section('Past Obstetric History', childHtml);
+
+  html += section('Gynaecological History', `
+    ${row('Menarche', v(d.gyn_menarche))}
+    ${row('Cycle / Flow', v(d.gyn_cycle) + ' day cycle, ' + v(d.gyn_flow_dur) + ' days flow, ' + v(d.gyn_pads) + ' pads/day')}
+    ${row('Dysmenorrhoea', tval('dysmenorrhoea') + (toggleStates['dysmenorrhoea']==='yes'?' ('+v(d.dysm_type)+')':''))}
+    ${row('Menorrhagia', tval('menorrhagia'))} ${row('Clots', tval('menses_clots'))} ${row('IMB', tval('imb'))}
+    ${row('Coitarche', 'Age ' + v(d.gyn_coitarche))} ${row('Lifetime partners', v(d.gyn_partners))}
+    ${row('Contraception', v(d.gyn_contraception))}
+    ${row('Dyspareunia', tval('dyspareunia'))} ${row('Postcoital bleeding', tval('pcb'))}
+    ${row('SBE', tval('sbe'))} ${row('FBE', tval('fbe') + (toggleStates['fbe']==='yes'?' → '+v(d.fbe_result):''))}
+    ${row('Pap smear', tval('pap') + (toggleStates['pap']==='yes'?' → '+v(d.pap_result):''))}
+    ${d.gyn_prev_surgery ? row('Prev gynae surgery', v(d.gyn_prev_surgery)) : ''}
+  `);
+
+  html += section('Past Medical & Drug History', `
+    ${row('Diabetes', tval('pmh_dm'))} ${row('Sickle cell', tval('pmh_scd'))}
+    ${row('Hypertension', tval('pmh_htn'))} ${row('Asthma', tval('pmh_asthma'))}
+    ${d.pmh_other ? row('Other', v(d.pmh_other)) : ''}
+    ${row('Previous admission', tval('prev_admission') + (toggleStates['prev_admission']==='yes'?' — '+v(d.adm_detail):''))}
+    ${row('Previous surgery', tval('prev_surgery') + (toggleStates['prev_surgery']==='yes'?' — '+v(d.surg_detail):''))}
+    ${row('Transfusion', tval('prev_transfusion'))} ${row('Would accept transfusion', sv('trans_accept'))}
+    ${row('Current medications', v(d.drugs_current))}
+    ${row('Herbal medications', v(d.drugs_herbal))}
+    ${row('Allergies', v(d.drugs_allergies))}
+  `);
+
+  html += section('Family & Social History', `
+    ${row('Father', v(d.fhx_father) + (d.fhx_father_cond?' — '+v(d.fhx_father_cond):''))}
+    ${row('Mother', v(d.fhx_mother) + (d.fhx_mother_cond?' — '+v(d.fhx_mother_cond):''))}
+    ${row('Siblings', v(d.fhx_siblings) + ' — ' + v(d.fhx_siblings_status))}
+    ${row('FHx DM', tval('fhx_dm') + (toggleStates['fhx_dm']==='yes'?' ('+v(d.fhx_dm_who)+')':''))}
+    ${row('FHx HTN', tval('fhx_htn') + (toggleStates['fhx_htn']==='yes'?' ('+v(d.fhx_htn_who)+')':''))}
+    ${row('FHx Asthma', tval('fhx_asthma') + (toggleStates['fhx_asthma']==='yes'?' ('+v(d.fhx_asthma_who)+')':''))}
+    ${row('FHx Twins', tval('fhx_twins') + (toggleStates['fhx_twins']==='yes'?' ('+v(d.fhx_twin_side)+')':''))}
+    ${row('Marital status', v(d.soc_marital))} ${row('Lives with', v(d.soc_liveswith))} ${row('Area', v(d.soc_location))}
+    ${row('Occupation', v(d.soc_occ))} ${row('Education', v(d.soc_edu))}
+    ${row('Smokes', v(d.soc_smoke))} ${row('Alcohol', v(d.soc_alcohol))} ${row('NHIS', v(d.soc_nhis))}
+    ${row("Partner's age", v(d.partner_age))} ${row("Partner's occupation", v(d.partner_occ))}
+    ${row("Partner's health", v(d.partner_health))} ${row("Partner's other children", v(d.partner_other_children))}
+  `);
+
+  return html;
+}
+
+// ===========================
+// MODAL CONTROL
+// ===========================
+let currentModalTab = 'print';
+
+function openOutput() {
+  const d = collect();
+  const printHtml = generatePrintView(d);
+  const copyTxt = generateCopyText(d);
+  document.getElementById('printViewContent').innerHTML = printHtml;
+  document.getElementById('copyText').value = copyTxt;
+  switchModalTab('print');
+  document.getElementById('outputModal').classList.add('open');
+}
+
+function closeOutput() {
+  document.getElementById('outputModal').classList.remove('open');
+}
+
+function switchModalTab(tab) {
+  currentModalTab = tab;
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.modal-tab')[tab === 'print' ? 0 : 1].classList.add('active');
+  document.getElementById('printViewContent').style.display = tab === 'print' ? 'block' : 'none';
+  document.getElementById('copyText').style.display = tab === 'copy' ? 'block' : 'none';
+}
+
+function copyToClipboard() {
+  const txt = document.getElementById('copyText').value;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function clearAll() {
+  if (!confirm('Clear all data and start a new patient?')) return;
+  document.querySelectorAll('[data-key], #pt_name, #pt_gravida, #pt_para, #pt_age, #pt_lmp, #pt_edd_lmp, #pt_edd_scan, #pt_ga, #complaints, #hpc').forEach(el => {
+    if (el.tagName === 'SELECT') el.value = '';
+    else el.value = '';
+  });
+  toggleStates = {};
+  simpleStates = {};
+  childRows = 0;
+  document.getElementById('childTableBody').innerHTML = '';
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sub-fields').forEach(s => s.classList.add('dimmed'));
+  document.getElementById('progressBar').style.width = '5%';
+  // go to first tab
+  document.querySelectorAll('.tab')[0].click();
+}
+
+// LMP → EDD auto calc
+document.addEventListener('DOMContentLoaded', () => {
+  renderToggles();
+  addChildRow();
+  const lmpInput = document.getElementById('pt_lmp');
+  lmpInput.addEventListener('change', () => {
+    const lmp = new Date(lmpInput.value);
+    if (!isNaN(lmp)) {
+      const edd = new Date(lmp);
+      edd.setDate(edd.getDate() + 280);
+      document.getElementById('pt_edd_lmp').value = edd.toISOString().split('T')[0];
+    }
+  });
+});
+</script>
+</body>
+</html>
