@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a1628">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dream Team A">
+<link rel="apple-touch-icon" href="data:image/jpeg;base64,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">
+<link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,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">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Team A</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy2: #112240;
+  --sea: #1e6fa5;
+  --sea2: #2196c4;
+  --sea-light: #64b5d9;
+  --white: #ffffff;
+  --off-white: #f4f8fb;
+  --black: #0a0a0a;
+  --gray: #6b7a8d;
+  --gray-light: #e8eef4;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+  border-bottom: 2px solid var(--sea);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.header-logo { display:flex; align-items:center; gap:12px; }
+.header-logo .icon {
+  width:40px; height:40px; background: linear-gradient(135deg, var(--sea), var(--sea2));
+  border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+}
+.header-title { font-size:20px; font-weight:800; letter-spacing:-0.5px; }
+.header-title span { color: var(--sea-light); }
+.header-date { font-size:12px; color: var(--sea-light); font-weight:500; }
+
+/* ── NAV ── */
+.nav {
+  background: var(--navy2);
+  display: flex;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(30,111,165,0.3);
+  padding: 0 24px;
+  scrollbar-width: none;
+}
+.nav::-webkit-scrollbar { display:none; }
+.nav-btn {
+  padding: 14px 20px;
+  border: none;
+  background: none;
+  color: var(--gray);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-btn:hover { color: var(--sea-light); }
+.nav-btn.active { color: var(--sea2); border-bottom-color: var(--sea2); }
+
+/* ── MAIN ── */
+.main { padding: 24px; max-width: 900px; margin: 0 auto; }
+
+/* ── SECTION ── */
+.section { display:none; animation: fadeIn 0.3s ease; }
+.section.active { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── CARDS ── */
+.card {
+  background: var(--navy2);
+  border: 1px solid rgba(30,111,165,0.25);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--sea-light);
+  margin-bottom: 16px; display:flex; align-items:center; gap:8px;
+}
+.card-title .dot {
+  width:8px; height:8px; border-radius:50%; background: var(--sea2);
+}
+
+/* ── LOOKUP ── */
+.lookup-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+.lookup-group { flex:1; min-width:200px; }
+.lookup-group label { display:block; font-size:12px; color:var(--sea-light); font-weight:600; margin-bottom:8px; letter-spacing:0.5px; text-transform:uppercase; }
+.lookup-group select, .lookup-group input {
+  width:100%; padding:12px 16px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(30,111,165,0.4);
+  border-radius:10px;
+  color: var(--white);
+  font-family: 'Poppins', sans-serif;
+  font-size:14px;
+  outline:none;
+  transition: border 0.2s;
+}
+.lookup-group select:focus, .lookup-group input:focus {
+  border-color: var(--sea2);
+  background: rgba(33,150,196,0.1);
+}
+.lookup-group select option { background: var(--navy2); }
+.btn-lookup {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--sea), var(--sea2));
+  border: none; border-radius: 10px;
+  color: white; font-family: 'Poppins', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; align-self: flex-end;
+  transition: opacity 0.2s, transform 0.1s;
+  letter-spacing: 0.3px;
+}
+.btn-lookup:hover { opacity:0.9; transform:translateY(-1px); }
+.btn-lookup:active { transform:translateY(0); }
+
+/* ── RESULT ── */
+.result-hidden { display:none; }
+.result-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 13px; font-weight: 700;
+  margin-bottom: 20px;
+}
+.badge-obs { background: rgba(33,150,196,0.2); border:1px solid var(--sea2); color:var(--sea-light); }
+.badge-gynae { background: rgba(46,204,113,0.15); border:1px solid #2ecc71; color:#2ecc71; }
+.badge-float { background: rgba(243,156,18,0.15); border:1px solid #f39c12; color:#f39c12; }
+.badge-leave { background: rgba(231,76,60,0.15); border:1px solid #e74c3c; color:#e74c3c; }
+
+.duties-section { margin-bottom:20px; }
+.duties-label {
+  font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--gray); margin-bottom:10px;
+  padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.duty-item {
+  display:flex; gap:10px; align-items:flex-start;
+  padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+  font-size:13px; line-height:1.6; color:rgba(255,255,255,0.85);
+}
+.duty-item:last-child { border-bottom:none; }
+.duty-item .bullet {
+  width:6px; height:6px; border-radius:50%; background:var(--sea2);
+  margin-top:7px; flex-shrink:0;
+}
+.duty-time {
+  font-size:11px; font-weight:700; color:var(--sea2);
+  background: rgba(33,150,196,0.1); padding:2px 8px; border-radius:4px;
+  white-space:nowrap; margin-top:2px;
+}
+
+/* ── MEDS ── */
+.scenario-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:12px; margin-bottom:20px; }
+.scenario-card {
+  padding:16px; background:rgba(255,255,255,0.04);
+  border:1px solid rgba(30,111,165,0.25); border-radius:12px;
+  cursor:pointer; transition:all 0.2s;
+}
+.scenario-card:hover { background:rgba(33,150,196,0.12); border-color:var(--sea2); transform:translateY(-2px); }
+.scenario-card.selected { background:rgba(33,150,196,0.18); border-color:var(--sea2); }
+.scenario-card .s-icon { font-size:24px; margin-bottom:8px; }
+.scenario-card .s-title { font-size:13px; font-weight:600; color:var(--white); }
+.scenario-card .s-sub { font-size:11px; color:var(--gray); margin-top:4px; }
+
+.med-result { display:none; background: var(--navy2) !important; color: var(--white) !important; }
+.med-result.show { display:block; }
+.med-result * { color: inherit; }
+.med-result .card-title { color: var(--sea-light) !important; }
+.med-result .duties-label { color: var(--gray) !important; }
+.med-result .med-table td { color: rgba(255,255,255,0.85) !important; background: transparent !important; }
+.med-result .med-table td small { color: #f39c12 !important; }
+.med-result .med-table th { color: var(--sea-light) !important; background: rgba(33,150,196,0.2) !important; }
+.med-result .med-table tr:hover td { background: rgba(255,255,255,0.04) !important; }
+.med-result .check-text { color: rgba(255,255,255,0.85) !important; }
+.med-result .check-text.done { color: var(--gray) !important; }
+.med-result .note-box { color: #f39c12 !important; background: rgba(243,156,18,0.1) !important; }
+.med-table { width:100%; border-collapse:collapse; margin-top:12px; }
+.med-table th {
+  background: rgba(33,150,196,0.2); padding:10px 14px;
+  text-align:left; font-size:12px; font-weight:700;
+  color:var(--sea-light); letter-spacing:0.5px;
+}
+.med-table th:first-child { border-radius:8px 0 0 0; }
+.med-table th:last-child { border-radius:0 8px 0 0; }
+.med-table td {
+  padding:10px 14px; font-size:13px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.85);
+}
+.med-table tr:hover td { background:rgba(255,255,255,0.03); }
+.note-box {
+  background:rgba(243,156,18,0.1); border:1px solid rgba(243,156,18,0.3);
+  border-radius:10px; padding:14px; margin-top:14px;
+  font-size:13px; color:#f39c12; line-height:1.6;
+}
+.note-box strong { display:block; margin-bottom:4px; font-size:12px; letter-spacing:0.5px; }
+
+/* ── CONTACTS ── */
+.contacts-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:12px; }
+.contact-card {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(30,111,165,0.25);
+  border-radius:12px; padding:18px; transition:all 0.2s;
+}
+.contact-card:hover { background:rgba(33,150,196,0.1); border-color:var(--sea2); }
+.contact-card .c-role { font-size:11px; color:var(--sea-light); font-weight:700; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:6px; }
+.contact-card .c-name { font-size:14px; font-weight:600; color:var(--white); margin-bottom:8px; }
+.contact-card .c-num {
+  font-size:13px; color:var(--sea2); font-weight:500;
+  display:flex; align-items:center; gap:6px;
+}
+.contact-cat { font-size:12px; font-weight:700; color:var(--sea-light); letter-spacing:1px; text-transform:uppercase; margin:20px 0 10px; }
+
+/* ── POST DUTY ── */
+.checklist-item {
+  display:flex; gap:12px; align-items:flex-start;
+  padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.checklist-item:last-child { border-bottom:none; }
+.check-box {
+  width:20px; height:20px; border:2px solid var(--sea2);
+  border-radius:5px; flex-shrink:0; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; margin-top:2px;
+}
+.check-box.checked { background:var(--sea2); }
+.check-box.checked::after { content:'✓'; color:white; font-size:12px; font-weight:700; }
+.check-text { font-size:13px; color:rgba(255,255,255,0.85); line-height:1.6; }
+.check-text.done { text-decoration:line-through; color:var(--gray); }
+.section-label {
+  font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--sea2); margin:20px 0 10px;
+  display:flex; align-items:center; gap:8px;
+}
+.section-label::after { content:''; flex:1; height:1px; background:rgba(30,111,165,0.3); }
+
+/* ── PAGE TITLE ── */
+.page-title { font-size:22px; font-weight:800; margin-bottom:6px; }
+.page-sub { font-size:13px; color:var(--gray); margin-bottom:24px; }
+
+/* ── LEAVE NOTICE ── */
+.leave-notice {
+  background:rgba(231,76,60,0.1); border:1px solid rgba(231,76,60,0.3);
+  border-radius:12px; padding:20px; text-align:center;
+}
+.leave-notice .l-icon { font-size:32px; margin-bottom:8px; }
+.leave-notice .l-title { font-size:16px; font-weight:700; color:#e74c3c; margin-bottom:6px; }
+.leave-notice .l-text { font-size:13px; color:rgba(255,255,255,0.7); line-height:1.6; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px) {
+  .main { padding:16px; }
+  .lookup-row { flex-direction:column; }
+  .btn-lookup { width:100%; }
+}
+
+html, body {
+  background: #0a1628 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff;
+  color-scheme: dark;
+}
+* {
+  -webkit-text-fill-color: inherit;
+}
+.section, .main, .card, .scenario-card, .contact-card,
+#section-schedule, #section-meds, #section-postduty, #section-contacts {
+  background-color: inherit !important;
+  color: #ffffff !important;
+}
+.scenario-card {
+  background: rgba(255,255,255,0.04) !important;
+  color: #ffffff !important;
+}
+.scenario-card .s-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+.scenario-card .s-sub { color: #6b7a8d !important; -webkit-text-fill-color: #6b7a8d !important; }
+.page-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+.page-sub { color: #6b7a8d !important; -webkit-text-fill-color: #6b7a8d !important; }
+.duty-item { color: rgba(255,255,255,0.85) !important; -webkit-text-fill-color: rgba(255,255,255,0.85) !important; }
+.check-text { color: rgba(255,255,255,0.85) !important; -webkit-text-fill-color: rgba(255,255,255,0.85) !important; }
+.check-text.done { color: #6b7a8d !important; -webkit-text-fill-color: #6b7a8d !important; text-decoration: line-through !important; }
+.med-table td { color: rgba(255,255,255,0.85) !important; -webkit-text-fill-color: rgba(255,255,255,0.85) !important; }
+.med-table td small { color: #f39c12 !important; -webkit-text-fill-color: #f39c12 !important; }
+.med-table td strong { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+.med-table th { color: #64b5d9 !important; -webkit-text-fill-color: #64b5d9 !important; }
+.card-title { color: #64b5d9 !important; -webkit-text-fill-color: #64b5d9 !important; }
+.duties-label { color: #6b7a8d !important; -webkit-text-fill-color: #6b7a8d !important; }
+.note-box { color: #f39c12 !important; -webkit-text-fill-color: #f39c12 !important; }
+.note-box strong { color: #f39c12 !important; -webkit-text-fill-color: #f39c12 !important; }
+.section-label { color: #2196c4 !important; -webkit-text-fill-color: #2196c4 !important; }
+.contact-card .c-role { color: #64b5d9 !important; -webkit-text-fill-color: #64b5d9 !important; }
+.contact-card .c-name { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+.contact-card .c-num { color: #2196c4 !important; -webkit-text-fill-color: #2196c4 !important; }
+.result-badge { color: inherit !important; }
+.duty-time { color: #2196c4 !important; -webkit-text-fill-color: #2196c4 !important; }
+.leave-notice .l-title { color: #e74c3c !important; -webkit-text-fill-color: #e74c3c !important; }
+.leave-notice .l-text { color: rgba(255,255,255,0.7) !important; -webkit-text-fill-color: rgba(255,255,255,0.7) !important; }
+.header-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+.header-title span { color: #64b5d9 !important; -webkit-text-fill-color: #64b5d9 !important; }
+.header-date { color: #64b5d9 !important; -webkit-text-fill-color: #64b5d9 !important; }
+.nav-btn { color: #6b7a8d !important; }
+.nav-btn.active { color: #2196c4 !important; }
+.lookup-group label { color: #64b5d9 !important; -webkit-text-fill-color: #64b5d9 !important; }
+.lookup-group select, .lookup-group input { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+.contact-cat { color: #64b5d9 !important; -webkit-text-fill-color: #64b5d9 !important; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">
+    <div class="icon" style="padding:0;overflow:hidden;"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAkACQAAD/4QD2RXhpZgAATU0AKgAAAAgABwEOAAIAAAALAAAAYgESAAMAAAABAAEAAAEaAAUAAAABAAAAbgEbAAUAAAABAAAAdgEoAAMAAAABAAIAAAEyAAIAAAAUAAAAfodpAAQAAAABAAAAkgAAAABTY3JlZW5zaG90AAAAAACQAAAAAQAAAJAAAAABMjAyNjowNjowNCAxODo0NToyMQAABJADAAIAAAAUAAAAyJKGAAcAAAASAAAA3KACAAQAAAABAAAAtKADAAQAAAABAAAA3gAAAAAyMDI2OjA2OjA0IDE4OjQ1OjIxAEFTQ0lJAAAAU2NyZWVuc2hvdP/tADhQaG90b3Nob3AgMy4wADhCSU0EBAAAAAAAADhCSU0EJQAAAAAAENQdjNmPALIE6YAJmOz4Qn7/4gIoSUNDX1BST0ZJTEUAAQEAAAIYYXBwbAQAAABtbnRyUkdCIFhZWiAH5gABAAEAAAAAAABhY3NwQVBQTAAAAABBUFBMAAAAAAAAAAAAAAAAAAAAAAAA9tYAAQAAAADTLWFwcGwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApkZXNjAAAA/AAAADBjcHJ0AAABLAAAAFB3dHB0AAABfAAAABRyWFlaAAABkAAAABRnWFlaAAABpAAAABRiWFlaAAABuAAAABRyVFJDAAABzAAAACBjaGFkAAAB7AAAACxiVFJDAAABzAAAACBnVFJDAAABzAAAACBtbHVjAAAAAAAAAAEAAAAMZW5VUwAAABQAAAAcAEQAaQBzAHAAbABhAHkAIABQADNtbHVjAAAAAAAAAAEAAAAMZW5VUwAAADQAAAAcAEMAbwBwAHkAcgBpAGcAaAB0ACAAQQBwAHAAbABlACAASQBuAGMALgAsACAAMgAwADIAMlhZWiAAAAAAAAD21QABAAAAANMsWFlaIAAAAAAAAIPfAAA9v////7tYWVogAAAAAAAASr8AALE3AAAKuVhZWiAAAAAAAAAoOAAAEQsAAMi5cGFyYQAAAAAAAwAAAAJmZgAA8qcAAA1ZAAAT0AAACltzZjMyAAAAAAABDEIAAAXe///zJgAAB5MAAP2Q///7ov///aMAAAPcAADAbv/AABEIAN4AtAMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgv/xAC1EAACAQMDAgQDBQUEBAAAAX0BAgMABBEFEiExQQYTUWEHInEUMoGRoQgjQrHBFVLR8CQzYnKCCQoWFxgZGiUmJygpKjQ1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4eLj5OXm5+jp6vHy8/T19vf4+fr/xAAfAQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgv/xAC1EQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4+Tl5ufo6ery8/T19vf4+fr/2wBDAAICAgICAgMCAgMFAwMDBQYFBQUFBggGBgYGBggKCAgICAgICgoKCgoKCgoMDAwMDAwODg4ODg8PDw8PDw8PDw//2wBDAQICAgQEBAcEBAcQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/3QAEAAz/2gAMAwEAAhEDEQA/APxTooor6g8cKKKKqwBRRRS5QCil96KpIBKWlooASlopaLgIBS0UVNxi0UUU0hBRRRVAFKBRiloAKWiikAUv40UfhTsB/9D8VKKKWvqkjxxMUlPpMCi4DaWlxSVQBS0lLQAUtFFSMKKKKLALRRRTsIKKKWmAlOxSUtABS0UUgCiilpgFFFFAH//R/FWiilr6pnjhRRS0gEpaKKQBSUtFUgExS0UU7AFFFLTASloooAKWiigApaKKQBRS0UwCiiigGFFFFBNz/9L8VqKKK+pPHCloop2AKKK6Lw34W1vxZfCw0S3MzjlmPCIPVm6CrhScnyxV2RUqRgnKTsjnaK+v/DfwB0CyRZvEc76hN1KITHEPbj5j+Y+leo2vw68DWqhY9Bs2H/TSFZD+bgmvoKPDVeSvJpHztfinDxdoJs/O+iv0eHgbwV/0L+n/APgJF/8AE04eBfBR/wCZf0//AMBIf/ia3/1Xqfzo5nxfS/kZ+b9LX6SDwJ4J/wChe07/AMBIf/iakHgPwR0/4R7Tv/ASH/4mj/Vep/Ohf630v5GfmvS1+lg8B+B/+he07/wEh/8Aiaf/AMIH4G/6F3Tv/ASH/wCJp/6rVP50T/rjS/59s/NClr9Lx4C8Dn/mXdO/8BIf/iaJPh54EmXY/h3TwD/dto1P5qoND4WqfzoP9cqX8j/A/NCivvfX/gB4D1hGbT4ZNKnPRoGLJn3R8j8sV8r+PPhR4m8Bsbi7QXenk4W6iB289A46qfrx715eMyavRXNJXXdHr5fn+HxD5Yuz7M8xoooryj2WFFFFBIUUUUCP/9P8VqWiivqrHjhRRRVAdD4W8N33izW7fRLAYeY5Zj0RB95j9BX334X8L6V4U0qPStKjCIgG98fNI3dmP+cV5F8AfDSWXh+fxHMv77UXKISOkUZxx9Wz+Qr6DC197kGXqnSVV/E/wR+d8R5k6lV0Yv3Y/iwC1KBigDFOAzX0J8w2AGalC0BamAqRAFqRVoVakqkiGwpQM0oUk1Kq0NktiBalApQPSpAKSRDYAVFdWdrfW0tnexLPBMpV0cZVgexFWAMVIq1TQua2x+evxi+GjeAtYW608FtIvyTCTyY36mM/TqD3H0rxqv08+I3hSLxf4N1HRmXMxjMkB7iaMbk/M8fQ1+YhBUkEYI7V+d57l6oVbx+Fn6jw5mjxNC0370dH+jEooorxD6AKXBpKKAP/1PxXooor6w8cKKKKAP0S+HVotr4F0GJRgNZwyfjIoc/qa7YDFct4G/5Erw//ANg+0/8ARK11irX6vhlanG3ZH45i5Xqzfm/zEC1Kq0qrUoFanMKi5IHTNVZtU0q2laGe4COhwQRj+dXgO5r7q+H/AMJvBnibwJpWr6tpsU9zNF8zsoycGvleLM0r4OjCpQa1dndH0vC2WUMXWlTrp6K6sz4GTWtEc4+2oPqQP61YGqaH/wBBCL/vof41+h8nwH+GUaNNNpECogJYsoAAHUmuTPgT9nYnBuNJz/12j/xr4KXHeMj8Uor5H6Fh/D7D1rujSnK3a7/JHw8dY0JAT/aER+jD/Go4/EGiSusUd0GZjgAYJP5Gv0PT9n74XXMazQaRbvHIAysqggg9CDWD4r+BfgPw/wCGtS1nTtLiiuLWFnRgoyCO/SurD8Y46c4wutWlsedieD8DThKbi9E3v2PinGOBUgWlAzUirX6+mfj7l2EVe9TBaAKlAxTM2wAxX5UeMrRLDxfrljGMLb31zGPokrD+lfqyBmvyy+IX/I/+Jv8AsJ3v/o56+V4qXuQfmfacFP8AeVF5I4+ilor4s/Qwo/z0oo/GkI//1fxXooor6w8cKKKWgD9IfAo/4orw/wD9g+0/9ErXXKtct4EH/FE+Hv8AsHWn/ola64Cv1fD/AMOPoj8axX8SXqxQK6Dw9oOr+I7/APsnQ1ia9lRjGso+UlecZwcflWGB3NeufBJ9nxDsG9Fk/lXFnd1g6rTs+V/kdGTu+LpXV/eX5nD6l8OPjDZh9+mWq7c9GX/4iv0I+B0Wqw/CbQ4daAF6sbCQL0zuPTAH8q+cRFrjfFvWrm6e8OnsJBGHeQ2/QY2qTs/IV6l4yuZ7X4Ema1kaF1ZcMjFSPnPcc1+CZjjK0ad6s3JJX3b/ADP6A4fyqlisXDD0oqDlJRvZdXa+lj3PXlb+xNQJH/LvL/6Ca+E/+EU0I/CZvFpgP9p/bTF5m9sbN2Mbc7f0q/peg+Cr7TLefUviVNazzRgywlXbYx6qTu5xXr0XhPwG3wl/sdvFajR/tW/+0PL48zP3Nua+Yrv6zdtLSL6p9vuP2zKKcMkUacKlR81WF7U5x0jzXX9699lv5n0P4ZRv7A0w4P8Ax7Rf+gCsL4sRXsnwz8Rpp3y3RtH8vPZuMV8lX/hf4eWWlXNxp3xSluLiCJmigCuu9lHCg7uM17d8Obi4vfgBdTXcjTSmObLOxY/eHc5Nelgswcqip2s7Xumnt6Hw/EvCEMPhZY6NRyTly2lTlDdN/a327HxDo3w6+LF/BE/lW5DAHJA/+IrR1nw3rfhiaOw14obl1D4jUAAHp2Ga9e1K11lvHPhqWxN2LRDF5vkvKIcZ53hSFP41X+OzBvGSkdPISv07hOpWljIe0qNqzdrs/BOLo0Y4OXs6aTuleyPFAMU4DNAGalC1+rtn5OAWvyu+In/I/wDib/sJ3v8A6Pev1WVa/Kr4iD/i4Hib/sKXv/o96+V4o/hw9T7Pgl/vanovzOOpaKO9fGH6MFLg0mDRg0CP/9b8V6KKWvrDxxKWiigD9KvAY/4ojw9n/oHWn/ola68CuU8BD/ih/Dp/6h1p/wCiVrra/WcMv3cfRH4vin+9l6sK9U+Dfy+PbE99r/yry5Vr1X4OL/xXdl/uv/KuLO/9zq/4X+R05Q/9rpf4l+Z3SXfiN/iprC3N7fPpwEgjidn+zDgY2gjb+VfT/hPS9M1vwDaafrFsl5bSbt0cg3KcMcZFfLq6r4iuPinq+n3Go3EmnR+YI7dgvkrgDGPlB/Wvq/wAjDwhYj2b+Zr8GxdP4bpbI/c8DWablCTum/l6HPa18Mvh3BpF9PD4es0kjgkZWEfIIU4Ir5xDJ/wzq65AP9okY9t1faN7ai8tZrOUkJOjIxHUBhg4r57f9mvwZz/xMb/aTnHmR4z9NleBjsDKT/dRWqa7bn6pwlxXQp0+XMa0rqpCa0cvhvdatWvc9B8PfDD4dXGiafcT+HrOSSS3iZmMfJYqCSfrXba1pOk6D8PdV03RbWOytY4HKxxDCgkjOBVjT4FsLS3soiTHbosa564UYGaTxc5HgzVwe8B/mK9Wjh4xtZJM+AzHNK9dyVSpKUb3s23+Z8c6tceIU8c+HF068vobL915scDuIGBPPmBfl/OqPxsO/wAYA9vJWreq6x4gtfGvh6z0/Ubi3spPK82GPHlvk87sqT+tU/jLhvFvH/PJa/QuEo2xUHb7LPy7i+d8JPX7S/I8kC1Kq0KtSAYr9SPydsAMV+U/xEH/ABcDxP8A9hS9/wDR71+rYFflJ8Rf+Sg+J/8AsKXv/o96+Y4oX7uHqfbcEP8Ae1PRfmcdS0UV8Yfo4ClooqRH/9f8V6WiivrDxwpaKKAP0v8AAf8AyI/h3/sHWn/ola65VrlPAI/4ofw7/wBg60/9ErXYKtfrOH/hx9EfiuLf7yXqwVa9U+Do/wCK8sfo/wDKvMAK9P8AhEdvjmyPs/8AKuHOv9zq/wCF/kdGTv8A2ul/iX5ndw6/4jufivqukXWotJpkPmCO28qMKuAMfOFDn8TXpvjXxn4h8F/COLUvCx23yMNp8sSYQsdx2kGvH7bxjrl38X9W8OT3ERsIPM2RiFA4IA6uPmP417lqkMdz8OIw4BHlv1+pr8LxELcultEfuOGk/e1vqz4dk/a1+JxcodetwQcY+zR9f++agb9rH4nbth163BBxj7NH/wDE15/PJZpqD2/lJxMV+6P71R3ctnDfyweUnyyY+6PWvRjlcbr3ulzjlm0rP3etj0Rv2r/idG5V9ft1ZeubaLj/AMdr6Z+EPxY8Z/EPwV4ofxVcrdxxxAQOsKxDnryoGa+IdYls7bULmHy04PoPSvt74T20MPwx1OWJQu63zx7gVzYjCKnGMk9zoo4x1JSja1jB1XxLr+neNPD2mWGoNb2dz5QlhEcbBwTzlmUsPwIqL4vfN4r47RLWHr3jfXdG8f8AhnQrC4hjtL7yhKjwo7Nk44c8j8K2Piqc+Jz/ANc1r6zhFf7VDS3us+M4yf8AsktftL9TzMDFPA7mgDuakAr9TufkjYAV+UXxG/5KF4o/7Cl7/wCj3r9YgK/J74jcfELxR/2FL3/0e9fLcT/w4ep9vwP/ABanovzOMxS0UlfFn6QLR+NFH4UAf//Q/FilpKWvrDxwpaKKAP0x+HcizeA/DrocgafbKfqsSqf1FdqBXiPwA19NY8BxaezZn0mRoGHfYxLofyOPwr3IDNfqmAqKdGEl2R+MZlSdPETg+7ADNdV4P12Lw1rsGryxNMkIYFVIBORjvXMAVKq1riKMasJU57NWOShXlTmqkN07ntlz8TNBlne7g0cx3EmcyZXcSfU4zXTD4qeHZPBiaLIsy3YRgRsyuSfXP9K+cgKlAxXzEuCsC1omvn/mfSw42x0Xun8v8rHk1z4Q8RS6zJeo0PktP5gy5zt3Z6baj1Dwb4kudXmvITD5Ly7xlyDjPpivXwM1KFro/wBVsMur+/8A4BzPi3Fdl93/AATx3X/BfiXUdWuLuz8nypSNu5yD0A6Yr608EeL9O8P+Arrw7fhzezQCMbBlN2B/Fn+leZKtSAYrKfCGEkkpN6ef/ALhxpjIttKOvl/wT02y8b6ND5Mt3pImnhAAkJUsMehIyK5vxVrsfiLU/wC0I4jCNoXaxyePeuZAqQCu/AZBhsNU9pSTvtueXmPEeKxVP2VVq2+yACpQKAKkAr2TwWwAr8lviBKlx488STxnKyaleMPoZnIr9TvFGu23hfw5qPiC7IEdjA8vPdgPlH4tgfjX5E3NxJd3Et1McyTMzsfVmOTXyfFNVWhD1Z99wLRd6tTpoiGiiivj7H6GFFFFVYD/0fxZpaKK+sPHCilooA9O+FHjxvAfidLucltPuwIrpRydmeHHup5+ma/Razura/toryykWaCZQ6OpyrKehFfk3Xsvwz+MeseAmGn3Sm/0hjkwk/PGfWMnp7g8H2r6PJM4VH91U+H8j5PiLIXiP31H4l07/wDBP0MValArhvCvxH8G+MIlbRtRjaY9YJD5cyn02N1/DIrvgMV9xSqRmuaLuj81r0p05cs1Z+YAYpwGaAM1KFrRsxALUqrQq1IBikZtgBingdzQB3NSAUXIbACpQKAKkApEtgBUgFYOu+KPDnhe2N14g1GCxjAz+9cAn6L1P4Cvjn4o/tJzavbzaD4CV7W2kBWS8cbZXUjkRr/CD6nn2FcONzGlQV5vXt1PSy3Jq+KlanHTv0D9pP4o2+rTL4C0KYSW1s4e8kXBV5V+7GD3C9T749K+SKVmZ2LMSzMcknkkmkr88xmLlXqOpI/YMty+GFoqjDp+L7hRRRXNY7wooopgf//S/Fqiilr6w8cKKKKBMKKKKCRQSCCDgiujtPGPi6wQR2OuX1so7R3MqD8gwrm6KqM5R2ZnOnGWklc7D/hYXj7/AKGbU/8AwNm/+Lpf+Fh+P/8AoZtT/wDA2f8A+Lrj6K1+sVP5n95n9Upfyr7jsf8AhYnxA/6GfVP/AANn/wDi6X/hYnxB/wChn1T/AMDZ/wD4uuNop/WKn8z+8PqlL+Rfcdn/AMLF+IP/AEM+qf8AgbP/APF0v/CxfiEP+Zo1T/wNn/8Ai642ij6xU/mf3h9UpfyL7kdn/wALG+IX/Q0ap/4Gz/8AxdRS/EDx5cIY5/EmpSqeoa8mI/Vq5Gil9YqfzMPqtL+Rfciee4uLqUzXUrTSN1Z2LMfqTUNFFZG6QUUUUwCiiimAUUUUAf/T/FuiiivrDx2FFFFBDYUUUUCCloooAKWijvVDCijmloBhilopKQhaKKKYBRRRTsAUUUUwCiiigApcGkooA//U/FuiiivrDxGFFFFAgopaKdhhS0YoxQkIKWikqhi0UdqWpEFFFFCAKKKKoAooopgFFFFAC0UUUAFH+elLgmjaaAP/2Q==" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+    <div>
+      <div class="header-title">Dream <span>Team A</span></div>
+      <div class="header-date" id="headerDate"></div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="showSection('schedule')">📅 Work Schedule</button>
+  <button class="nav-btn" onclick="showSection('meds')">💊 Medications & Labs</button>
+  <button class="nav-btn" onclick="showSection('postduty')">📋 Post Duty Tasks</button>
+  <button class="nav-btn" onclick="showSection('contacts')">📞 Contacts</button>
+</nav>
+
+<div class="main">
+
+<!-- ══════════════ SECTION 1: SCHEDULE ══════════════ -->
+<div class="section active" id="section-schedule">
+  <div class="page-title">Work Schedule</div>
+  <div class="page-sub">Enter your name and a date to see your station and duties</div>
+
+  <div class="card">
+    <div class="lookup-row">
+      <div class="lookup-group">
+        <label>Your Name</label>
+        <select id="nameSelect">
+          <option value="">Select name...</option>
+          <option>Fatima</option>
+          <option>Winston</option>
+          <option>Daniel</option>
+          <option>Efua</option>
+          <option>Bertha</option>
+          <option>Messiah</option>
+          <option>Samira</option>
+        </select>
+      </div>
+      <div class="lookup-group">
+        <label>Date</label>
+        <input type="date" id="dateInput" min="2026-06-01" max="2026-12-01">
+      </div>
+      <button class="btn-lookup" onclick="lookupSchedule()">Check Schedule</button>
+    </div>
+
+    <div id="scheduleResult" class="result-hidden">
+      <div id="stationBadge" class="result-badge"></div>
+      <div id="dutyContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SECTION 2: MEDS ══════════════ -->
+<div class="section" id="section-meds">
+  <div class="page-title">Medications & Labs</div>
+  <div class="page-sub">Select a clinical scenario to view medications and checklist</div>
+
+  <div class="scenario-grid" id="scenarioGrid"></div>
+  <div class="card med-result" id="medResult"></div>
+</div>
+
+<!-- ══════════════ SECTION 3: POST DUTY ══════════════ -->
+<div class="section" id="section-postduty">
+  <div class="page-title">Post Duty Tasks</div>
+  <div class="page-sub">Saturday post duty and Monday morning meeting checklist</div>
+
+  <div class="card" id="postDutyContent"></div>
+</div>
+
+<!-- ══════════════ SECTION 4: CONTACTS ══════════════ -->
+<div class="section" id="section-contacts">
+  <div class="page-title">Contacts</div>
+  <div class="page-sub">Key people and departments — update numbers as needed</div>
+  <div id="contactsContent"></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ── DATE HEADER ──────────────────────────────────────────────────────────────
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now = new Date();
+document.getElementById('headerDate').textContent =
+  days[now.getDay()] + ', ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+document.getElementById('dateInput').value = now.toISOString().split('T')[0];
+
+// ── NAV ──────────────────────────────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── ROTA LOGIC ───────────────────────────────────────────────────────────────
+const LEAVE = {
+  Fatima:  ['2026-06-01','2026-06-24'],
+  Winston: ['2026-06-29','2026-07-22'],
+  Daniel:  ['2026-07-24','2026-08-18'],
+  Efua:    ['2026-08-20','2026-09-14'],
+  Bertha:  ['2026-09-16','2026-10-09'],
+  Messiah: ['2026-10-12','2026-11-04'],
+  Samira:  ['2026-11-06','2026-12-01'],
+};
+
+function toD(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function dateStr(d){ return d.toISOString().split('T')[0]; }
+
+function getPersonOnLeave(d) {
+  for(const [p,[s,e]] of Object.entries(LEAVE)) {
+    if(d >= toD(s) && d <= toD(e)) return p;
+  }
+  return null;
+}
+
+function getPairs(d) {
+  const ds = dateStr(d);
+  let A, B, C;
+  if(ds < '2026-06-25')       A = ['Winston','Samira'];
+  else if(ds < '2026-06-29')  A = ['Winston/Fatima','Samira'];
+  else if(ds < '2026-11-05')  A = ['Fatima','Samira'];
+  else if(ds === '2026-11-05') A = ['Fatima','Samira/Messiah'];
+  else                         A = ['Fatima','Messiah'];
+
+  if(ds < '2026-07-23')       B = ['Efua','Daniel'];
+  else if(ds === '2026-07-23') B = ['Efua','Daniel/Winston'];
+  else if(ds < '2026-08-19')  B = ['Efua','Winston'];
+  else if(ds === '2026-08-19') B = ['Efua/Daniel','Winston'];
+  else                         B = ['Daniel','Winston'];
+
+  if(ds < '2026-09-15')       C = ['Messiah','Bertha'];
+  else if(ds === '2026-09-15') C = ['Messiah','Bertha/Efua'];
+  else if(ds < '2026-09-16')  C = ['Messiah','Bertha/Efua'];
+  else if(ds < '2026-10-10')  C = ['Messiah','Efua'];
+  else if(ds === '2026-10-10') C = ['Messiah','Efua/Bertha'];
+  else if(ds < '2026-10-12')  C = ['Messiah','Efua'];
+  else                         C = ['Bertha','Efua'];
+
+  return {A,B,C};
+}
+
+const START = toD('2026-06-01');
+const DEPTS = ['Obs','Gynae','Float'];
+const DEPT_OFF = {A:0, B:1, C:2};
+
+function weekNum(d){ return Math.floor((d - START) / (7*24*3600*1000)); }
+
+function getDept(pid, wn){ return DEPTS[(wn + DEPT_OFF[pid]) % 3]; }
+
+function getStation(name, d) {
+  const onLeave = getPersonOnLeave(d);
+  if(onLeave === name) return 'leave';
+  const pairs = getPairs(d);
+  const wn = weekNum(d);
+  for(const [pid, members] of Object.entries(pairs)) {
+    const [m0, m1] = wn%2===0 ? members : [members[1], members[0]];
+    const dept = getDept(pid, wn);
+    const names0 = m0.split('/');
+    const names1 = m1.split('/');
+    if(names0.includes(name)) return dept + '_C1';
+    if(names1.includes(name)) return dept + '_C2';
+  }
+  return 'unknown';
+}
+
+// ── DUTIES DATA ──────────────────────────────────────────────────────────────
+const ALL_DUTIES = [
+  'Attend compulsory departmental morning meeting — sign register',
+  'Be part of morning ward round',
+  'Check ward before knocking off',
+  'Inform nurses when leaving ward and leave your mobile number',
+  'Encourage relatives to pay for labs and drugs during visiting hours',
+  'Review lab results and sign when reviewed',
+  'Hand over ill patients to night duty team',
+];
+
+const DAY_DUTIES = {
+  Obs: {
+    1: [ // Monday
+      {time:'7:30am', task:'Work starts'},
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'8:30am', task:'Review all inpatients, note problems'},
+      {time:'9:30am', task:'Major Obstetric ward rounds — present cases, write in notes, complete investigations and management decisions'},
+    ],
+    2: [ // Tuesday
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'After meeting', task:'Support Gynae major ward rounds'},
+    ],
+    3: [ // Wednesday
+      {time:'7:30am', task:'Work starts'},
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'Morning', task:'Help on ward then join Gynae clinic'},
+      {time:'Afternoon', task:'Confirm blood for Thursday theatre. Confirm medications and IV fluids purchased for all theatre patients'},
+    ],
+    4: [ // Thursday
+      {time:'7:00am', task:'Work starts'},
+      {time:'Morning', task:'Review patients on admission with resident before or immediately after morning meeting'},
+      {time:'Morning', task:'Other Obs HOs join Gynae theatre'},
+      {time:'By 7:00pm', task:'Prepare Friday duty theatre list in duplicate. Distribute to Labour Ward 1, Mat 3 ward and Maternity Blood Bank'},
+    ],
+    5: [ // Friday
+      {time:'6:00am', task:'24-hour duty day starts'},
+      {time:'First thing', task:'Induction of labour with duty resident'},
+      {time:'Morning', task:'Set IV lines on all theatre cases. Confirm blood bank for all theatre cases'},
+      {time:'Every 4–6hrs', task:'Review induction of labour cases'},
+      {time:'8am–5pm', task:'One or two HOs at Labour Ward 1 covering with labour ward team'},
+      {time:'Morning', task:'One HO assigned to Obs ER with Obs ER resident. Other HOs run ANC clinic'},
+      {time:'End of duty', task:'Write 24hr duty report with resident for Monday morning meeting'},
+    ],
+    6: [ // Saturday
+      {time:'Morning', task:'Quick inpatient review with resident on cover'},
+      {time:'Morning', task:'Proper handover of emergency cases especially those for MVA'},
+      {time:'Note', task:'Duty report to be presented at Monday morning meeting'},
+    ],
+    0: [ // Sunday
+      {time:'Sunday', task:'If team is ON DUTY — join main duty'},
+      {time:'Sunday', task:'If team is NOT on duty — cover the ward'},
+    ],
+  },
+  Gynae: {
+    1: [
+      {time:'7:30am', task:'Work starts'},
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'8:30am', task:'Quick inpatient review with Gynae resident, chase all investigations'},
+      {time:'After review', task:'Join Obs major ward rounds'},
+    ],
+    2: [
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'After meeting', task:'Gynae major ward rounds — present case summaries (written day before)'},
+      {time:'Morning', task:'Get theatre list ready for consultant/senior resident review'},
+    ],
+    3: [
+      {time:'7:30am', task:'Work starts'},
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'8:30am', task:'Daily Team A inpatient review — Wards E & Chenard A — and discharges'},
+      {time:'9:30am', task:'One Gynae HO covers Gynae ER until 5pm'},
+      {time:'Morning', task:'Other Gynae HO admits patients for Thursday theatre. Review pre-op cases, check Hb, confirm cross-matched blood'},
+      {time:'Before 12pm', task:'Compile operation list and submit to department secretary'},
+      {time:'Afternoon', task:'Visit blood bank to confirm blood available for all Thursday theatre cases'},
+    ],
+    4: [
+      {time:'7:00am', task:'Work starts — send Gynae cases to theatre on time'},
+      {time:'7:00am', task:'Take pictures of cross-matched blood and share with anaesthetists'},
+      {time:'7:30am', task:'Ring theatre to brief consultants, resident and anaesthetist on cases and blood availability — VERY IMPORTANT'},
+      {time:'Morning', task:'One Gynae HO stays in theatre. Other stays on ward arranging blood and blood products'},
+      {time:'4hrs post-op', task:'Review operated cases with Gynae junior resident. Update team WhatsApp'},
+      {time:'By 7:00pm', task:'Complete Friday duty theatre list in duplicate. Distribute to Labour Ward 1, Mat 3 ward and Maternity Blood Bank'},
+    ],
+    5: [
+      {time:'6:00am', task:'24-hour duty day starts'},
+      {time:'8:00am', task:'See postnatal cases and discharge with resident'},
+      {time:'Morning', task:'Run ANC clinic'},
+      {time:'5:00pm', task:'Take over Gynae Emergency with Gynae resident'},
+      {time:'Note', task:'Learn Gynae surgery — MVA, Ectopics, D&C'},
+    ],
+    6: [
+      {time:'Morning', task:'Present full report on Ectopics, Acute PIDs, inevitable abortions and statistics at Monday morning meeting'},
+    ],
+    0: [
+      {time:'Sunday', task:'If team is ON DUTY — join main duty'},
+      {time:'Sunday', task:'If team is NOT on duty — cover the ward'},
+    ],
+  },
+  Float: {
+    1: [
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'Morning', task:'Join Obstetrics major ward rounds'},
+    ],
+    2: [
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'Morning', task:'Help with Gynae major ward rounds'},
+    ],
+    3: [
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'Morning', task:'Help with Gynae clinic'},
+    ],
+    4: [
+      {time:'8:00am', task:'Departmental morning meeting'},
+      {time:'Morning', task:'Assist with major tasks of the day — theatre support'},
+    ],
+    5: [
+      {time:'All day', task:'Cover Labour Ward 1 and Obs ER the whole day'},
+      {time:'Note', task:'Close at 8am Saturday'},
+    ],
+    6: [
+      {time:'Morning', task:'If numbers allow, one Floater covers the ward till 2pm to give Obs Cover HOs some rest'},
+    ],
+    0: [
+      {time:'Sunday', task:'If team is ON DUTY — join main duty'},
+      {time:'If NOT on duty', task:'Come in during the afternoon to review cases, assist with handovers for the coming week and prepare for Monday ward rounds'},
+    ],
+  },
+};
+
+
+// ── FAMILY PLANNING SCHEDULE ─────────────────────────────────────────────────
+const FP_SCHEDULE = {
+  "Daniel":  ['2026-06-29','2026-07-03'],
+  "Fatima":  ['2026-07-06','2026-07-10'],
+  "Bertha":  ['2026-07-13','2026-07-17'],
+  "Efua":    ['2026-07-20','2026-07-24'],
+  "Samira":  ['2026-07-27','2026-07-31'],
+  "Messiah": ['2026-08-03','2026-08-07'],
+  "Winston": ['2026-08-10','2026-08-14'],
+};
+
+function isOnFP(name, d) {
+  if(!FP_SCHEDULE[name]) return false;
+  const [s, e] = FP_SCHEDULE[name].map(toD);
+  return d >= s && d <= e;
+}
+
+function isFPWeekday(name, d) {
+  return isOnFP(name, d) && d.getDay() >= 1 && d.getDay() <= 4;
+}
+
+function isFPFriday(name, d) {
+  return isOnFP(name, d) && d.getDay() === 5;
+}
+
+// ── LOOKUP FUNCTION ──────────────────────────────────────────────────────────
+function lookupSchedule() {
+  const name = document.getElementById('nameSelect').value;
+  const dateVal = document.getElementById('dateInput').value;
+  if(!name || !dateVal) { alert('Please select your name and a date.'); return; }
+
+  const d = toD(dateVal);
+  const station = getStation(name, d);
+  const dayOfWeek = d.getDay();
+  const dayName = days[dayOfWeek];
+  const result = document.getElementById('scheduleResult');
+  const badge = document.getElementById('stationBadge');
+  const content = document.getElementById('dutyContent');
+
+  result.classList.remove('result-hidden');
+
+  if(station === 'leave') {
+    const [ls, le] = LEAVE[name];
+    badge.className = 'result-badge badge-leave';
+    badge.innerHTML = '🏖️ On Leave';
+    content.innerHTML = `<div class="leave-notice">
+      <div class="l-icon">🏖️</div>
+      <div class="l-title">${name} is on leave</div>
+      <div class="l-text">Leave period: <strong>${toD(ls).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})} — ${toD(le).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</strong><br>Rest well and return refreshed!</div>
+    </div>`;
+    return;
+  }
+
+  const dept = station.replace('_C1','').replace('_C2','');
+  const cover = station.includes('C1') ? 'Cover 1' : 'Cover 2';
+
+  const badgeClass = dept==='Obs' ? 'badge-obs' : dept==='Gynae' ? 'badge-gynae' : 'badge-float';
+  const deptLabel = dept==='Obs' ? 'Obstetrics' : dept==='Gynae' ? 'Gynaecology' : 'Floater';
+  const deptIcon = dept==='Obs' ? '🩺' : dept==='Gynae' ? '🌿' : '🔄';
+
+  badge.className = 'result-badge ' + badgeClass;
+  badge.innerHTML = `${deptIcon} ${deptLabel} — ${cover} &nbsp;|&nbsp; ${dayName} ${d.getDate()} ${months[d.getMonth()]}`;
+
+  // Build duties
+  let html = '';
+
+  // All HOs
+  html += `<div class="duties-section">
+    <div class="duties-label">All HOs — Every Day</div>`;
+  ALL_DUTIES.forEach(t => {
+    html += `<div class="duty-item"><div class="bullet"></div><div>${t}</div></div>`;
+  });
+  html += `</div>`;
+
+  // Check FP week
+  const onFPWeekday = dept === 'Float' && isFPWeekday(name, d);
+  const onFPFriday  = dept === 'Float' && isFPFriday(name, d);
+
+  if(onFPWeekday || onFPFriday) {
+    // FP banner
+    html += `<div class="note-box" style="background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.4);color:#2ecc71;margin-bottom:16px;">
+      <strong>🏥 FAMILY PLANNING WEEK</strong>
+      You are on your Family Planning rotation this week (${toD(FP_SCHEDULE[name][0]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${toD(FP_SCHEDULE[name][1]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})})
+    </div>`;
+
+    const fpDay = onFPFriday ? 5 : dayOfWeek;
+    const fpDuties = [{time: onFPWeekday ? '8:00am–5:00pm' : '8:00am', task: onFPWeekday ? 'Family Planning unit — attend and assist with Family Planning clinic' : 'Join the team for the full 24-hour Friday duty — Family Planning rotation ends today'}];
+
+    html += `<div class="duties-section">
+      <div class="duties-label">${onFPWeekday ? 'Family Planning' : 'Friday Duty'} — ${dayName}</div>`;
+    fpDuties.forEach(item => {
+      html += `<div class="duty-item">
+        <div class="bullet"></div>
+        <div><span class="duty-time">${item.time}</span> ${item.task}</div>
+      </div>`;
+    });
+    html += `</div>`;
+  } else {
+    // Station specific
+    const stationDuties = DAY_DUTIES[dept] && DAY_DUTIES[dept][dayOfWeek];
+    if(stationDuties && stationDuties.length > 0) {
+      html += `<div class="duties-section">
+        <div class="duties-label">${deptLabel} — ${dayName} Duties</div>`;
+      stationDuties.forEach(item => {
+        html += `<div class="duty-item">
+          <div class="bullet"></div>
+          <div><span class="duty-time">${item.time}</span> ${item.task}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+  }
+
+  content.innerHTML = html;
+}
+
+// ── MEDICATIONS DATA ─────────────────────────────────────────────────────────
+const SCENARIOS = [
+  {
+    id:'cs', icon:'🔪', title:'Pre-op Caesarean Section', sub:'Medications & checklist',
+    meds:[
+      {drug:'IV Augmentin',dose:'1.2g 8hrly',duration:'1 day'},
+      {drug:'IV Flagyl',dose:'500mg 8hrly',duration:'1 day'},
+      {drug:'IV Fluids',dose:'1L N/S + 1L DNS + 1L R/L',duration:''},
+      {drug:'PR Diclofenac',dose:'100mg BD',duration:'5 days',note:'Do NOT prescribe for ulcer, kidney problems or hypertensive disease in pregnancy — use Supp Paracetamol 1g tds x 5days instead'},
+      {drug:'IV Paracetamol',dose:'1g tds/qid',duration:'1 day'},
+      {drug:'IM Pethidine',dose:'100mg 8hrly',duration:'1 day',note:'Do NOT prescribe for sickle cell patients'},
+      {drug:'SC Clexane',dose:'40mg daily',duration:'3 days',note:'Confirm duration and dose with junior resident — may vary based on condition'},
+    ],
+    checklist:[
+      'Confirm working EDD is correct — discuss with resident if unsure',
+      'Note indication for surgery and any allergies',
+      'Confirm blood donation slips from relations and blood bank record',
+      'Full clerking of patient',
+      'Ensure sickling test and current Hb are in records',
+      'If Hb > 1 week old, do new one using haemo-check',
+      'If Hb < 10g/dl — inform resident, may need to transfuse',
+      'Take blood for grouping and cross-matching (2 pints — 4 pints if placenta praevia)',
+      'Attach blood donation slips to X-matching form',
+      'Check anaesthesia clearance chart/form for additional orders',
+    ],
+    notes:'Check any other medications on antenatal card or anaesthetist orders.'
+  },
+  {
+    id:'gynae_preop', icon:'🏥', title:'Pre-op Gynaecology Theatre', sub:'Medications & checklist',
+    meds:[
+      {drug:'IV Augmentin',dose:'1.2g 8hrly',duration:'1 day'},
+      {drug:'IV Flagyl',dose:'500mg 8hrly',duration:'1 day'},
+      {drug:'IV Fluids',dose:'1L N/S + 1L D/S + 1L R/L',duration:''},
+      {drug:'PR Diclofenac',dose:'100mg BD',duration:'5 days'},
+      {drug:'IV Tranexamic Acid',dose:'1g stat',duration:''},
+      {drug:'IV Gelofusion',dose:'500ml',duration:'1 bag'},
+      {drug:'IV Paracetamol',dose:'1g 8hrly',duration:'1 day'},
+      {drug:'IM Pethidine',dose:'100mg tds',duration:'1 day'},
+      {drug:'SC Clexane',dose:'40mg daily',duration:'3 days min',note:'For very obese patients or those at high risk for DVT'},
+    ],
+    checklist:[
+      'Be clear on reason for admission and operation to be done — refer to OPD card',
+      'Full clerking',
+      'Read and effect any instructions on anaesthetic pre-assessment forms',
+      'Take blood for grouping and cross-matching — send to maternity blood bank',
+      'Attach blood donation slips to X-matching form',
+      'Prescribe medications for pre-surgery and post-op',
+      'Check Hb > 10g/dl — else discuss with anaesthetist',
+      'Confirm X-matched blood ready in theatre for morning list',
+      'For majors — 2 units blood. For cancers — 4 units blood',
+    ],
+    notes:'Check any other medications on OPD card or anaesthetist orders.'
+  },
+  {
+    id:'iol', icon:'🤱', title:'Induction of Labour — Standard', sub:'Cytotec protocol',
+    meds:[
+      {drug:'Cytotec tabs',dose:'200 micrograms — divide into 4 equal parts (50mcg each)',duration:'Most patients need 1–2 doses only, 4–6hrs apart'},
+      {drug:'Normal Saline',dose:'1L',duration:''},
+    ],
+    checklist:[
+      'Confirm maturity and no contraindications (breech, previous C/S)',
+      'Review patient\'s Obs scan and NST',
+      'Confirm fetal heart rate is normal (110–160)',
+      'Ensure current Hb, sickling status and X-match 2 units blood are in records',
+      'Set IV line',
+      'Patient assessment for Cytotec should only be performed with duty resident until cleared independently',
+      'Refer to FIGO 2023 IOL chart on treatment room wall — run with junior resident if unsure about dose',
+    ],
+    notes:'Most patients require one or two 50mcg doses only, 4–6hrs apart. Cytotec can cause fetal distress and uterine rupture.'
+  },
+  {
+    id:'iol_highparity', icon:'⚠️', title:'Induction — High Parity (Para 5+)', sub:'Foley\'s catheter protocol',
+    meds:[
+      {drug:'30ml Balloon Foley\'s Catheter',dose:'After discussion with resident',duration:''},
+      {drug:'Normal Saline',dose:'1L',duration:''},
+    ],
+    checklist:[
+      'Cytotec may be contraindicated for Para 5 and above',
+      'Discuss with resident before proceeding',
+      'Confirm current Hb, sickling status and X-match 2 units blood',
+      'Set IV line',
+    ],
+    notes:'Cytotec may be contraindicated in high parity patients. Always discuss with resident first.'
+  },
+  {
+    id:'iol_prev_cs', icon:'🚫', title:'Induction — Previous C/S', sub:'Catheter only protocol',
+    meds:[
+      {drug:'30ml Balloon Foley\'s Catheter',dose:'Catheter induction only',duration:''},
+      {drug:'Normal Saline',dose:'1L',duration:''},
+    ],
+    checklist:[
+      'Cytotec is CONTRAINDICATED for previous C/S patients',
+      'Catheter induction only — discuss with resident',
+      'Confirm current Hb, sickling status and X-match 2 units blood',
+      'Set IV line',
+    ],
+    notes:'Cytotec induction is CONTRAINDICATED for previous C/S patients. Catheter induction only.'
+  },
+  {
+    id:'iol_iufd', icon:'📋', title:'Induction — IUFD', sub:'Clotting profile required',
+    meds:[
+      {drug:'Cytotec tabs',dose:'Per FIGO 2023 IOL chart',duration:'Discuss with resident'},
+      {drug:'Normal Saline',dose:'1L',duration:''},
+    ],
+    checklist:[
+      'Ensure recent FBC and CLOTTING PROFILE results are available',
+      'If no clotting profile available — do bedside clotting time',
+      'Bedside clotting time: take venous blood in empty amoxiclav bottle, wrap hands around it, note time to clot. Normal = 9 minutes or less',
+      'NB: blood clots slower if left in a syringe',
+      'Confirm Hb and sickling status',
+      'Set IV line',
+      'Discuss dose with resident and refer to FIGO 2023 IOL chart',
+    ],
+    notes:'Always check clotting profile before induction for IUFD patients.'
+  },
+  {
+    id:'postop1', icon:'📅', title:'Post-Op Day 1 (C/S)', sub:'Review checklist',
+    meds:[],
+    checklist:[
+      'Check for any complaints',
+      'Examine for pallor',
+      'Check temperature, pulse and BP are normal and stable — refer to charts',
+      'Examine abdomen for unusual tenderness, uterine contraction and bowel sounds',
+      'Exclude bleeding from operation site and heavy lochia',
+      'Check for adequate urine output',
+      'Order removal of urethral catheter on Day 1 if patient can mobilise',
+      'If bowel sounds present — commence oral sips. If tolerated, stop IV infusion and change IV medications to orals',
+      'Review treatment sheet — confirm drugs and dosages are correct and being given',
+    ],
+    notes:''
+  },
+  {
+    id:'postop23', icon:'📆', title:'Post-Op Days 2 & 3 (C/S)', sub:'Wound and discharge',
+    meds:[],
+    checklist:[
+      'Day 2 — Check Hb if not already done',
+      'Day 3 — Wound inspection. Order open wound dressing if appropriate',
+      'Day 3 — Check Hb if not done on Day 2',
+      'Day 3 — Discharges may be done. Inform cover resident before any discharge',
+      'Day 7 — Remove nylon stitches for Pfannenstiel incisions',
+      'Day 10 — Remove nylon stitches for Midline incisions',
+    ],
+    notes:'Always inform the cover resident before any discharges are made.'
+  },
+  {
+    id:'svd', icon:'✅', title:'SVD Discharge', sub:'Medications & review',
+    meds:[
+      {drug:'Tab Erythromycin',dose:'500mg qid',duration:'1 week',note:'Or Amoxiclav 1g BD — for patients who had episiotomy, EOU, manual removal of placenta'},
+      {drug:'Tab Flagyl',dose:'400mg tds',duration:'1 week',note:'For patients who had episiotomy, EOU, manual removal of placenta'},
+      {drug:'Haematinics',dose:'As prescribed',duration:''},
+      {drug:'Analgesics',dose:'As prescribed',duration:''},
+    ],
+    checklist:[
+      'Check for pallor, uterine contraction, PIH',
+      'Assess the lochia',
+      'Check episiotomy site is sound',
+      'Discharge home 24hrs post-delivery if stable — BP normal, no PPH',
+      'Can discharge earlier than 24hrs so relatives can start arranging payment',
+    ],
+    notes:'Discharge when patient is stable — BP normal, no PPH.'
+  },
+  {
+    id:'svd_sc', icon:'🩸', title:'SVD — Sickle Cell Patient', sub:'Extended observation',
+    meds:[
+      {drug:'Malaria treatment',dose:'As per protocol',duration:''},
+      {drug:'Antibiotics',dose:'As per protocol',duration:''},
+      {drug:'Analgesics',dose:'As per protocol',duration:''},
+      {drug:'Haematinics (usual)',dose:'As per protocol',duration:''},
+    ],
+    checklist:[
+      'Observe on admission for 5 days',
+      'Ensure patient is well hydrated throughout',
+      'Ensure malaria treatment, antibiotics and analgesics are prescribed',
+      'Check Hb is not low prior to discharge',
+      'Discharge on usual haematinics',
+    ],
+    notes:'Sickle cell SVD patients are observed for 5 days minimum before discharge.'
+  },
+  {
+    id:'clotting', icon:'🧪', title:'Bedside Clotting Time', sub:'Procedure guide',
+    meds:[],
+    checklist:[
+      'Take a venous blood sample',
+      'Put blood in an empty amoxiclav bottle',
+      'Wrap your hands around the bottle',
+      'Note the time it takes for blood to clot',
+      'Normal clotting time — 9 minutes or less',
+      'NB: Blood clots longer if left in a syringe — always use a bottle',
+    ],
+    notes:'Perform this when no clotting profile is available, especially for IUFD inductions.'
+  },
+];
+
+// ── RENDER SCENARIOS ─────────────────────────────────────────────────────────
+const grid = document.getElementById('scenarioGrid');
+SCENARIOS.forEach(sc => {
+  const card = document.createElement('div');
+  card.className = 'scenario-card';
+  card.innerHTML = `<div class="s-icon">${sc.icon}</div><div class="s-title">${sc.title}</div><div class="s-sub">${sc.sub}</div>`;
+  card.onclick = () => showScenario(sc.id);
+  grid.appendChild(card);
+});
+
+function showScenario(id) {
+  const sc = SCENARIOS.find(s => s.id === id);
+  const result = document.getElementById('medResult');
+  document.querySelectorAll('.scenario-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+
+  let html = `<div class="card-title"><div class="dot"></div>${sc.icon} ${sc.title}</div>`;
+
+  if(sc.meds.length > 0) {
+    html += `<div class="duties-label" style="margin-bottom:10px">Medications</div>
+    <table class="med-table">
+      <tr><th>Drug</th><th>Dose</th><th>Duration</th></tr>`;
+    sc.meds.forEach(m => {
+      html += `<tr><td><strong>${m.drug}</strong>${m.note ? '<br><small style="color:#f39c12">'+m.note+'</small>' : ''}</td><td>${m.dose}</td><td>${m.duration||'—'}</td></tr>`;
+    });
+    html += `</table>`;
+  }
+
+  if(sc.checklist.length > 0) {
+    html += `<div class="duties-label" style="margin:16px 0 10px">Checklist</div>`;
+    sc.checklist.forEach((item,i) => {
+      html += `<div class="checklist-item">
+        <div class="check-box" id="chk_${id}_${i}" onclick="toggleCheck('chk_${id}_${i}','txt_${id}_${i}')"></div>
+        <div class="check-text" id="txt_${id}_${i}">${item}</div>
+      </div>`;
+    });
+  }
+
+  if(sc.notes) {
+    html += `<div class="note-box"><strong>⚠️ NOTE</strong>${sc.notes}</div>`;
+  }
+
+  result.innerHTML = html;
+  result.classList.add('show');
+  result.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function toggleCheck(boxId, txtId) {
+  const box = document.getElementById(boxId);
+  const txt = document.getElementById(txtId);
+  box.classList.toggle('checked');
+  txt.classList.toggle('done');
+}
+
+// ── POST DUTY ────────────────────────────────────────────────────────────────
+const postDutyItems = {
+  'Saturday — All HOs': [
+    'Quick inpatient review with resident on cover',
+    'Proper handover of emergency cases — especially those for MVA',
+    'Ensure proper handover to team taking over day\'s duty',
+  ],
+  'Saturday — Obs HO (Theatre)': [
+    'Write 24hr duty report with resident — summarise all operated cases',
+    'Get resident to read through and correct your report',
+    'Present duty report at Monday morning departmental meeting',
+  ],
+  'Saturday — Gynae HO': [
+    'Prepare full report on all Ectopics and Acute PIDs',
+    'Know a little about inevitable abortions and other interesting cases',
+    'Compile statistics for remaining cases',
+    'Present full report at Monday morning meeting',
+  ],
+  'What to check — SVD Patients': [
+    'Check for pallor, uterine contraction, PIH',
+    'Assess the lochia',
+    'Check episiotomy site is sound',
+    'Ensure appropriate discharge medications are prescribed',
+    'Discharge home 24hrs post-delivery if stable',
+  ],
+  'What to check — C/S Post-Op Day 1': [
+    'Check for complaints',
+    'Examine for pallor',
+    'Check temperature, pulse and BP — refer to charts',
+    'Examine abdomen for tenderness, contraction and bowel sounds',
+    'Exclude bleeding from operation site and heavy lochia',
+    'Check urine output is adequate',
+    'Order removal of urethral catheter if patient can mobilise',
+    'If bowel sounds present — start oral sips, stop IV fluids if tolerated',
+    'Review treatment sheet — confirm drugs and dosages correct',
+  ],
+};
+
+const pdContent = document.getElementById('postDutyContent');
+let pdHtml = '';
+let itemIdx = 0;
+for(const [section, items] of Object.entries(postDutyItems)) {
+  pdHtml += `<div class="section-label">${section}</div>`;
+  items.forEach(item => {
+    pdHtml += `<div class="checklist-item">
+      <div class="check-box" id="pd_${itemIdx}" onclick="toggleCheck('pd_${itemIdx}','pdt_${itemIdx}')"></div>
+      <div class="check-text" id="pdt_${itemIdx}">${item}</div>
+    </div>`;
+    itemIdx++;
+  });
+}
+pdContent.innerHTML = pdHtml;
+
+// ── CONTACTS ─────────────────────────────────────────────────────────────────
+const CONTACTS = {
+  'Team': [
+    {role:'Consultant',name:'Dr Asare',num:'+233 24 422 9014'},
+    {role:'Senior Resident',name:'Dr Bill Boafo',num:'+233 24 902 7691'},
+    {role:'Senior Resident',name:'Dr S. L. Manu',num:'+233 20 302 8136'},
+    {role:'Junior Resident — 3rd Year',name:'Dr Mervyn Mensah',num:'+233 50 334 1141'},
+    {role:'Junior Resident — 3rd Year',name:'Dr Fidelis',num:'+233 24 965 0211'},
+    {role:'Junior Resident — 1st Year',name:'Dr Arab',num:'+233 24 403 7389'},
+  ],
+  'Support Staff': [
+    {role:'Medical School Secretary (Theatre List)',name:'',num:'+233 20 755 7000'},
+    {role:'Phlebotomist — Gynae Cases',name:'Wisdom',num:'+233 20 695 0125'},
+  ],
+  'Wards & Departments': [
+    {role:'Labour Ward 1',name:'',num:'—'},
+    {role:'Theatre',name:'',num:'—'},
+    {role:'Blood Bank (Maternity)',name:'',num:'—'},
+    {role:'Gynae ER',name:'',num:'—'},
+    {role:'Obs ER',name:'',num:'—'},
+    {role:'Pharmacy',name:'',num:'—'},
+  ],
+  'Wards': [
+    {role:'Ward E',name:'',num:'—'},
+    {role:'Chenard A',name:'',num:'—'},
+    {role:'Maternity 4th Floor',name:'',num:'—'},
+    {role:'Maternity 6th Floor',name:'',num:'—'},
+    {role:'Labour Ward Recovery',name:'',num:'—'},
+  ],
+};
+
+const contactsContent = document.getElementById('contactsContent');
+let ctHtml = '';
+for(const [cat, contacts] of Object.entries(CONTACTS)) {
+  ctHtml += `<div class="contact-cat">${cat}</div><div class="contacts-grid">`;
+  contacts.forEach(c => {
+    const numDisplay = c.num !== '—' 
+      ? `<a href="tel:${c.num.replace(/\s/g,'')}" style="color:var(--sea2);text-decoration:none;">📞 ${c.num}</a>`
+      : '📞 —';
+    ctHtml += `<div class="contact-card">
+      <div class="c-role">${c.role}</div>
+      ${c.name ? `<div class="c-name">${c.name}</div>` : ''}
+      <div class="c-num">${numDisplay}</div>
+    </div>`;
+  });
+  ctHtml += `</div>`;
+}
+contactsContent.innerHTML = ctHtml;
+</script>
+</body>
+</html>
