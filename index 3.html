@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mat 4 — Team A Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B3E;
+    --navy-mid: #1A2F5E;
+    --navy-light: #2A4480;
+    --accent: #4A90D9;
+    --accent-light: #EBF3FB;
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --border: #D0DAE8;
+    --text: #0D1B3E;
+    --muted: #6B7FA3;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 28px 20px 24px;
+  }
+  .hero-eyebrow {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #8BA3CC;
+    margin-bottom: 6px;
+  }
+  .hero-greeting {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .hero-date {
+    font-size: 12.5px;
+    color: #8BA3CC;
+    font-weight: 400;
+  }
+  .hero-meta {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+  }
+  .hero-badge {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* ── MAIN ── */
+  .main {
+    padding: 20px 16px 0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+  .section-label:first-of-type { margin-top: 4px; }
+
+  /* ── TEMPLATE LIST ITEM ── */
+  .tpl-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 9px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tpl-item:active {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .tpl-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+
+  .tpl-text { flex: 1; min-width: 0; }
+  .tpl-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2px;
+  }
+  .tpl-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tpl-arrow {
+    color: var(--border);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* colour themes per category */
+  .icon-daily  { background: #E8F0FE; }
+  .icon-ops    { background: #FEF3E8; }
+  .icon-clinic { background: #E8F5EE; }
+  .icon-data   { background: #F3E8FE; }
+  .icon-hist   { background: #FEE8E8; }
+
+  /* ── HISTORY STRIP ── */
+  .history-strip {
+    background: var(--navy-mid);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .history-strip-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .history-strip-text { flex: 1; }
+  .history-strip-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+  .history-strip-desc {
+    font-size: 11.5px;
+    color: #8BA3CC;
+  }
+  .history-strip-arrow {
+    color: rgba(255,255,255,0.3);
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">KBTH · OBS &amp; GYN</div>
+  <div class="hero-greeting" id="greeting">Good morning, Dr. Efua</div>
+  <div class="hero-date" id="hero-date"></div>
+  <div class="hero-meta">
+    <span class="hero-badge">Team A</span>
+    <span class="hero-badge">Maternity 4</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="section-label" style="margin-top:4px;">Team Tools</div>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/DreamTeamA" target="_blank" rel="noopener">
+    <div class="tpl-icon icon-daily">🏥</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Dream Team A</div>
+      <div class="tpl-desc">Team roster, schedules &amp; duty planner</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <div class="section-label">Daily Reviews</div>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=ppsvd">
+    <div class="tpl-icon icon-daily">🤱</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Post-Partum SVD Review</div>
+      <div class="tpl-desc">Daily review after vaginal delivery</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=ppcs">
+    <div class="tpl-icon icon-daily">🏥</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Post-Partum C/S Review</div>
+      <div class="tpl-desc">Daily review after caesarean section</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=antepartum">
+    <div class="tpl-icon icon-daily">🫄</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Antepartum Review</div>
+      <div class="tpl-desc">Daily review for admitted antenatal patients</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=rounds">
+    <div class="tpl-icon icon-daily">👩‍⚕️</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Rounds Summary</div>
+      <div class="tpl-desc">Ward rounds note — quick vitals or full summary</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <div class="section-label">Admissions &amp; Discharge</div>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=reception">
+    <div class="tpl-icon icon-clinic">📋</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Reception / Admission Note</div>
+      <div class="tpl-desc">Elective C/S pre-op admission clerking</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=discharge">
+    <div class="tpl-icon icon-clinic">🏠</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Discharge Summary</div>
+      <div class="tpl-desc">Discharge diagnosis, medications, plan</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <div class="section-label">Clerking</div>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=obser">
+    <div class="tpl-icon icon-ops">🚨</div>
+    <div class="tpl-text">
+      <div class="tpl-name">OBS Emergency Room</div>
+      <div class="tpl-desc">Full obstetric ER clerking</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=anc">
+    <div class="tpl-icon icon-clinic">🤰</div>
+    <div class="tpl-text">
+      <div class="tpl-name">ANC</div>
+      <div class="tpl-desc">Antenatal clinic note with full booking details</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=gynaeclinic">
+    <div class="tpl-icon icon-clinic">🩺</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Gynae Clinic</div>
+      <div class="tpl-desc">Full gynaecological outpatient clerking</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <div class="section-label">Operative Notes</div>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=lwcs">
+    <div class="tpl-icon icon-ops">⚕️</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Labour Ward C/S Note</div>
+      <div class="tpl-desc">Procedure note for emergency or elective C/S</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=gynaetheatre">
+    <div class="tpl-icon icon-ops">🔬</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Gynae Theatre Note</div>
+      <div class="tpl-desc">Procedure note for gynaecological surgery</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <div class="section-label">Data Entry</div>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=labs">
+    <div class="tpl-icon icon-data">🧪</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Labs</div>
+      <div class="tpl-desc">FBC, Urine R/E, BUECR, LFT, Clotting, OGTT</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <a class="tpl-item" href="https://lclworld.github.io/drekd/templates?tpl=transfusion">
+    <div class="tpl-icon icon-data">🩸</div>
+    <div class="tpl-text">
+      <div class="tpl-name">Transfusion Notes</div>
+      <div class="tpl-desc">Pre-transfusion vitals, blood product, reaction protocol</div>
+    </div>
+    <div class="tpl-arrow">›</div>
+  </a>
+
+  <div class="section-label">Records</div>
+
+  <a class="history-strip" href="https://lclworld.github.io/drekd/templates?tpl=history">
+    <div class="history-strip-icon">📂</div>
+    <div class="history-strip-text">
+      <div class="history-strip-name">Saved Notes</div>
+      <div class="history-strip-desc" id="history-count">View and copy previously generated notes</div>
+    </div>
+    <div class="history-strip-arrow">›</div>
+  </a>
+
+</div><!-- /main -->
+
+<script>
+  // Greeting based on time of day
+  function setGreeting() {
+    const h = new Date().getHours();
+    let greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('greeting').textContent = greet + ', Dr. Efua';
+  }
+
+  // Date display
+  function setDate() {
+    const d = new Date();
+    const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    document.getElementById('hero-date').textContent = d.toLocaleDateString('en-GB', opts);
+  }
+
+  // History count
+  function setHistoryCount() {
+    try {
+      const history = JSON.parse(localStorage.getItem('mat4_history') || '[]');
+      if (history.length > 0) {
+        document.getElementById('history-count').textContent =
+          `${history.length} saved note${history.length !== 1 ? 's' : ''} — tap to view or copy`;
+      }
+    } catch {}
+  }
+
+  setGreeting();
+  setDate();
+  setHistoryCount();
+</script>
+</body>
+</html>
