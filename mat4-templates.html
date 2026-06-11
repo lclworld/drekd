@@ -1,0 +1,2828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mat 4 Templates — Team A</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B3E;
+    --navy-mid: #1A2F5E;
+    --navy-light: #2A4480;
+    --accent: #4A90D9;
+    --accent-light: #EBF3FB;
+    --white: #FFFFFF;
+    --off-white: #F7F9FC;
+    --border: #D0DAE8;
+    --text: #0D1B3E;
+    --muted: #6B7FA3;
+    --success: #1A7A4A;
+    --success-bg: #E8F5EE;
+    --danger: #C0392B;
+    --toggle-pos: #1A7A4A;
+    --toggle-neg: #C0392B;
+    --toggle-pos-bg: #E8F5EE;
+    --toggle-neg-bg: #FDECEA;
+    --toggle-neu: #5B6F99;
+    --toggle-neu-bg: #EEF2FA;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 16px 20px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-header h1 { font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
+  .app-header p { font-size: 11px; color: #8BA3CC; margin-top: 2px; }
+
+  /* TEMPLATE SELECTOR */
+  .selector-bar {
+    background: var(--navy-mid);
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .selector-bar::-webkit-scrollbar { display: none; }
+  .sel-btn {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.7);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sel-btn.active {
+    background: var(--white);
+    color: var(--navy);
+    border-color: var(--white);
+    font-weight: 600;
+  }
+
+  /* MAIN CONTENT */
+  .main { padding: 16px; max-width: 640px; margin: 0 auto; }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--navy-light);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--accent);
+  }
+  .field textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
+
+  .field-row { display: grid; gap: 10px; }
+  .field-row.col2 { grid-template-columns: 1fr 1fr; }
+  .field-row.col3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  /* ODQ TOGGLES */
+  .odq-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 4px;
+  }
+  .odq-item {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .odq-label {
+    padding: 5px 10px;
+    background: var(--off-white);
+    color: var(--text);
+    font-size: 11.5px;
+    font-weight: 600;
+    border-right: 1.5px solid var(--border);
+  }
+  .odq-toggle {
+    display: flex;
+  }
+  .odq-toggle button {
+    border: none;
+    background: transparent;
+    padding: 5px 9px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.15s;
+    color: var(--muted);
+  }
+  .odq-toggle button.pos-active {
+    background: var(--toggle-pos-bg);
+    color: var(--toggle-pos);
+  }
+  .odq-toggle button.neg-active {
+    background: var(--toggle-neg-bg);
+    color: var(--toggle-neg);
+  }
+  .odq-toggle button:not(:last-child) {
+    border-right: 1px solid var(--border);
+  }
+
+  /* PLAN SECTION */
+  .plan-doctor-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 10px; }
+  .plan-doctor-row .field { flex: 1; margin-bottom: 0; }
+  .saved-doctors { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .saved-doc-btn {
+    background: var(--accent-light);
+    color: var(--navy-light);
+    border: 1.5px solid var(--accent);
+    border-radius: 16px;
+    padding: 4px 11px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .saved-doc-btn:hover { background: var(--accent); color: var(--white); }
+
+  /* GENERATE BUTTON */
+  .btn-generate {
+    width: 100%;
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.2s;
+  }
+  .btn-generate:hover { background: var(--navy-light); }
+
+  /* OUTPUT */
+  .output-box {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 18px 16px;
+    margin-top: 16px;
+    position: relative;
+    display: none;
+  }
+  .output-box.visible { display: block; }
+  .output-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8BA3CC;
+    margin-bottom: 10px;
+  }
+  .output-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12.5px;
+    color: #E8EEF8;
+    white-space: pre-wrap;
+    line-height: 1.7;
+    word-break: break-word;
+  }
+  .output-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .btn-copy, .btn-save-history {
+    flex: 1;
+    border: none;
+    border-radius: 8px;
+    padding: 11px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-copy { background: var(--accent); color: var(--white); }
+  .btn-copy.copied { background: var(--success); }
+  .btn-save-history { background: rgba(255,255,255,0.12); color: var(--white); }
+  .btn-save-history:hover { background: rgba(255,255,255,0.2); }
+
+  /* HISTORY */
+  .history-section { margin-top: 24px; }
+  .history-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .clear-history {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .history-item {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .history-item-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .history-item-type {
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--navy-light);
+    background: var(--accent-light);
+    padding: 3px 8px;
+    border-radius: 10px;
+  }
+  .history-item-time { font-size: 10.5px; color: var(--muted); }
+  .history-item-preview {
+    font-size: 11.5px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 8px;
+  }
+  .history-item-actions { display: flex; gap: 6px; }
+  .btn-hist-copy, .btn-hist-del {
+    border: 1.5px solid var(--border);
+    background: transparent;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-hist-copy { color: var(--navy); }
+  .btn-hist-del { color: var(--danger); border-color: #FADBD8; }
+
+  /* SECTION TOGGLE (rounds) */
+  .mode-toggle {
+    display: flex;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .mode-toggle button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .mode-toggle button.active {
+    background: var(--navy);
+    color: var(--white);
+  }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 22px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="https://lclworld.github.io/drekd/" style="color:#8BA3CC;font-size:13px;text-decoration:none;font-weight:600;">← Dashboard</a>
+    <div>
+      <h1>Mat 4 Template Generator</h1>
+      <p>Team A · KBTH OBS &amp; GYN</p>
+    </div>
+  </div>
+</div>
+
+<div class="selector-bar" id="selectorBar">
+  <button class="sel-btn active" onclick="showTemplate('labs')">Labs</button>
+  <button class="sel-btn" onclick="showTemplate('transfusion')">Transfusion</button>
+  <button class="sel-btn" onclick="showTemplate('ppsvd')">PP SVD Review</button>
+  <button class="sel-btn" onclick="showTemplate('ppcs')">PP C/S Review</button>
+  <button class="sel-btn" onclick="showTemplate('antepartum')">Antepartum</button>
+  <button class="sel-btn" onclick="showTemplate('rounds')">Rounds Summary</button>
+  <button class="sel-btn" onclick="showTemplate('discharge')">Discharge</button>
+  <button class="sel-btn" onclick="showTemplate('reception')">Reception</button>
+  <button class="sel-btn" onclick="showTemplate('anc')">ANC</button>
+  <button class="sel-btn" onclick="showTemplate('obser')">OBS ER</button>
+  <button class="sel-btn" onclick="showTemplate('gynaeclinic')">Gynae Clinic</button>
+  <button class="sel-btn" onclick="showTemplate('lwcs')">LW C/S Note</button>
+  <button class="sel-btn" onclick="showTemplate('gynaetheatre')">Gynae Theatre</button>
+  <button class="sel-btn" onclick="showTemplate('history')">📋 History</button>
+</div>
+
+<div class="main">
+
+  <!-- ═══════════════════════════════════════════ LABS ═══ -->
+  <div id="tpl-labs">
+    <div class="card">
+      <div class="card-title">FBC</div>
+      <div class="field-row col2">
+        <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="fbc-hb" placeholder="e.g. 10.2"></div>
+        <div class="field"><label>Haematocrit</label><input type="number" step="0.1" id="fbc-hct" placeholder="e.g. 31"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>WBC (×10⁹)</label><input type="number" step="0.1" id="fbc-wbc"></div>
+        <div class="field"><label>NEU (×10⁹)</label><input type="number" step="0.1" id="fbc-neu"></div>
+        <div class="field"><label>LYM (×10⁹)</label><input type="number" step="0.1" id="fbc-lym"></div>
+      </div>
+      <div class="field"><label>PLT (×10⁹)</label><input type="number" id="fbc-plt" placeholder="e.g. 210"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Urine R/E</div>
+      <div class="field-row col2">
+        <div class="field"><label>Macroscopy</label><input type="text" id="ure-macro" placeholder="e.g. Turbid"></div>
+        <div class="field"><label>Appearance</label><input type="text" id="ure-appear" placeholder="e.g. Hazy"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>pH</label><input type="number" step="0.1" id="ure-ph"></div>
+        <div class="field"><label>Sp. Gravity</label><input type="text" id="ure-sg" placeholder="1.015"></div>
+        <div class="field"><label>Colour</label><input type="text" id="ure-colour" placeholder="Straw"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Protein</label>
+          <select id="ure-protein"><option value="NEG">NEG</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option><option value="3+">3+</option></select>
+        </div>
+        <div class="field"><label>Glucose</label>
+          <select id="ure-glucose"><option value="NEG">NEG</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Blood</label>
+          <select id="ure-blood"><option value="NEG">NEG</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option></select>
+        </div>
+        <div class="field"><label>Leukocyte Est.</label>
+          <select id="ure-le"><option value="NEG">NEG</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Nitrites</label>
+          <select id="ure-nitrites"><option value="NEG">NEG</option><option value="POS">POS</option></select>
+        </div>
+        <div class="field"><label>Ketones</label>
+          <select id="ure-ketones"><option value="NEG">NEG</option><option value="TRACE">TRACE</option><option value="POS">POS</option></select>
+      </div>
+      </div>
+      <div class="card-title" style="margin-top:12px">Microscopy</div>
+      <div class="field-row col3">
+        <div class="field"><label>Pus cells/HPF</label><input type="text" id="ure-pus"></div>
+        <div class="field"><label>Epi cells/HPF</label><input type="text" id="ure-epi"></div>
+        <div class="field"><label>RBC/HPF</label><input type="text" id="ure-rbc"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">BUECR</div>
+      <div class="field-row col3">
+        <div class="field"><label>Na</label><input type="number" step="0.1" id="bue-na"></div>
+        <div class="field"><label>K</label><input type="number" step="0.1" id="bue-k"></div>
+        <div class="field"><label>Cl</label><input type="number" step="0.1" id="bue-cl"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>CO2</label><input type="number" step="0.1" id="bue-co2"></div>
+        <div class="field"><label>Urea</label><input type="number" step="0.1" id="bue-urea"></div>
+        <div class="field"><label>Creatinine</label><input type="number" step="0.1" id="bue-creat"></div>
+      </div>
+      <div class="field"><label>eGFR</label><input type="number" step="0.1" id="bue-egfr"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">LFT</div>
+      <div class="field-row col3">
+        <div class="field"><label>Total Bili</label><input type="number" step="0.1" id="lft-tbili"></div>
+        <div class="field"><label>Direct Bili</label><input type="number" step="0.1" id="lft-dbili"></div>
+        <div class="field"><label>Indirect Bili</label><input type="number" step="0.1" id="lft-ibili"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>AST</label><input type="number" step="0.1" id="lft-ast"></div>
+        <div class="field"><label>ALT</label><input type="number" step="0.1" id="lft-alt"></div>
+        <div class="field"><label>ALP</label><input type="number" step="0.1" id="lft-alp"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>GGT</label><input type="number" step="0.1" id="lft-ggt"></div>
+        <div class="field"><label>Total Protein</label><input type="number" step="0.1" id="lft-tp"></div>
+        <div class="field"><label>Albumin</label><input type="number" step="0.1" id="lft-alb"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Clotting Profile</div>
+      <div class="field-row col2">
+        <div class="field"><label>PT</label><input type="number" step="0.1" id="clot-pt"></div>
+        <div class="field"><label>APTT</label><input type="number" step="0.1" id="clot-aptt"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">OGTT</div>
+      <div class="field-row col2">
+        <div class="field"><label>FBS</label><input type="number" step="0.1" id="ogtt-fbs"></div>
+        <div class="field"><label>1HR</label><input type="number" step="0.1" id="ogtt-1hr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>2HR</label><input type="number" step="0.1" id="ogtt-2hr"></div>
+        <div class="field"><label>3HR</label><input type="number" step="0.1" id="ogtt-3hr"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Date of Labs</div>
+      <div class="field"><label>Date</label><input type="text" id="labs-date" placeholder="DD/MM/25"></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateLabs()">Generate Labs Note</button>
+    <div class="output-box" id="out-labs">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-labs"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-labs', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('labs', 'outtext-labs')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ TRANSFUSION ═══ -->
+  <div id="tpl-transfusion" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="tf-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="tf-age"></div>
+      </div>
+      <div class="field"><label>Date</label><input type="text" id="tf-date" placeholder="DD/MM/25"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Pre-Transfusion Vitals</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="tf-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="tf-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="tf-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="tf-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="tf-rr"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Blood Product</div>
+      <div class="field-row col2">
+        <div class="field"><label>Blood Group</label>
+          <select id="tf-bg">
+            <option value="">Select</option>
+            <option>A POS</option><option>A NEG</option>
+            <option>B POS</option><option>B NEG</option>
+            <option>AB POS</option><option>AB NEG</option>
+            <option>O POS</option><option>O NEG</option>
+          </select>
+        </div>
+        <div class="field"><label>Product Type</label>
+          <select id="tf-product">
+            <option value="CRC">CRC</option>
+            <option value="WHOLE BLOOD">WHOLE BLOOD</option>
+            <option value="FFP">FFP</option>
+            <option value="PLATELETS">PLATELETS</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>DIN</label><input type="text" id="tf-din"></div>
+        <div class="field"><label>Units</label><input type="number" id="tf-units" placeholder="1" value="1"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Date X-Matched</label><input type="text" id="tf-xdate" placeholder="DD/MM/25"></div>
+        <div class="field"><label>Expiry Date</label><input type="text" id="tf-expiry" placeholder="DD/MM/YY"></div>
+      </div>
+      <div class="field"><label>Start Time</label><input type="time" id="tf-starttime"></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateTransfusion()">Generate Transfusion Note</button>
+    <div class="output-box" id="out-transfusion">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-transfusion"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-transfusion', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('transfusion', 'outtext-transfusion')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ PP SVD REVIEW ═══ -->
+  <div id="tpl-ppsvd" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="svd-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="svd-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Parity (Now P)</label><input type="number" id="svd-parity" placeholder="1"></div>
+        <div class="field"><label>Post-SVD Day</label><input type="number" id="svd-day" placeholder="2"></div>
+      </div>
+      <div class="field"><label>Managed as a case of</label><input type="text" id="svd-dx" placeholder="e.g. Anaemia in Pregnancy"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Delivery Findings</div>
+      <div class="field-row col2">
+        <div class="field"><label>Baby</label>
+          <select id="svd-baby"><option value="LIVE MALE">Live Male</option><option value="LIVE FEMALE">Live Female</option></select>
+        </div>
+        <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="svd-bw"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Apgar 1min</label><input type="number" max="10" id="svd-apg1"></div>
+        <div class="field"><label>Apgar 5min</label><input type="number" max="10" id="svd-apg2"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Presentation</label>
+          <select id="svd-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select>
+        </div>
+        <div class="field"><label>EBL (mL)</label><input type="number" id="svd-ebl" placeholder="300"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Currently On</div>
+      <div class="field"><textarea id="svd-currenton" placeholder="e.g. Tab Metronidazole 400mg TDS, Supp Diclofenac 100mg BD"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Complaints</div>
+      <div class="field"><input type="text" id="svd-co" placeholder="e.g. Nil complaints / wound pain"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ</div>
+      <div class="odq-grid" id="odq-svd"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="svd-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="svd-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="svd-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="svd-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="svd-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SpO2 (%)</label><input type="number" id="svd-spo2"></div>
+        <div class="field"><label>GCS</label><input type="text" id="svd-gcs" placeholder="15/15"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pallor</label>
+          <select id="svd-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select>
+        </div>
+        <div class="field"><label>Jaundice</label>
+          <select id="svd-jau"><option value="ANICTERIC">Anicteric</option><option value="ICTERIC">Icteric</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pedal Oedema</label>
+          <select id="svd-oedema"><option value="NO PEDAL OEDEMA">Absent</option><option value="PEDAL OEDEMA PRESENT">Present</option></select>
+        </div>
+        <div class="field"><label>Hydration</label>
+          <select id="svd-hyd"><option value="FAIR">Fair</option><option value="SATISFACTORY">Satisfactory</option><option value="POOR">Poor</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Uterus size (wks) + contracted?</label><input type="text" id="svd-uterus" placeholder="e.g. 12, WELL CONTRACTED"></div>
+      <div class="field"><label>Lochia</label>
+        <select id="svd-lochia"><option value="NORMAL">Normal</option><option value="OFFENSIVE">Offensive</option><option value="REDUCED">Reduced</option><option value="HEAVY">Heavy</option></select>
+      </div>
+      <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="svd-hb"></div>
+      <div class="field"><label>Fluid I/O Chart</label><input type="text" id="svd-io" placeholder="e.g. Adequate / Not maintained"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="svd-doc" placeholder="e.g. DR. MENSAH" oninput="updateDocDropdown('svd-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-svd"></div>
+      <div class="field"><label>Management Plan</label><textarea id="svd-plan" placeholder="Type the plan as instructed by the senior doctor..."></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generatePPSVD()">Generate PP SVD Review</button>
+    <div class="output-box" id="out-ppsvd">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-ppsvd"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-ppsvd', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('PP SVD Review', 'outtext-ppsvd')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ PP C/S REVIEW ═══ -->
+  <div id="tpl-ppcs" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="cs-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="cs-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Parity (Now P)</label><input type="number" id="cs-parity" placeholder="1"></div>
+        <div class="field"><label>Post-op Day</label><input type="number" id="cs-day" placeholder="2"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>C/S Type</label>
+          <select id="cs-type"><option value="ELECTIVE">Elective</option><option value="EMERGENCY">Emergency</option></select>
+        </div>
+        <div class="field"><label>Indication</label><input type="text" id="cs-indication" placeholder="e.g. Prev. CS x2"></div>
+      </div>
+      <div class="field"><label>Managed as a case of</label><input type="text" id="cs-dx"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Operative Findings</div>
+      <div class="field-row col2">
+        <div class="field"><label>Baby</label>
+          <select id="cs-baby"><option value="LIVE MALE">Live Male</option><option value="LIVE FEMALE">Live Female</option></select>
+        </div>
+        <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="cs-bw"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Apgar 1min</label><input type="number" max="10" id="cs-apg1"></div>
+        <div class="field"><label>Apgar 5min</label><input type="number" max="10" id="cs-apg2"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Presentation</label>
+          <select id="cs-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select>
+        </div>
+        <div class="field"><label>EBL (mL)</label><input type="number" id="cs-ebl" placeholder="400"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Liquor</label>
+          <select id="cs-liquor"><option value="CLEAR AND ADEQUATE">Clear &amp; Adequate</option><option value="MECONIUM-STAINED">Meconium-stained</option><option value="BLOOD-STAINED">Blood-stained</option><option value="REDUCED">Reduced</option></select>
+        </div>
+        <div class="field"><label>Placenta</label>
+          <select id="cs-placenta"><option value="NORMALLY SITED">Normally Sited</option><option value="ANTERIOR">Anterior</option><option value="POSTERIOR">Posterior</option><option value="FUNDAL">Fundal</option><option value="LOW-LYING">Low-lying</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Currently On</div>
+      <div class="field"><textarea id="cs-currenton" placeholder="e.g. IV Amoxiclav 1.2g 12hrly, IV Metronidazole 500mg 8hrly"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Complaints</div>
+      <div class="field"><input type="text" id="cs-co" placeholder="e.g. Wound pain, Nil"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ</div>
+      <div class="odq-grid" id="odq-cs"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="cs-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="cs-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="cs-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="cs-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="cs-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SpO2 (%)</label><input type="number" id="cs-spo2"></div>
+        <div class="field"><label>GCS</label><input type="text" id="cs-gcs" placeholder="15/15"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pallor</label>
+          <select id="cs-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select>
+        </div>
+        <div class="field"><label>Jaundice</label>
+          <select id="cs-jau"><option value="ANICTERIC">Anicteric</option><option value="ICTERIC">Icteric</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pedal Oedema</label>
+          <select id="cs-oedema"><option value="NO PEDAL OEDEMA">Absent</option><option value="PEDAL OEDEMA PRESENT">Present</option></select>
+        </div>
+        <div class="field"><label>Hydration</label>
+          <select id="cs-hyd"><option value="FAIR">Fair</option><option value="SATISFACTORY">Satisfactory</option><option value="POOR">Poor</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Uterus size (wks) + contracted?</label><input type="text" id="cs-uterus" placeholder="e.g. 12, WELL CONTRACTED"></div>
+      <div class="field-row col2">
+        <div class="field"><label>Wound</label>
+          <select id="cs-wound"><option value="DRY AND CLEAN">Dry &amp; Clean</option><option value="SOAKED">Soaked</option><option value="INFECTED">Infected</option><option value="DEHISCED">Dehisced</option></select>
+        </div>
+        <div class="field"><label>Lochia</label>
+          <select id="cs-lochia"><option value="NORMAL">Normal</option><option value="OFFENSIVE">Offensive</option><option value="REDUCED">Reduced</option><option value="HEAVY">Heavy</option></select>
+        </div>
+      </div>
+      <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="cs-hb"></div>
+      <div class="field"><label>Fluid I/O Chart</label><input type="text" id="cs-io" placeholder="e.g. Adequate / Not maintained"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="cs-doc" placeholder="e.g. DR. ATUGUBA" oninput="updateDocDropdown('cs-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-cs"></div>
+      <div class="field"><label>Management Plan</label><textarea id="cs-plan"></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generatePPCS()">Generate PP C/S Review</button>
+    <div class="output-box" id="out-ppcs">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-ppcs"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-ppcs', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('PP C/S Review', 'outtext-ppcs')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ANTEPARTUM ═══ -->
+  <div id="tpl-antepartum" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="ap-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="ap-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>EGA (weeks)</label><input type="number" id="ap-egaw"></div>
+        <div class="field"><label>EGA (days)</label><input type="number" max="6" id="ap-egad"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>EDD</label><input type="text" id="ap-edd" placeholder="DD/MM/25"></div>
+        <div class="field"><label>Admission Day</label><input type="number" id="ap-admday" placeholder="2"></div>
+      </div>
+      <div class="field"><label>Admitted O/A of</label><input type="text" id="ap-oa" placeholder="e.g. Preeclampsia with Severe Features"></div>
+      <div class="field"><label>Currently On</label><textarea id="ap-currenton" placeholder="e.g. IV Labetalol 200mg BD, IV MgSO4..."></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Complaints</div>
+      <div class="field"><input type="text" id="ap-co" placeholder="e.g. Headache, Nil"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ</div>
+      <div class="odq-grid" id="odq-ap"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="ap-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="ap-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="ap-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="ap-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="ap-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SpO2 (%)</label><input type="number" id="ap-spo2"></div>
+        <div class="field"><label>GCS</label><input type="text" id="ap-gcs" placeholder="15/15"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pallor</label>
+          <select id="ap-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select>
+        </div>
+        <div class="field"><label>Jaundice</label>
+          <select id="ap-jau"><option value="ANICTERIC">Anicteric</option><option value="ICTERIC">Icteric</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pedal Oedema</label>
+          <select id="ap-oedema"><option value="NO PEDAL OEDEMA">Absent</option><option value="PEDAL OEDEMA PRESENT">Present</option></select>
+        </div>
+        <div class="field"><label>Hydration</label>
+          <select id="ap-hyd"><option value="FAIR">Fair</option><option value="SATISFACTORY">Satisfactory</option><option value="POOR">Poor</option></select>
+        </div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>SFH (cm)</label><input type="number" id="ap-sfh"></div>
+        <div class="field"><label>Lie</label>
+          <select id="ap-lie"><option>LONGITUDINAL</option><option>TRANSVERSE</option><option>OBLIQUE</option></select>
+        </div>
+        <div class="field"><label>Presentation</label>
+          <select id="ap-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>FHR (BPM)</label><input type="number" id="ap-fhr"></div>
+        <div class="field"><label>Uterine Tenderness</label>
+          <select id="ap-tender"><option value="NON-TENDER">Non-tender</option><option value="TENDER">Tender</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Investigations (if any)</label><textarea id="ap-inv" placeholder="e.g. Urine protein 2+ on dipstick"></textarea></div>
+      <div class="field"><label>Fluid I/O Chart</label><input type="text" id="ap-io"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="ap-doc" oninput="updateDocDropdown('ap-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-ap"></div>
+      <div class="field"><label>Management Plan</label><textarea id="ap-plan"></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateAntepartum()">Generate Antepartum Review</button>
+    <div class="output-box" id="out-antepartum">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-antepartum"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-antepartum', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Antepartum Review', 'outtext-antepartum')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ROUNDS SUMMARY ═══ -->
+  <div id="tpl-rounds" class="hidden">
+    <div class="card">
+      <div class="card-title">Mode</div>
+      <div class="mode-toggle">
+        <button class="active" id="rounds-mode-vitals" onclick="setRoundsMode('vitals')">Quick Vitals Only</button>
+        <button id="rounds-mode-full" onclick="setRoundsMode('full')">Full Summary</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="rnd-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="rnd-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Type</label>
+          <select id="rnd-type">
+            <option value="POST SVD">Post SVD</option>
+            <option value="POST C/S">Post C/S</option>
+            <option value="ANTEPARTUM">Antepartum</option>
+          </select>
+        </div>
+        <div class="field"><label>Day</label><input type="number" id="rnd-day" placeholder="2"></div>
+      </div>
+      <div class="field"><label>Parity (Now P)</label><input type="number" id="rnd-parity"></div>
+      <div class="field"><label>Managed as / O/A of</label><input type="text" id="rnd-dx"></div>
+    </div>
+
+    <div id="rnd-full-section" class="hidden">
+      <div class="card">
+        <div class="card-title">Background Summary</div>
+        <div class="field"><textarea id="rnd-background" placeholder="Type salient background — not every detail. E.g. 35yr old G2P1, known HPT, admitted for PESF, on MgSO4 and Labetalol..." rows="4"></textarea></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Complaints</div>
+        <div class="field"><input type="text" id="rnd-co" placeholder="e.g. Nil / Wound pain"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">ODQ</div>
+        <div class="odq-grid" id="odq-rnd"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="rnd-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="rnd-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="rnd-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="rnd-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="rnd-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SpO2 (%)</label><input type="number" id="rnd-spo2"></div>
+        <div class="field"><label>GCS</label><input type="text" id="rnd-gcs" placeholder="15/15"></div>
+      </div>
+      <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="rnd-hb"></div>
+      <div class="field"><label>Fluid I/O Chart</label><input type="text" id="rnd-io"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Ward Rounds Decision</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="rnd-doc" oninput="updateDocDropdown('rnd-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-rnd"></div>
+      <div class="field"><label>Decision / Plan</label><textarea id="rnd-plan" placeholder="Type exactly what the consultant/senior said about management..."></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateRounds()">Generate Rounds Note</button>
+    <div class="output-box" id="out-rounds">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-rounds"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-rounds', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Rounds Summary', 'outtext-rounds')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ DISCHARGE ═══ -->
+  <div id="tpl-discharge" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="dc-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="dc-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Date of Admission</label><input type="text" id="dc-doa" placeholder="DD/MM/25"></div>
+        <div class="field"><label>Date of Discharge</label><input type="text" id="dc-dod" placeholder="DD/MM/25"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Parity (Now P)</label><input type="number" id="dc-parity"></div>
+        <div class="field"><label>Discharge HB (g/dL)</label><input type="number" step="0.1" id="dc-hb"></div>
+      </div>
+      <div class="field"><label>Discharge Diagnosis</label><input type="text" id="dc-dx"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Discharge Notes</div>
+      <div class="field"><textarea id="dc-notes" placeholder="Summary of hospital course, significant events, condition at discharge..." rows="4"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Discharge Medications</div>
+      <div class="field"><label>Delivery Type</label>
+        <select id="dc-deltype" onchange="updateDischargeMeds()">
+          <option value="svd">Post SVD</option>
+          <option value="cs">Post C/S</option>
+        </select>
+      </div>
+      <div class="field"><label>Medications (auto-filled, edit as needed)</label>
+        <textarea id="dc-meds" rows="5"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Discharge Plan</div>
+      <div class="field"><textarea id="dc-plan" placeholder="e.g. Review in OPD in 2 weeks, RTC if worsening symptoms..."></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Authorised By</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="dc-doc" oninput="updateDocDropdown('dc-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-dc"></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateDischarge()">Generate Discharge Summary</button>
+    <div class="output-box" id="out-discharge">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-discharge"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-discharge', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Discharge Summary', 'outtext-discharge')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ RECEPTION ═══ -->
+  <div id="tpl-reception" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="rec-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="rec-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Gravidity</label><input type="number" id="rec-g"></div>
+        <div class="field"><label>Parity</label><input type="number" id="rec-p"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Prev Losses</label><input type="number" id="rec-losses" value="0"></div>
+        <div class="field"><label>EGA (weeks)</label><input type="number" id="rec-egaw"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>EGA (days)</label><input type="number" max="6" id="rec-egad"></div>
+        <div class="field"><label>EDD</label><input type="text" id="rec-edd" placeholder="DD/MM/25"></div>
+      </div>
+      <div class="field"><label>Indication for Elective C/S</label><input type="text" id="rec-indication" placeholder="e.g. Prev CS x2, Placenta Praevia"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Booking Details</div>
+      <div class="field-row col2">
+        <div class="field"><label>Blood Group</label>
+          <select id="rec-bg">
+            <option>A POS</option><option>A NEG</option>
+            <option>B POS</option><option>B NEG</option>
+            <option>AB POS</option><option>AB NEG</option>
+            <option>O POS</option><option>O NEG</option>
+          </select>
+        </div>
+        <div class="field"><label>Booking HB (g/dL)</label><input type="number" step="0.1" id="rec-bkhb"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>HBsAg</label>
+          <select id="rec-hbsag"><option value="NEG">NEG</option><option value="POS">POS</option></select>
+        </div>
+        <div class="field"><label>Sickling</label>
+          <select id="rec-sick"><option value="NEG">NEG</option><option value="POS">POS</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>G6PD</label>
+          <select id="rec-g6pd"><option value="NO DEFECT">No Defect</option><option value="DEFICIENT">Deficient</option></select>
+        </div>
+        <div class="field"><label>VDRL</label>
+          <select id="rec-vdrl"><option value="NEG">NEG</option><option value="POS">POS</option></select>
+        </div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Retroscreen</label>
+          <select id="rec-retro"><option value="NON-REACTIVE">NON-REACTIVE</option><option value="REACTIVE">REACTIVE</option></select>
+        </div>
+        <div class="field"><label>Booking BP (mmHg)</label><input type="text" id="rec-bkbp" placeholder="120/80"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ</div>
+      <div class="odq-grid" id="odq-rec"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="rec-temp" placeholder="36.1"></div>
+        <div class="field"><label>Pulse</label><input type="number" id="rec-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="rec-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="rec-bpd"></div>
+        <div class="field"><label>RR</label><input type="number" id="rec-rr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>SFH (cm)</label><input type="number" id="rec-sfh"></div>
+        <div class="field"><label>Lie</label>
+          <select id="rec-lie"><option>LONGITUDINAL</option><option>TRANSVERSE</option><option>OBLIQUE</option></select>
+        </div>
+        <div class="field"><label>Presentation</label>
+          <select id="rec-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select>
+        </div>
+      </div>
+      <div class="field"><label>FHR (BPM)</label><input type="number" id="rec-fhr"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="rec-doc" oninput="updateDocDropdown('rec-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-rec"></div>
+      <div class="field"><label>Management Plan</label><textarea id="rec-plan" placeholder="e.g. Get items for C/S, GXM + BUE, consent form, cleared by anaesthesia..."></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateReception()">Generate Reception Note</button>
+    <div class="output-box" id="out-reception">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-reception"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-reception', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Reception Note', 'outtext-reception')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ ANC ═══ -->
+  <div id="tpl-anc" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="anc-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="anc-age"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>Gravidity</label><input type="number" id="anc-g"></div>
+        <div class="field"><label>Parity</label><input type="number" id="anc-p"></div>
+        <div class="field"><label>Prev Losses</label><input type="number" id="anc-losses" value="0"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>EGA (weeks)</label><input type="number" id="anc-egaw"></div>
+        <div class="field"><label>EGA (days)</label><input type="number" max="6" id="anc-egad"></div>
+      </div>
+      <div class="field"><label>EDD</label><input type="text" id="anc-edd" placeholder="DD/MM/25"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">HPC</div>
+      <div class="field-row col2">
+        <div class="field"><label>ANC Status</label>
+          <select id="anc-ancstatus"><option value="REGULAR ANC ATTENDANT">Regular Attendant</option><option value="NON-ATTENDANT">Non-Attendant</option></select>
+        </div>
+        <div class="field"><label>Known Comorbidity</label><input type="text" id="anc-comorbidity" placeholder="e.g. HPT / leave blank if none"></div>
+      </div>
+      <div class="field"><label>Referred from (if applicable)</label><input type="text" id="anc-referral" placeholder="Leave blank if self-presenting"></div>
+      <div class="field"><label>O/A of (presenting complaint)</label><input type="text" id="anc-oa" placeholder="e.g. Labour pains, Reduced fetal movement"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ</div>
+      <div class="odq-grid" id="odq-anc"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Systemic Enquiry</div>
+      <div class="odq-grid" id="odq-anc-se"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Past Medical &amp; Surgical History</div>
+      <div class="field-row col2">
+        <div class="field"><label>HPT</label><select id="anc-hpt"><option value="-">No</option><option value="+">Yes</option></select></div>
+        <div class="field"><label>DM</label><select id="anc-dm"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SCD</label><select id="anc-scd"><option value="-">No</option><option value="+">Yes</option></select></div>
+        <div class="field"><label>Asthma</label><select id="anc-asthma"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field"><label>Surgeries / Blood Transfusions</label><input type="text" id="anc-surg" placeholder="e.g. None / Appendicectomy 2018"></div>
+      <div class="field"><label>Drug &amp; Herbal History / Allergies</label><input type="text" id="anc-drug" placeholder="e.g. No known drug allergies"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Social History</div>
+      <div class="field-row col2">
+        <div class="field"><label>Lives at</label><input type="text" id="anc-lives"></div>
+        <div class="field"><label>Level of Education</label><input type="text" id="anc-edu" placeholder="e.g. Tertiary"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Occupation</label><input type="text" id="anc-occ"></div>
+        <div class="field"><label>NHIS</label><select id="anc-nhis"><option value="+">Yes</option><option value="-">No</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Alcohol</label><select id="anc-alc"><option value="-">No</option><option value="+">Yes</option></select></div>
+        <div class="field"><label>Smoking</label><select id="anc-smk"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field"><label>Accepts Blood Transfusion</label><select id="anc-transfuse"><option value="ACCEPTS BLOOD TRANSFUSION">Yes</option><option value="DECLINES BLOOD TRANSFUSION">No</option></select></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Obstetric History</div>
+      <div class="field" id="anc-obs-hist-container">
+        <div id="anc-obs-entries"></div>
+        <button type="button" style="background:var(--accent-light);color:var(--navy-light);border:1.5px solid var(--accent);border-radius:8px;padding:7px 14px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:4px;" onclick="addObsEntry('anc')">+ Add Pregnancy</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Index Pregnancy Booking Details</div>
+      <div class="field-row col2">
+        <div class="field"><label>Blood Group</label>
+          <select id="anc-bg"><option>A POS</option><option>A NEG</option><option>B POS</option><option>B NEG</option><option>AB POS</option><option>AB NEG</option><option>O POS</option><option>O NEG</option></select>
+        </div>
+        <div class="field"><label>Booking HB (g/dL)</label><input type="number" step="0.1" id="anc-bkhb"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>HBsAg</label><select id="anc-hbsag"><option value="NEG">NEG</option><option value="POS">POS</option></select></div>
+        <div class="field"><label>Sickling</label><select id="anc-sick"><option value="NEG">NEG</option><option value="POS">POS</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>G6PD</label><select id="anc-g6pd"><option value="NO DEFECT">No Defect</option><option value="DEFICIENT">Deficient</option></select></div>
+        <div class="field"><label>VDRL</label><select id="anc-vdrl"><option value="NEG">NEG</option><option value="POS">POS</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Retroscreen</label><select id="anc-retro"><option value="NON-REACTIVE">NON-REACTIVE</option><option value="REACTIVE">REACTIVE</option></select></div>
+        <div class="field"><label>Booking BP (mmHg)</label><input type="text" id="anc-bkbp" placeholder="120/80"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="anc-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="anc-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="anc-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="anc-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="anc-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pallor</label><select id="anc-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select></div>
+        <div class="field"><label>Jaundice</label><select id="anc-jau"><option value="ANICTERIC">Anicteric</option><option value="ICTERIC">Icteric</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pedal Oedema</label><select id="anc-oedema"><option value="NO PEDAL OEDEMA">Absent</option><option value="PEDAL OEDEMA PRESENT">Present</option></select></div>
+        <div class="field"><label>Hydration</label><select id="anc-hyd"><option value="FAIR">Fair</option><option value="SATISFACTORY">Satisfactory</option><option value="POOR">Poor</option></select></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>SFH (cm)</label><input type="number" id="anc-sfh"></div>
+        <div class="field"><label>Lie</label><select id="anc-lie"><option>LONGITUDINAL</option><option>TRANSVERSE</option><option>OBLIQUE</option></select></div>
+        <div class="field"><label>Presentation</label><select id="anc-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>FHR (BPM)</label><input type="number" id="anc-fhr"></div>
+        <div class="field"><label>Uterine Tenderness</label><select id="anc-tender"><option value="NON-TENDER">Non-tender</option><option value="TENDER">Tender</option></select></div>
+      </div>
+      <div class="field"><label>VE findings (if done)</label><input type="text" id="anc-ve" placeholder="e.g. Cervix 3cm dilated, 80% effaced / Leave blank"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Investigations</div>
+      <div class="card-title" style="border:none;padding:0;margin-bottom:8px;font-size:11px;">Obs Scan</div>
+      <div class="field-row col2">
+        <div class="field"><label>No. of Fetuses</label><input type="number" id="anc-scan-fetus" value="1"></div>
+        <div class="field"><label>Presentation</label><select id="anc-scan-pres"><option>CEPHALIC</option><option>BREECH</option><option>TRANSVERSE</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Placenta Location</label><input type="text" id="anc-scan-placenta" placeholder="e.g. Anterior / Posterior fundal"></div>
+        <div class="field"><label>Fetal Heart</label><select id="anc-scan-fh"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Liquor Volume</label><select id="anc-scan-liquor"><option value="ADEQUATE">Adequate</option><option value="REDUCED">Reduced</option><option value="INCREASED">Increased</option><option value="ABSENT">Absent</option></select></div>
+        <div class="field"><label>Scan EGA</label><input type="text" id="anc-scan-ega" placeholder="e.g. 36+2"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Scan EDD</label><input type="text" id="anc-scan-edd" placeholder="DD/MM/25"></div>
+        <div class="field"><label>EFA (g)</label><input type="number" id="anc-scan-efa"></div>
+      </div>
+      <div class="field"><label>Urine Protein (dipstick)</label>
+        <select id="anc-uproteins"><option value="NIL">NIL</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option><option value="3+">3+</option></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="anc-doc" oninput="updateDocDropdown('anc-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-anc"></div>
+      <div class="field"><label>Management Plan</label><textarea id="anc-plan"></textarea></div>
+      <div class="field"><label>Next Visit</label><input type="text" id="anc-nextvisit" placeholder="e.g. 2 weeks / 36 weeks"></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateANC()">Generate ANC Note</button>
+    <div class="output-box" id="out-anc">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-anc"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-anc', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('ANC', 'outtext-anc')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ OBS ER ═══ -->
+  <div id="tpl-obser" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="er-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="er-age"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>Gravidity</label><input type="number" id="er-g"></div>
+        <div class="field"><label>Parity</label><input type="number" id="er-p"></div>
+        <div class="field"><label>Prev Losses</label><input type="number" id="er-losses" value="0"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>EGA (weeks)</label><input type="number" id="er-egaw"></div>
+        <div class="field"><label>EGA (days)</label><input type="number" max="6" id="er-egad"></div>
+      </div>
+      <div class="field"><label>EDD</label><input type="text" id="er-edd" placeholder="DD/MM/25"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Presenting Complaint &amp; HPC</div>
+      <div class="field"><label>Presenting Complaint</label><input type="text" id="er-pc" placeholder="e.g. Labour pains, APH, Reduced FM"></div>
+      <div class="field-row col2">
+        <div class="field"><label>ANC Status</label>
+          <select id="er-ancstatus"><option value="REGULAR ANC ATTENDANT">Regular Attendant</option><option value="NON-ATTENDANT">Non-Attendant</option></select>
+        </div>
+        <div class="field"><label>Known Comorbidity</label><input type="text" id="er-comorbidity" placeholder="e.g. HPT / leave blank"></div>
+      </div>
+      <div class="field"><label>Referred from (if applicable)</label><input type="text" id="er-referral" placeholder="Leave blank if walk-in"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ</div>
+      <div class="odq-grid" id="odq-er"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Systemic Enquiry</div>
+      <div class="odq-grid" id="odq-er-se"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Past Medical &amp; Surgical History</div>
+      <div class="field-row col2">
+        <div class="field"><label>HPT</label><select id="er-hpt"><option value="-">No</option><option value="+">Yes</option></select></div>
+        <div class="field"><label>DM</label><select id="er-dm"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SCD</label><select id="er-scd"><option value="-">No</option><option value="+">Yes</option></select></div>
+        <div class="field"><label>Asthma</label><select id="er-asthma"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field"><label>Surgeries / Blood Transfusions</label><input type="text" id="er-surg" placeholder="e.g. None"></div>
+      <div class="field"><label>Drug &amp; Herbal History / Allergies</label><input type="text" id="er-drug" placeholder="e.g. No known drug allergies"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Social History</div>
+      <div class="field-row col2">
+        <div class="field"><label>Lives at</label><input type="text" id="er-lives"></div>
+        <div class="field"><label>Occupation</label><input type="text" id="er-occ"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>NHIS</label><select id="er-nhis"><option value="+">Yes</option><option value="-">No</option></select></div>
+        <div class="field"><label>Accepts Transfusion</label><select id="er-transfuse"><option value="ACCEPTS BLOOD TRANSFUSION">Yes</option><option value="DECLINES BLOOD TRANSFUSION">No</option></select></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Obstetric History</div>
+      <div id="er-obs-entries"></div>
+      <button type="button" style="background:var(--accent-light);color:var(--navy-light);border:1.5px solid var(--accent);border-radius:8px;padding:7px 14px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:4px;" onclick="addObsEntry('er')">+ Add Pregnancy</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Index Pregnancy Booking Details</div>
+      <div class="field-row col2">
+        <div class="field"><label>Blood Group</label>
+          <select id="er-bg"><option>A POS</option><option>A NEG</option><option>B POS</option><option>B NEG</option><option>AB POS</option><option>AB NEG</option><option>O POS</option><option>O NEG</option></select>
+        </div>
+        <div class="field"><label>Booking HB (g/dL)</label><input type="number" step="0.1" id="er-bkhb"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>HBsAg</label><select id="er-hbsag"><option value="NEG">NEG</option><option value="POS">POS</option></select></div>
+        <div class="field"><label>Sickling</label><select id="er-sick"><option value="NEG">NEG</option><option value="POS">POS</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>G6PD</label><select id="er-g6pd"><option value="NO DEFECT">No Defect</option><option value="DEFICIENT">Deficient</option></select></div>
+        <div class="field"><label>VDRL</label><select id="er-vdrl"><option value="NEG">NEG</option><option value="POS">POS</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Retroscreen</label><select id="er-retro"><option value="NON-REACTIVE">NON-REACTIVE</option><option value="REACTIVE">REACTIVE</option></select></div>
+        <div class="field"><label>Booking BP (mmHg)</label><input type="text" id="er-bkbp" placeholder="120/80"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="er-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="er-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="er-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="er-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="er-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pallor</label><select id="er-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select></div>
+        <div class="field"><label>Jaundice</label><select id="er-jau"><option value="ANICTERIC">Anicteric</option><option value="ICTERIC">Icteric</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pedal Oedema</label><select id="er-oedema"><option value="NO PEDAL OEDEMA">Absent</option><option value="PEDAL OEDEMA PRESENT">Present</option></select></div>
+        <div class="field"><label>Hydration</label><select id="er-hyd"><option value="FAIR">Fair</option><option value="SATISFACTORY">Satisfactory</option></select></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>SFH (cm)</label><input type="number" id="er-sfh"></div>
+        <div class="field"><label>Lie</label><select id="er-lie"><option>LONGITUDINAL</option><option>TRANSVERSE</option><option>OBLIQUE</option></select></div>
+        <div class="field"><label>Presentation</label><select id="er-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>FHR (BPM)</label><input type="number" id="er-fhr"></div>
+        <div class="field"><label>Uterine Tenderness</label><select id="er-tender"><option value="NON-TENDER">Non-tender</option><option value="TENDER">Tender</option></select></div>
+      </div>
+      <div class="field"><label>VE findings (if done)</label><input type="text" id="er-ve" placeholder="e.g. Cervix 4cm dilated / Not done"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Investigations</div>
+      <div class="card-title" style="border:none;padding:0;margin-bottom:8px;font-size:11px;">Obs Scan</div>
+      <div class="field-row col2">
+        <div class="field"><label>No. of Fetuses</label><input type="number" id="er-scan-fetus" value="1"></div>
+        <div class="field"><label>Presentation</label><select id="er-scan-pres"><option>CEPHALIC</option><option>BREECH</option><option>TRANSVERSE</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Placenta Location</label><input type="text" id="er-scan-placenta" placeholder="e.g. Anterior fundal"></div>
+        <div class="field"><label>Fetal Heart</label><select id="er-scan-fh"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Liquor Volume</label><select id="er-scan-liquor"><option value="ADEQUATE">Adequate</option><option value="REDUCED">Reduced</option><option value="INCREASED">Increased</option><option value="ABSENT">Absent</option></select></div>
+        <div class="field"><label>Scan EGA</label><input type="text" id="er-scan-ega" placeholder="e.g. 38+4"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Scan EDD</label><input type="text" id="er-scan-edd" placeholder="DD/MM/25"></div>
+        <div class="field"><label>EFA (g)</label><input type="number" id="er-scan-efa"></div>
+      </div>
+      <div class="field"><label>Urine Protein (dipstick)</label>
+        <select id="er-uproteins"><option value="NIL">NIL</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option><option value="3+">3+</option></select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="er-doc" oninput="updateDocDropdown('er-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-er"></div>
+      <div class="field"><label>Management Plan</label><textarea id="er-plan"></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateOBSER()">Generate OBS ER Note</button>
+    <div class="output-box" id="out-obser">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-obser"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-obser', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('OBS ER', 'outtext-obser')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ GYNAE CLINIC ═══ -->
+  <div id="tpl-gynaeclinic" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="gc-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="gc-age"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>Gravidity</label><input type="number" id="gc-g"></div>
+        <div class="field"><label>Parity</label><input type="number" id="gc-p"></div>
+        <div class="field"><label>Prev Losses</label><input type="number" id="gc-losses" value="0"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>LMP</label><input type="text" id="gc-lmp" placeholder="DD/MM/25"></div>
+        <div class="field"><label>Street Address</label><input type="text" id="gc-address"></div>
+      </div>
+      <div class="field"><label>Presenting Complaint</label><input type="text" id="gc-pc"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ (Specific to Complaint)</div>
+      <div class="field"><textarea id="gc-odq" placeholder="Type ODQ narrative or specific symptom details here..." rows="3"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Systemic Enquiry</div>
+      <div class="odq-grid" id="odq-gc-se"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Gynaecological History</div>
+      <div class="field-row col2">
+        <div class="field"><label>Menarche (age)</label><input type="number" id="gc-menarche"></div>
+        <div class="field"><label>Cycle Length (days)</label><input type="number" id="gc-cycle"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Duration of Flow (days)</label><input type="number" id="gc-flowdur"></div>
+        <div class="field"><label>Dysmenorrhoea</label><select id="gc-dysm"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Vaginal Discharge</label><select id="gc-vd"><option value="-">No</option><option value="+">Yes</option></select></div>
+        <div class="field"><label>IMB</label><select id="gc-imb"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Coitarche (age)</label><input type="number" id="gc-coitarche"></div>
+        <div class="field"><label>Lifetime Partners</label><input type="number" id="gc-partners"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pap Smear</label><input type="text" id="gc-pap" placeholder="e.g. Done 2023 / Never done"></div>
+        <div class="field"><label>Breast Exam</label><input type="text" id="gc-breast" placeholder="e.g. Done / Not done"></div>
+      </div>
+      <div class="field"><label>Contraceptive History</label><input type="text" id="gc-contra" placeholder="e.g. COCP x 2yrs, stopped due to headaches"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Obstetric History</div>
+      <div id="gc-obs-entries"></div>
+      <button type="button" style="background:var(--accent-light);color:var(--navy-light);border:1.5px solid var(--accent);border-radius:8px;padding:7px 14px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:4px;" onclick="addObsEntry('gc')">+ Add Pregnancy</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Past Medical / Surgical History</div>
+      <div class="field"><textarea id="gc-pmhx" placeholder="e.g. HPT-, DM-, No previous surgeries" rows="2"></textarea></div>
+      <div class="field"><label>Drug History / Allergies</label><input type="text" id="gc-drug" placeholder="e.g. No known allergies"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Family History</div>
+      <div class="field"><input type="text" id="gc-fhx" placeholder="e.g. Mother has HPT / NIL of note"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Social History</div>
+      <div class="field-row col2">
+        <div class="field"><label>Marital Status</label><select id="gc-marital"><option value="MARRIED">Married</option><option value="SINGLE">Single</option><option value="COHABITING">Cohabiting</option><option value="DIVORCED">Divorced</option><option value="WIDOWED">Widowed</option></select></div>
+        <div class="field"><label>Level of Education</label><input type="text" id="gc-edu" placeholder="e.g. Tertiary"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Occupation</label><input type="text" id="gc-occ"></div>
+        <div class="field"><label>Husband's Occupation</label><input type="text" id="gc-husbocc"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>NHIS</label><select id="gc-nhis"><option value="+">Yes</option><option value="-">No</option></select></div>
+        <div class="field"><label>Accepts Transfusion</label><select id="gc-transfuse"><option value="ACCEPTS BLOOD TRANSFUSION">Yes</option><option value="DECLINES">No</option></select></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="gc-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="gc-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="gc-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="gc-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="gc-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SpO2 (%)</label><input type="number" id="gc-spo2"></div>
+        <div class="field"><label>Pallor</label><select id="gc-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select></div>
+      </div>
+      <div class="field"><label>Abdominal Mass — describe (size, surface, edges, consistency, extending)</label><textarea id="gc-abdmass" placeholder="e.g. 16-week size mass with smooth surface, well-defined edges, firm consistency extending to the umbilicus / Leave blank if no mass" rows="2"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="gc-doc" oninput="updateDocDropdown('gc-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-gc"></div>
+      <div class="field"><label>Management Plan</label><textarea id="gc-plan"></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateGynaeClinic()">Generate Gynae Clinic Note</button>
+    <div class="output-box" id="out-gynaeclinic">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-gynaeclinic"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-gynaeclinic', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Gynae Clinic', 'outtext-gynaeclinic')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ LW C/S NOTE ═══ -->
+  <div id="tpl-lwcs" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="lw-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="lw-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>EGA (weeks)</label><input type="number" id="lw-egaw"></div>
+        <div class="field"><label>EGA (days)</label><input type="number" max="6" id="lw-egad"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Parity (Now P)</label><input type="number" id="lw-parity"></div>
+        <div class="field"><label>Date of Surgery</label><input type="text" id="lw-date" placeholder="DD/MM/25"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Surgical Team</div>
+      <div class="field"><label>Indication</label><input type="text" id="lw-indication" placeholder="e.g. Preeclampsia with Severe Features, Prev CS x2"></div>
+      <div class="field-row col2">
+        <div class="field"><label>C/S Type</label><select id="lw-cstype"><option value="EMERGENCY">Emergency</option><option value="ELECTIVE">Elective</option></select></div>
+        <div class="field"><label>Surgeon</label><input type="text" id="lw-surgeon" placeholder="e.g. DR. ATUGUBA" oninput="updateDocDropdown('lw-surgeon')"></div>
+      </div>
+      <div class="saved-doctors" id="saved-docs-lw-surgeon"></div>
+      <div class="field-row col2">
+        <div class="field"><label>Surgeon's Assistant</label><input type="text" id="lw-assist" placeholder="DR."></div>
+        <div class="field"><label>Anaesthesia by</label><input type="text" id="lw-anaest" placeholder="DR."></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Anaesthesia Type</label><select id="lw-anatype"><option value="SPINAL">Spinal</option><option value="GENERAL">General</option><option value="EPIDURAL">Epidural</option></select></div>
+        <div class="field"><label>Scrub Nurse</label><input type="text" id="lw-scrub"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Operative Findings</div>
+      <div class="field-row col2">
+        <div class="field"><label>Baby</label><select id="lw-baby"><option value="LIVE MALE">Live Male</option><option value="LIVE FEMALE">Live Female</option></select></div>
+        <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="lw-bw"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Apgar 1min</label><input type="number" max="10" id="lw-apg1"></div>
+        <div class="field"><label>Apgar 5min</label><input type="number" max="10" id="lw-apg2"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Presentation</label><select id="lw-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select></div>
+        <div class="field"><label>Liquor</label><select id="lw-liquor"><option value="CLEAR AND ADEQUATE">Clear &amp; Adequate</option><option value="MECONIUM-STAINED">Meconium-stained</option><option value="BLOOD-STAINED">Blood-stained</option><option value="REDUCED">Reduced</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Placenta</label><select id="lw-placenta"><option value="NORMALLY SITED">Normally Sited</option><option value="ANTERIOR">Anterior</option><option value="POSTERIOR">Posterior</option><option value="FUNDAL">Fundal</option><option value="LOW-LYING">Low-lying</option></select></div>
+        <div class="field"><label>EBL (mL)</label><input type="number" id="lw-ebl" placeholder="400"></div>
+      </div>
+      <div class="field"><label>Additional Findings</label><input type="text" id="lw-extra-findings" placeholder="e.g. Normal tubes and ovaries / Fibroid noted anteriorly"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Post-Op Management</div>
+      <div class="field"><label>Use Standard Post-C/S Regimen?</label>
+        <select id="lw-standard-mgt" onchange="toggleLWCustomMgt()">
+          <option value="yes">Yes — use standard</option>
+          <option value="no">No — I'll enter custom</option>
+        </select>
+      </div>
+      <div id="lw-custom-mgt-box" class="hidden">
+        <div class="field"><label>Custom Post-Op Management</label><textarea id="lw-custom-mgt" rows="6" placeholder="Enter post-op orders..."></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Authorising Doctor</div>
+      <div class="field"><label>Senior Doctor (for plan)</label><input type="text" id="lw-doc" oninput="updateDocDropdown('lw-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-lw"></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateLWCS()">Generate LW C/S Note</button>
+    <div class="output-box" id="out-lwcs">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-lwcs"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-lwcs', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('LW C/S Note', 'outtext-lwcs')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ GYNAE THEATRE ═══ -->
+  <div id="tpl-gynaetheatre" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="gt-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="gt-age"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>Gravidity</label><input type="number" id="gt-g"></div>
+        <div class="field"><label>Parity</label><input type="number" id="gt-p"></div>
+        <div class="field"><label>Prev Losses</label><input type="number" id="gt-losses" value="0"></div>
+      </div>
+      <div class="field"><label>Date of Surgery</label><input type="text" id="gt-date" placeholder="DD/MM/25"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Surgical Team</div>
+      <div class="field"><label>Type of Surgery</label><input type="text" id="gt-surgery" placeholder="e.g. Total Abdominal Hysterectomy, Diagnostic Laparoscopy, MVA"></div>
+      <div class="field"><label>Indication</label><input type="text" id="gt-indication"></div>
+      <div class="field-row col2">
+        <div class="field"><label>Surgeon</label><input type="text" id="gt-surgeon" placeholder="DR." oninput="updateDocDropdown('gt-surgeon')"></div>
+        <div class="field"><label>Assistant</label><input type="text" id="gt-assist" placeholder="DR."></div>
+      </div>
+      <div class="saved-doctors" id="saved-docs-gt-surgeon"></div>
+      <div class="field-row col2">
+        <div class="field"><label>Anaesthetist</label><input type="text" id="gt-anaest" placeholder="DR."></div>
+        <div class="field"><label>Anaesthesia Type</label><select id="gt-anatype"><option value="SPINAL">Spinal</option><option value="GENERAL">General</option><option value="EPIDURAL">Epidural</option><option value="LOCAL">Local</option></select></div>
+      </div>
+      <div class="field"><label>Scrub Nurse</label><input type="text" id="gt-scrub"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Operative Findings</div>
+      <div class="field"><textarea id="gt-findings" rows="3" placeholder="e.g. Uterus 16-week size with multiple fibroids, tubes and ovaries normal, no free fluid in peritoneum..."></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Procedure Notes</div>
+      <div class="field"><textarea id="gt-procedure" rows="4" placeholder="Describe the procedure or leave blank to use standard boilerplate for the selected surgery type..."></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Post-Op Management</div>
+      <div class="field"><label>Use Standard Gynae Post-Op Regimen?</label>
+        <select id="gt-standard-mgt" onchange="toggleGTCustomMgt()">
+          <option value="yes">Yes — use standard</option>
+          <option value="no">No — I'll enter custom</option>
+        </select>
+      </div>
+      <div id="gt-custom-mgt-box" class="hidden">
+        <div class="field"><label>Custom Post-Op Management</label><textarea id="gt-custom-mgt" rows="6"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Authorising Doctor</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="gt-doc" oninput="updateDocDropdown('gt-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-gt"></div>
+    </div>
+
+    <button class="btn-generate" onclick="generateGynaeTheatre()">Generate Gynae Theatre Note</button>
+    <div class="output-box" id="out-gynaetheatre">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-gynaetheatre"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-gynaetheatre', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Gynae Theatre', 'outtext-gynaetheatre')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ HISTORY ═══ -->
+  <div id="tpl-history" class="hidden">
+    <div class="history-section">
+      <div class="history-title">
+        Saved Notes
+        <button class="clear-history" onclick="clearAllHistory()">Clear All</button>
+      </div>
+      <div id="history-list"><p style="color:var(--muted);font-size:13px;text-align:center;padding:24px 0;">No saved notes yet.</p></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+
+function today() {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${dd}/${mm}/${yy}`;
+}
+
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? (el.value || '').trim() : '';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function copyOutput(textId, btn) {
+  const text = document.getElementById(textId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    showToast('Note copied to clipboard');
+    setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+// ── TEMPLATE NAVIGATION ──
+const templates = ['labs','transfusion','ppsvd','ppcs','antepartum','rounds','discharge','reception','anc','obser','gynaeclinic','lwcs','gynaetheatre','history'];
+
+function showTemplate(name) {
+  templates.forEach(t => document.getElementById('tpl-' + t).classList.add('hidden'));
+  document.getElementById('tpl-' + name).classList.remove('hidden');
+  document.querySelectorAll('.sel-btn').forEach((b, i) => b.classList.remove('active'));
+  const idx = templates.indexOf(name);
+  document.querySelectorAll('.sel-btn')[idx].classList.add('active');
+  if (name === 'history') renderHistory();
+  if (name === 'discharge') updateDischargeMeds();
+}
+
+// ── ODQ BUILDER ──
+const ODQ_STANDARD = ['LAP','BPV','HEADACHE','PALPITATIONS','DIZZINESS','FEVER','CHILLS','NAUSEA','VOMITING','DYSURIA','FREQUENCY'];
+const ODQ_AP = ['FFM','LOL','LAP','BPV','FEVER','CHILLS','ANOREXIA','DIZZINESS','PALPITATIONS','FRONTAL HEADACHE','BLURRED VISION','EPIGASTRIC PAIN','NAUSEA','VOMITING','OLIGURIA','DARK URINE','FREQUENCY','URGENCY','DYSURIA'];
+const ODQ_REC = ['FFM','LOL','LAP','BPV','FEVER','CHILLS'];
+
+function buildODQ(containerId, items) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  items.forEach(sym => {
+    const key = containerId + '_' + sym.replace(/\s/g, '_');
+    const div = document.createElement('div');
+    div.className = 'odq-item';
+    div.innerHTML = `
+      <span class="odq-label">${sym}</span>
+      <div class="odq-toggle">
+        <button type="button" id="${key}_pos" onclick="setODQ('${key}','pos')">+</button>
+        <button type="button" id="${key}_neg" onclick="setODQ('${key}','neg')" class="neg-active">−</button>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function setODQ(key, val) {
+  const pos = document.getElementById(key + '_pos');
+  const neg = document.getElementById(key + '_neg');
+  pos.className = val === 'pos' ? 'pos-active' : '';
+  neg.className = val === 'neg' ? 'neg-active' : '';
+}
+
+function getODQString(containerId, items) {
+  return items.map(sym => {
+    const key = containerId + '_' + sym.replace(/\s/g, '_');
+    const pos = document.getElementById(key + '_pos');
+    const isPos = pos && pos.classList.contains('pos-active');
+    return sym + (isPos ? '+' : '-');
+  }).join(', ');
+}
+
+// ── DOCTOR MEMORY ──
+function getSavedDoctors() {
+  try { return JSON.parse(localStorage.getItem('mat4_doctors') || '[]'); } catch { return []; }
+}
+
+function saveDoctorName(name) {
+  if (!name) return;
+  const upper = name.toUpperCase();
+  let docs = getSavedDoctors();
+  if (!docs.includes(upper)) { docs.unshift(upper); if (docs.length > 8) docs = docs.slice(0, 8); }
+  localStorage.setItem('mat4_doctors', JSON.stringify(docs));
+}
+
+function updateDocDropdown(inputId) {
+  // derive container id: e.g. 'svd-doc' → 'saved-docs-svd', 'lw-surgeon' → 'saved-docs-lw-surgeon'
+  const containerId = 'saved-docs-' + inputId.replace('-doc', '');
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const docs = getSavedDoctors();
+  container.innerHTML = docs.map(d =>
+    `<button class="saved-doc-btn" onclick="document.getElementById('${inputId}').value='${d}'">${d}</button>`
+  ).join('');
+}
+
+function renderAllDocDropdowns() {
+  ['svd','cs','ap','rnd','dc','rec','anc','er','gc','lw','gt'].forEach(p => {
+    const el = document.getElementById(p + '-doc');
+    if (el) updateDocDropdown(p + '-doc');
+  });
+  // Special ones with surgeon fields
+  ['lw-surgeon','gt-surgeon'].forEach(id => {
+    if (document.getElementById(id)) updateDocDropdown(id);
+  });
+}
+
+// ── HISTORY ──
+function saveToHistory(type, textId) {
+  const text = document.getElementById(textId).textContent;
+  if (!text) return;
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
+  history.unshift({ type, text, time: new Date().toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) });
+  if (history.length > 50) history = history.slice(0, 50);
+  localStorage.setItem('mat4_history', JSON.stringify(history));
+  showToast('Saved to history');
+}
+
+function renderHistory() {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
+  const list = document.getElementById('history-list');
+  if (!history.length) { list.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:24px 0;">No saved notes yet.</p>'; return; }
+  list.innerHTML = history.map((h, i) => `
+    <div class="history-item">
+      <div class="history-item-meta">
+        <span class="history-item-type">${h.type}</span>
+        <span class="history-item-time">${h.time}</span>
+      </div>
+      <div class="history-item-preview">${h.text.slice(0, 80)}...</div>
+      <div class="history-item-actions">
+        <button class="btn-hist-copy" onclick="copyHistItem(${i})">Copy</button>
+        <button class="btn-hist-del" onclick="deleteHistItem(${i})">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+function copyHistItem(i) {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
+  navigator.clipboard.writeText(history[i].text).then(() => showToast('Copied to clipboard'));
+}
+
+function deleteHistItem(i) {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
+  history.splice(i, 1);
+  localStorage.setItem('mat4_history', JSON.stringify(history));
+  renderHistory();
+}
+
+function clearAllHistory() {
+  if (confirm('Clear all saved notes?')) { localStorage.removeItem('mat4_history'); renderHistory(); }
+}
+
+// ── ROUNDS MODE ──
+let roundsMode = 'vitals';
+function setRoundsMode(mode) {
+  roundsMode = mode;
+  document.getElementById('rounds-mode-vitals').classList.toggle('active', mode === 'vitals');
+  document.getElementById('rounds-mode-full').classList.toggle('active', mode === 'full');
+  document.getElementById('rnd-full-section').classList.toggle('hidden', mode === 'vitals');
+}
+
+// ── DISCHARGE MEDS AUTO-FILL ──
+function updateDischargeMeds() {
+  const type = v('dc-deltype');
+  const svdMeds = `SUPPOSITORY DICLOFENAC 100MG BD X 7/7\nTAB POLYFER 1 TAB BD X 30/7\nTAB FOLIC ACID 5MG OD X 30/7\nTAB VIT C 1G OD X 30/7`;
+  const csMeds = `SUPPOSITORY DICLOFENAC 100MG BD X 7/7\nTAB POLYFER 1 TAB BD X 30/7\nTAB FOLIC ACID 5MG OD X 30/7\nTAB VIT C 1G OD X 30/7\nWOUND CARE AS DIRECTED`;
+  document.getElementById('dc-meds').value = type === 'svd' ? svdMeds : csMeds;
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATORS
+// ══════════════════════════════════════════════════════
+
+function showOutput(outId, text) {
+  const box = document.getElementById(outId);
+  const textEl = box.querySelector('.output-text') || document.getElementById('outtext-' + outId.replace('out-', ''));
+  textEl.textContent = text;
+  box.classList.add('visible');
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── LABS ───
+function generateLabs() {
+  const date = v('labs-date') || today();
+  let out = '';
+
+  const hb = v('fbc-hb'), hct = v('fbc-hct'), wbc = v('fbc-wbc'), neu = v('fbc-neu'), lym = v('fbc-lym'), plt = v('fbc-plt');
+  if (hb || wbc || plt) {
+    out += `FBC (${date})\nHB - ${hb || '?'} G/DL\nHEMATOCRIT - ${hct || '?'}\nWBC - ${wbc || '?'} X10^9/L\nNEU - ${neu || '?'} X10^9/L\nLYM - ${lym || '?'} X10^9/L\nPLT - ${plt || '?'} X10^9/L\n\n`;
+  }
+
+  const ureMacro = v('ure-macro'), ureAppear = v('ure-appear'), urePh = v('ure-ph'), ureSg = v('ure-sg'), ureColour = v('ure-colour');
+  if (ureMacro || urePh) {
+    out += `URINE R/E (${date})\nMACROSCOPY - ${ureMacro || '?'}\nAPPEARANCE - ${ureAppear || 'HAZY'}\npH - ${urePh || '?'}\nPROTEIN - ${v('ure-protein')}\nGLUCOSE - ${v('ure-glucose')}\nBLOOD - ${v('ure-blood')}\nCOLOUR - ${ureColour || 'STRAW'}\nSPEC GRAVITY - ${ureSg || '?'}\nLEUKOCYTE ESTERASE - ${v('ure-le')}\nNITRITES - ${v('ure-nitrites')}\nKETONES - ${v('ure-ketones')}\n`;
+    out += `\nMICROSCOPY\nPUS CELLS/HPF - ${v('ure-pus') || '?'}\nEPITHELIAL CELLS/HPF - ${v('ure-epi') || '?'}\nRBC/HPF - ${v('ure-rbc') || '?'}\n\n`;
+  }
+
+  const na = v('bue-na'), k = v('bue-k'), creat = v('bue-creat');
+  if (na || k || creat) {
+    out += `BUECR (${date})\nNA - ${na || '?'}\nK - ${k || '?'}\nCL - ${v('bue-cl') || '?'}\nCO2 - ${v('bue-co2') || '?'}\nUREA - ${v('bue-urea') || '?'}\nCREATININE - ${creat || '?'}\neGFR - ${v('bue-egfr') || '?'}\n\n`;
+  }
+
+  const ast = v('lft-ast'), alt = v('lft-alt'), alb = v('lft-alb');
+  if (ast || alt || alb) {
+    out += `LFT (${date})\nTOTAL BILIRUBIN - ${v('lft-tbili') || '?'}\nDIRECT BILIRUBIN - ${v('lft-dbili') || '?'}\nINDIRECT BILIRUBIN - ${v('lft-ibili') || '?'}\nAST - ${ast || '?'}\nALT - ${alt || '?'}\nALP - ${v('lft-alp') || '?'}\nGGT - ${v('lft-ggt') || '?'}\nTOTAL PROTEIN - ${v('lft-tp') || '?'}\nALBUMIN - ${alb || '?'}\n\n`;
+  }
+
+  const pt = v('clot-pt'), aptt = v('clot-aptt');
+  if (pt || aptt) {
+    out += `CLOTTING PROFILE (${date})\nPT - ${pt || '?'}\nAPTT - ${aptt || '?'}\n\n`;
+  }
+
+  const fbs = v('ogtt-fbs');
+  if (fbs) {
+    out += `OGTT (${date})\nFBS - ${fbs || '?'}\n1HR - ${v('ogtt-1hr') || '?'}\n2HR - ${v('ogtt-2hr') || '?'}\n3HR - ${v('ogtt-3hr') || '?'}\n`;
+  }
+
+  if (!out) { showToast('Please fill in at least one lab result'); return; }
+  document.getElementById('outtext-labs').textContent = out.trim();
+  document.getElementById('out-labs').classList.add('visible');
+  document.getElementById('out-labs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── TRANSFUSION ───
+function generateTransfusion() {
+  const date = v('tf-date') || today();
+  const startTime = v('tf-starttime');
+  const units = v('tf-units') || '1';
+  const out = `TRANSFUSION NOTES ON ${date}
+
+NAME: ${v('tf-name') || '?'}
+AGE: ${v('tf-age') || '?'} YRS
+
+PRE-TRANSFUSION VITALS
+T - ${v('tf-temp') || '?'}°C
+BP - ${v('tf-bps') || '?'}/${v('tf-bpd') || '?'} MMHG
+PR - ${v('tf-pr') || '?'} BPM
+RR - ${v('tf-rr') || '?'} CPM
+CHEST CLINICALLY CLEAR
+
+TRANSFUSION START TIME: ${startTime || '?'}
+
+BLOOD GROUP: ${v('tf-bg') || '?'}
+PRODUCT TYPE: ${v('tf-product') || 'CRC'}
+DIN: ${v('tf-din') || '?'}
+DATE X-MATCHED: ${v('tf-xdate') || date}
+EXPIRY DATE: ${v('tf-expiry') || '?'}
+
+${units} UNIT OF CRC SET TO RUN FOR 2 HRS.
+
+IN CASE OF TRANSFUSION REACTION:
+STOP THE TRANSFUSION BUT DO NOT DISCARD THE BLOOD PRODUCTS
+RUN IV NORMAL SALINE 500MLS STAT
+ADMINISTER IV HYDROCORTISONE 200MG STAT
+ADMINISTER IM PHENERGAN 25MG STAT
+CALL THE NEAREST DOCTOR.`;
+  document.getElementById('outtext-transfusion').textContent = out;
+  document.getElementById('out-transfusion').classList.add('visible');
+  document.getElementById('out-transfusion').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  saveDoctorName('');
+}
+
+// ─── PP SVD REVIEW ───
+function generatePPSVD() {
+  const doc = v('svd-doc').toUpperCase();
+  saveDoctorName(doc);
+  const odq = getODQString('odq-svd', ODQ_STANDARD);
+  const uterus = v('svd-uterus');
+  const [utSize, utContract] = uterus.includes(',') ? uterus.split(',').map(s => s.trim()) : [uterus, 'WELL CONTRACTED'];
+
+  const out = `MAT 4 REVIEW — POST PARTUM SVD
+
+NAME: ${v('svd-name') || '?'}
+AGE: ${v('svd-age') || '?'} YRS
+NOW P${v('svd-parity') || '?'}
+
+POST SVD DAY ${v('svd-day') || '?'} BEING MANAGED AS A CASE OF ${v('svd-dx') || '?'}
+
+FINDINGS: ${v('svd-baby') || 'LIVE'}, BW- ${v('svd-bw') || '?'} KG, APGARS ${v('svd-apg1') || '?'}/10, ${v('svd-apg2') || '?'}/10, ${v('svd-pres') || 'CEPHALIC'}, EBL= ${v('svd-ebl') || '?'}ML
+
+CURRENTLY ON: ${v('svd-currenton') || '?'}
+
+C/O: ${v('svd-co') || 'NIL COMPLAINTS'}
+
+ODQ: ${odq}
+
+O/E: YOUNG WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('svd-pale') || 'NOT PALE'}, ${v('svd-jau') || 'ANICTERIC'}, AFEBRILE (${v('svd-temp') || '?'}°C), HYDRATION ${v('svd-hyd') || 'FAIR'}, ${v('svd-oedema') || 'NO PEDAL OEDEMA'}
+
+CVS: P- ${v('svd-pr') || '?'} BPM, BP- ${v('svd-bps') || '?'}/${v('svd-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v('svd-rr') || '?'} CPM, SPO2- ${v('svd-spo2') || '?'}%, CHEST CLINICALLY CLEAR
+ABD: FULL SOFT, MWR, NON-TENDER, LIVER AND SPLEEN NOT PALPABLE AND KIDNEYS NOT BALLOTABLE, UTERUS ${utSize ? utSize + ' WK SIZE' : ''} AND IS ${utContract || 'WELL CONTRACTED'}, LOCHIA ${v('svd-lochia') || 'NORMAL'}
+CNS: ALERT AND CONSCIOUS, GCS- ${v('svd-gcs') || '15'}/15
+
+FLUID INPUT & OUTPUT CHART: ${v('svd-io') || '?'}
+CHECK HB: ${v('svd-hb') || '?'} G/DL
+
+PLAN + ${doc || '?'}
+${v('svd-plan') || '?'}`;
+
+  document.getElementById('outtext-ppsvd').textContent = out;
+  document.getElementById('out-ppsvd').classList.add('visible');
+  document.getElementById('out-ppsvd').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── PP C/S REVIEW ───
+function generatePPCS() {
+  const doc = v('cs-doc').toUpperCase();
+  saveDoctorName(doc);
+  const odq = getODQString('odq-cs', ODQ_STANDARD);
+  const uterus = v('cs-uterus');
+  const [utSize, utContract] = uterus.includes(',') ? uterus.split(',').map(s => s.trim()) : [uterus, 'WELL CONTRACTED'];
+
+  const out = `MAT 4 REVIEW — POST PARTUM C/S
+
+NAME: ${v('cs-name') || '?'}
+AGE: ${v('cs-age') || '?'} YRS
+NOW P${v('cs-parity') || '?'}
+
+POSTOP DAY ${v('cs-day') || '?'} FOLLOWING ${v('cs-type') || 'ELECTIVE'} C/S O/A ${v('cs-indication') || v('cs-dx') || '?'}
+
+MANAGED AS A CASE OF: ${v('cs-dx') || '?'}
+
+FINDINGS: ${v('cs-baby') || 'LIVE'}, BW- ${v('cs-bw') || '?'} KG, APGARS ${v('cs-apg1') || '?'}/10, ${v('cs-apg2') || '?'}/10, ${v('cs-pres') || 'CEPHALIC'}, NTO, PLACENTA- ${v('cs-placenta') || 'NORMALLY SITED'}, LIQUOR- ${v('cs-liquor') || 'CLEAR AND ADEQUATE'}, EBL= ${v('cs-ebl') || '?'} ML
+
+CURRENTLY ON: ${v('cs-currenton') || '?'}
+
+C/O: ${v('cs-co') || 'NIL COMPLAINTS'}
+
+ODQ: ${odq}
+
+O/E: YOUNG WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('cs-pale') || 'NOT PALE'}, ${v('cs-jau') || 'ANICTERIC'}, AFEBRILE (${v('cs-temp') || '?'}°C), HYDRATION ${v('cs-hyd') || 'FAIR'}, ${v('cs-oedema') || 'NO PEDAL OEDEMA'}
+
+CVS: P- ${v('cs-pr') || '?'} BPM, BP- ${v('cs-bps') || '?'}/${v('cs-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v('cs-rr') || '?'} CPM, SPO2- ${v('cs-spo2') || '?'}%, CHEST CLINICALLY CLEAR
+ABD: FULL SOFT, MWR, NON-TENDER, LIVER AND SPLEEN NOT PALPABLE AND KIDNEYS NOT BALLOTABLE, UTERUS ${utSize ? utSize + ' WK SIZE' : ''} AND IS ${utContract || 'WELL CONTRACTED'}, WOUND ${v('cs-wound') || 'DRY AND CLEAN'}, LOCHIA ${v('cs-lochia') || 'NORMAL'}
+CNS: ALERT AND CONSCIOUS, GCS- ${v('cs-gcs') || '15'}/15
+
+FLUID INPUT & OUTPUT CHART: ${v('cs-io') || '?'}
+CHECK HB: ${v('cs-hb') || '?'} G/DL
+
+PLAN + ${doc || '?'}
+${v('cs-plan') || '?'}`;
+
+  document.getElementById('outtext-ppcs').textContent = out;
+  document.getElementById('out-ppcs').classList.add('visible');
+  document.getElementById('out-ppcs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── ANTEPARTUM ───
+function generateAntepartum() {
+  const doc = v('ap-doc').toUpperCase();
+  saveDoctorName(doc);
+  const odq = getODQString('odq-ap', ODQ_AP);
+
+  const out = `MAT 4 REVIEW — ANTEPARTUM
+
+NAME: ${v('ap-name') || '?'}
+AGE: ${v('ap-age') || '?'} YRS
+EGA: ${v('ap-egaw') || '?'} WKS + ${v('ap-egad') || '0'} DAYS
+EDD: ${v('ap-edd') || '?'}
+
+ADMISSION DAY ${v('ap-admday') || '?'} O/A ${v('ap-oa') || '?'}
+
+CURRENTLY ON: ${v('ap-currenton') || '?'}
+
+C/O: ${v('ap-co') || 'NIL COMPLAINTS'}
+
+ODQ: ${odq}
+
+O/E: YOUNG WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('ap-pale') || 'NOT PALE'}, ${v('ap-jau') || 'ANICTERIC'}, AFEBRILE (${v('ap-temp') || '?'}°C), HYDRATION ${v('ap-hyd') || 'FAIR'}, ${v('ap-oedema') || 'NO PEDAL OEDEMA'}
+
+CVS: P- ${v('ap-pr') || '?'} BPM, BP- ${v('ap-bps') || '?'}/${v('ap-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v('ap-rr') || '?'} CPM, SPO2- ${v('ap-spo2') || '?'}%, CHEST CLINICALLY CLEAR
+ABD: GRAVID, MWR, ${v('ap-tender') || 'NON-TENDER'}, SFH- ${v('ap-sfh') || '?'} CM, ${v('ap-lie') || 'LONGITUDINAL'} LIE, ${v('ap-pres') || 'CEPHALIC'} PRESENTATION, FHR- ${v('ap-fhr') || '?'} BPM
+CNS: ALERT AND CONSCIOUS, GCS- ${v('ap-gcs') || '15'}/15
+
+FLUID INPUT & OUTPUT CHART: ${v('ap-io') || '?'}
+${v('ap-inv') ? '\nINVESTIGATIONS:\n' + v('ap-inv') : ''}
+
+PLAN + ${doc || '?'}
+${v('ap-plan') || '?'}`;
+
+  document.getElementById('outtext-antepartum').textContent = out.trim();
+  document.getElementById('out-antepartum').classList.add('visible');
+  document.getElementById('out-antepartum').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── ROUNDS ───
+function generateRounds() {
+  const doc = v('rnd-doc').toUpperCase();
+  saveDoctorName(doc);
+  const type = v('rnd-type');
+  let out = '';
+
+  if (roundsMode === 'full') {
+    const odq = getODQString('odq-rnd', ODQ_STANDARD);
+    out = `OBS ROUNDS SUMMARY — ${type}
+
+NAME: ${v('rnd-name') || '?'}
+AGE: ${v('rnd-age') || '?'} YRS
+NOW P${v('rnd-parity') || '?'}
+${type === 'ANTEPARTUM' ? '' : `POST ${type} DAY ${v('rnd-day') || '?'}`}
+
+MANAGED AS A CASE OF: ${v('rnd-dx') || '?'}
+
+BACKGROUND:
+${v('rnd-background') || '?'}
+
+C/O: ${v('rnd-co') || 'NIL'}
+
+ODQ: ${odq}
+
+O/E:
+CVS: P- ${v('rnd-pr') || '?'} BPM, BP- ${v('rnd-bps') || '?'}/${v('rnd-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v('rnd-rr') || '?'} CPM, SPO2- ${v('rnd-spo2') || '?'}%, CHEST CLINICALLY CLEAR
+CNS: ALERT AND CONSCIOUS, GCS- ${v('rnd-gcs') || '15'}/15
+
+HB: ${v('rnd-hb') || '?'} G/DL
+FLUID I/O: ${v('rnd-io') || '?'}`;
+  } else {
+    out = `OBS ROUNDS SUMMARY — ${type}
+
+NAME: ${v('rnd-name') || '?'}
+NOW P${v('rnd-parity') || '?'} | ${type === 'ANTEPARTUM' ? '' : 'DAY ' + (v('rnd-day') || '?') + ' | '}${v('rnd-dx') || '?'}
+
+CVS: P- ${v('rnd-pr') || '?'} BPM, BP- ${v('rnd-bps') || '?'}/${v('rnd-bpd') || '?'} MMHG
+RESP: RR- ${v('rnd-rr') || '?'} CPM, SPO2- ${v('rnd-spo2') || '?'}%
+HB: ${v('rnd-hb') || '?'} G/DL | FLUID I/O: ${v('rnd-io') || '?'}`;
+  }
+
+  out += `\n\nOBSWR + ${doc || '?'}\n${v('rnd-plan') || '?'}`;
+
+  document.getElementById('outtext-rounds').textContent = out;
+  document.getElementById('out-rounds').classList.add('visible');
+  document.getElementById('out-rounds').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── DISCHARGE ───
+function generateDischarge() {
+  const doc = v('dc-doc').toUpperCase();
+  saveDoctorName(doc);
+
+  const out = `DISCHARGE SUMMARY
+
+NAME: ${v('dc-name') || '?'}
+AGE: ${v('dc-age') || '?'} YRS
+PARITY: NOW P${v('dc-parity') || '?'}
+
+DOA: ${v('dc-doa') || '?'}
+DOD: ${v('dc-dod') || today()}
+
+DISCHARGE DIAGNOSIS: ${v('dc-dx') || '?'}
+
+DISCHARGE HB: ${v('dc-hb') || '?'} G/DL
+
+DISCHARGE NOTES:
+${v('dc-notes') || '?'}
+
+DISCHARGE MEDICATIONS:
+${v('dc-meds') || '?'}
+
+DISCHARGE PLAN:
+${v('dc-plan') || '?'}
+
+AUTHORISED BY: ${doc || '?'}`;
+
+  document.getElementById('outtext-discharge').textContent = out;
+  document.getElementById('out-discharge').classList.add('visible');
+  document.getElementById('out-discharge').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── RECEPTION ───
+function generateReception() {
+  const doc = v('rec-doc').toUpperCase();
+  saveDoctorName(doc);
+  const odq = getODQString('odq-rec', ODQ_REC);
+
+  const out = `MAT 4 RECEPTION NOTES
+
+NAME: ${v('rec-name') || '?'}
+AGE: ${v('rec-age') || '?'} YEARS
+PARITY: G${v('rec-g') || '?'} P${v('rec-p') || '?'} + ${v('rec-losses') || '0'}
+EDD: ${v('rec-edd') || '?'}
+EGA: ${v('rec-egaw') || '?'} W + ${v('rec-egad') || '0'} D
+
+REPORTING TODAY FOR ELECTIVE C/S O/A ${v('rec-indication') || '?'}
+
+HPC: CLIENT IS A REGULAR ANC ATTENDANT HERE AT KBTH
+HAS NO KNOWN CHRONIC ILLNESSES
+
+ODQ: ${odq}
+
+S/E: NIL OF NOTE
+
+INDEX PREGNANCY
+BOOKING AT KBTH
+BLOOD GROUP: ${v('rec-bg') || '?'}
+HBSAG: ${v('rec-hbsag') || 'NEG'}
+SICKLING: ${v('rec-sick') || 'NEG'}
+G6PD: ${v('rec-g6pd') || 'NO DEFECT'}
+VDRL: ${v('rec-vdrl') || 'NEG'}
+RETROSCREEN: ${v('rec-retro') || 'NON-REACTIVE'}
+BOOKING HB: ${v('rec-bkhb') || '?'} G/DL
+BOOKING BP: ${v('rec-bkbp') || '?'} MMHG
+
+O/E
+YOUNG WOMAN, LOOKS WELL, NOT PALE, NOT JAUNDICED, AFEBRILE (T- ${v('rec-temp') || '36.1'}°C), HYDRATION SATISFACTORY
+
+CVS: BP- ${v('rec-bps') || '?'}/${v('rec-bpd') || '?'} MMHG, PR- ${v('rec-pr') || '?'}
+RESP: RR- ${v('rec-rr') || '?'}, CHEST CLINICALLY CLEAR
+ABDOMEN: GRAVID, MWR, NON-TENDER, SFH- ${v('rec-sfh') || '?'} CM, ${v('rec-lie') || 'LONGITUDINAL'} LIE, ${v('rec-pres') || 'CEPHALIC'} PRESENTATION, FHR: ${v('rec-fhr') || '?'} BPM
+CNS: ALERT AND CONSCIOUS, ORIENTED IN TPP.
+
+PLAN + ${doc || '?'}
+${v('rec-plan') || '?'}`;
+
+  document.getElementById('outtext-reception').textContent = out;
+  document.getElementById('out-reception').classList.add('visible');
+  document.getElementById('out-reception').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ══════════════════════════════════════════════════════
+// PHASE 2 ODQ SETS
+// ══════════════════════════════════════════════════════
+const ODQ_OBSTETRIC = ['FFM','LOL','LAP','BPV','FEVER','CHILLS','ANOREXIA','DIZZINESS','PALPITATIONS','FRONTAL HEADACHE','BLURRED VISION','EPIGASTRIC PAIN','NAUSEA','VOMITING','OLIGURIA','DARK URINE','FREQUENCY','URGENCY','DYSURIA'];
+const ODQ_SE = ['FEVER','WEIGHT LOSS','CHEST PAIN','PALPITATIONS','ORTHOPNOEA','PND','COUGH','RHINORRHOEA','HAEMOPTYSIS','ANOREXIA','BLOATING','CONSTIPATION','DIARRHOEA','FREQ','POLYURIA','HAEMATURIA','SEIZURES'];
+
+// ── OBSTETRIC HISTORY DYNAMIC ENTRIES ──
+const obsEntries = {}; // { prefix: count }
+
+function addObsEntry(prefix) {
+  if (!obsEntries[prefix]) obsEntries[prefix] = 0;
+  obsEntries[prefix]++;
+  const n = obsEntries[prefix];
+  const container = document.getElementById(prefix + '-obs-entries');
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.style.cssText = 'border:1.5px dashed var(--border);margin-bottom:10px;';
+  div.id = prefix + '-obs-' + n;
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span style="font-size:12px;font-weight:700;color:var(--navy-light);">G${n}</span>
+      <button type="button" onclick="document.getElementById('${prefix}-obs-${n}').remove()" style="background:none;border:none;color:var(--danger);font-size:12px;font-weight:600;cursor:pointer;">Remove</button>
+    </div>
+    <div class="field-row col2">
+      <div class="field"><label>Years Ago</label><input type="number" id="${prefix}-obs${n}-yrs" placeholder="e.g. 2"></div>
+      <div class="field"><label>Outcome</label>
+        <select id="${prefix}-obs${n}-outcome">
+          <option value="SVD AT TERM">SVD at term</option>
+          <option value="C/S AT TERM">C/S at term</option>
+          <option value="SVD PRETERM">SVD preterm</option>
+          <option value="SPONTANEOUS ABORTION">Spontaneous Abortion</option>
+          <option value="STILLBIRTH">Stillbirth</option>
+          <option value="ECTOPIC">Ectopic</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row col2">
+      <div class="field"><label>Baby</label>
+        <select id="${prefix}-obs${n}-sex">
+          <option value="LIVE FEMALE, ALIVE AND WELL">Live Female, alive &amp; well</option>
+          <option value="LIVE MALE, ALIVE AND WELL">Live Male, alive &amp; well</option>
+          <option value="N/A">N/A (SA/Ectopic)</option>
+        </select>
+      </div>
+      <div class="field"><label>Complications</label><input type="text" id="${prefix}-obs${n}-comp" placeholder="e.g. None / PPH"></div>
+    </div>`;
+  container.appendChild(div);
+}
+
+function getObsHistoryString(prefix) {
+  if (!obsEntries[prefix] || obsEntries[prefix] === 0) return 'NIL';
+  let lines = [];
+  for (let i = 1; i <= obsEntries[prefix]; i++) {
+    const el = document.getElementById(prefix + '-obs-' + i);
+    if (!el) continue;
+    const yrs = document.getElementById(prefix + '-obs' + i + '-yrs')?.value || '?';
+    const outcome = document.getElementById(prefix + '-obs' + i + '-outcome')?.value || '?';
+    const sex = document.getElementById(prefix + '-obs' + i + '-sex')?.value || '';
+    const comp = document.getElementById(prefix + '-obs' + i + '-comp')?.value || 'NO COMPLICATIONS';
+    const sexStr = sex === 'N/A' ? '' : `, OUTCOME: ${sex}`;
+    lines.push(`G${i}: ${yrs} YRS AGO, ${outcome}${sexStr}, COMPLICATIONS: ${comp}`);
+  }
+  return lines.join('\n');
+}
+
+// ── LW / GT MANAGEMENT TOGGLES ──
+function toggleLWCustomMgt() {
+  const val = document.getElementById('lw-standard-mgt').value;
+  document.getElementById('lw-custom-mgt-box').classList.toggle('hidden', val === 'yes');
+}
+function toggleGTCustomMgt() {
+  const val = document.getElementById('gt-standard-mgt').value;
+  document.getElementById('gt-custom-mgt-box').classList.toggle('hidden', val === 'yes');
+}
+
+// ── STANDARD POST-OP REGIMENS ──
+const LW_STANDARD_MGT = `1. MONITOR VITALS HOURLY UNTIL STABLE THEN 4 HOURLY
+2. MONITOR URINE OUTPUT EVERY 1HR
+3. STRICT INPUT AND OUTPUT MONITORING
+4. IV FLUIDS 3L (1L N/S + 1L R/L + 1L DNS) FOR 24HRS
+5. IV AMOXICLAV 1.2G 12HRY FOR 24HRS
+6. IV METRONIDAZOLE 500MG 8HRY FOR 24HRS
+7. IV PARACETAMOL 1G 6HRY FOR 24HRS
+8. IM PETHIDINE 100MG 6HRY FOR 24HRS
+9. SUPPOSITORY DICLOFENAC 100MG BD X 7/7
+10. SC CLEXANE 40MG DAILY FOR 3 DAYS AFTER 8HRS
+11. TOPICAL 1% TETRACYCLINE EYE OINTMENT BDS X 24HRS
+12. 7.1% CHLORHEXIDINE DROPS OD X 24HRS
+13. TRANSFER TO WARD WHEN STABLE`;
+
+const GT_STANDARD_MGT = `MONITOR VITALS QUARTER HRLY UNTIL STABLE
+IV FLUIDS 3L AS 1L N/S, 1L R/L AND 1L 10% DEXTROSE
+IV CLINDAMYCIN 600MG 8HRY FOR 72HRS
+IV GENTAMYCIN 80MG 8HRY FOR 72HRS
+IV PARACETAMOL 1G 8HRY FOR 24HRS
+IM PETHIDINE 100MG 6HRY FOR 24HRS
+ANTICOAGULATION 12HRS AFTER SURGERY: CLEXANE 40MG DAILY`;
+
+// ══════════════════════════════════════════════════════
+// PHASE 2 GENERATORS
+// ══════════════════════════════════════════════════════
+
+function buildBookingBlock(prefix) {
+  return `BLOOD GROUP: ${v(prefix+'-bg') || '?'}
+HBSAG: ${v(prefix+'-hbsag') || 'NEG'}
+SICKLING: ${v(prefix+'-sick') || 'NEG'}
+G6PD: ${v(prefix+'-g6pd') || 'NO DEFECT'}
+VDRL: ${v(prefix+'-vdrl') || 'NEG'}
+RETROSCREEN: ${v(prefix+'-retro') || 'NON-REACTIVE'}
+BOOKING HB: ${v(prefix+'-bkhb') || '?'} G/DL
+BOOKING BP: ${v(prefix+'-bkbp') || '?'} MMHG`;
+}
+
+function buildScanBlock(prefix) {
+  return `OBS SCAN FINDINGS
+NUMBER OF FETUSES: ${v(prefix+'-scan-fetus') || '1'}
+PLACENTA LOCATION: ${v(prefix+'-scan-placenta') || '?'}
+PRESENTATION: ${v(prefix+'-scan-pres') || '?'}
+FETAL HEART: ${v(prefix+'-scan-fh') || 'PRESENT'}
+LIQUOR VOLUME: ${v(prefix+'-scan-liquor') || 'ADEQUATE'}
+EGA: ${v(prefix+'-scan-ega') || '?'}
+EDD: ${v(prefix+'-scan-edd') || '?'}
+EFA: ${v(prefix+'-scan-efa') || '?'} G
+COMMENTS: SINGLETON`;
+}
+
+function buildObsExam(prefix) {
+  return `CVS: P- ${v(prefix+'-pr') || '?'} BPM, BP- ${v(prefix+'-bps') || '?'}/${v(prefix+'-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v(prefix+'-rr') || '?'} CPM, CHEST CLINICALLY CLEAR
+ABD: GRAVID, MWR, ${v(prefix+'-tender') || 'NON-TENDER'}, SFH- ${v(prefix+'-sfh') || '?'} CM, ${v(prefix+'-lie') || 'LONGITUDINAL'} LIE, ${v(prefix+'-pres') || 'CEPHALIC'} PRESENTATION, FHR- ${v(prefix+'-fhr') || '?'} BPM
+CNS: CONSCIOUS AND ALERT, WELL ORIENTED IN TPP`;
+}
+
+// ─── ANC ───
+function generateANC() {
+  const doc = v('anc-doc').toUpperCase();
+  saveDoctorName(doc);
+  const odqStr = getODQString('odq-anc', ODQ_OBSTETRIC);
+  const seStr = getODQString('odq-anc-se', ODQ_SE);
+  const comorbidity = v('anc-comorbidity');
+  const referral = v('anc-referral');
+  const hpcLine = comorbidity
+    ? `KNOWN CASE OF ${comorbidity.toUpperCase()}\nHPC: PATIENT IS A ${v('anc-ancstatus') || 'REGULAR ANC ATTENDANT'} HERE AT KBTH${referral ? '\nREFERRED FROM ' + referral.toUpperCase() : ''}`
+    : `HPC: PATIENT IS A ${v('anc-ancstatus') || 'REGULAR ANC ATTENDANT'} WITH NO KNOWN COMORBIDITIES${referral ? '\nREFERRED FROM ' + referral.toUpperCase() : ''}`;
+  const veStr = v('anc-ve') ? `\nVE: ${v('anc-ve').toUpperCase()}` : '';
+  const nextVisit = v('anc-nextvisit');
+
+  const out = `ANC
+
+NAME: ${v('anc-name') || '?'}
+AGE: ${v('anc-age') || '?'}   PARITY: G${v('anc-g') || '?'} P${v('anc-p') || '?'} + ${v('anc-losses') || '0'}
+EDD: ${v('anc-edd') || '?'}
+EGA: ${v('anc-egaw') || '?'} W ${v('anc-egad') || '0'} D
+
+${hpcLine}
+
+O/A OF ${v('anc-oa') || '?'}
+
+ON DIRECT QUESTIONING
+${odqStr}
+
+SYSTEMIC ENQUIRY
+${seStr}
+
+PAST MEDICAL & SURGICAL HISTORY
+HPT${v('anc-hpt') || '-'}, DM${v('anc-dm') || '-'}, SCD${v('anc-scd') || '-'}, ASTHMA${v('anc-asthma') || '-'}
+SURGERIES / TRANSFUSIONS: ${v('anc-surg') || 'NONE'}
+DRUG / HERBAL / ALLERGY HISTORY: ${v('anc-drug') || 'NO KNOWN DRUG ALLERGIES'}
+
+SOCIAL HISTORY
+HAS A PARTNER, LIVES AT ${v('anc-lives') || '?'}, LEL- ${v('anc-edu') || '?'}, WORKS AS ${v('anc-occ') || '?'}, ALCOHOL${v('anc-alc') || '-'}, SMOKING${v('anc-smk') || '-'}, NHIS${v('anc-nhis') || '+'}, ${v('anc-transfuse') || 'ACCEPTS BLOOD TRANSFUSION'}
+
+OBSTETRIC HISTORY — G${v('anc-g') || '?'} P${v('anc-p') || '?'} + ${v('anc-losses') || '0'}
+${getObsHistoryString('anc')}
+INDEX PREGNANCY
+${buildBookingBlock('anc')}
+________________________________________
+
+ON EXAMINATION
+YOUNG WOMAN NOT IN OBVIOUS RESP DISTRESS, ${v('anc-pale') || 'NOT PALE'}, ${v('anc-jau') || 'ANICTERIC'}, AFEBRILE (${v('anc-temp') || '?'}°C), ${v('anc-oedema') || 'NO PEDAL OEDEMA'}, HYDRATION ${v('anc-hyd') || 'FAIR'}
+
+${buildObsExam('anc')}${veStr}
+________________________________________
+
+INVESTIGATIONS
+${buildScanBlock('anc')}
+
+URINE PROTEINS: ${v('anc-uproteins') || 'NIL'}
+
+PLAN + ${doc || '?'}
+${v('anc-plan') || '?'}${nextVisit ? '\n\nNEXT VISIT: ' + nextVisit : ''}`;
+
+  document.getElementById('outtext-anc').textContent = out;
+  document.getElementById('out-anc').classList.add('visible');
+  document.getElementById('out-anc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── OBS ER ───
+function generateOBSER() {
+  const doc = v('er-doc').toUpperCase();
+  saveDoctorName(doc);
+  const odqStr = getODQString('odq-er', ODQ_OBSTETRIC);
+  const seStr = getODQString('odq-er-se', ODQ_SE);
+  const comorbidity = v('er-comorbidity');
+  const referral = v('er-referral');
+  const hpcLine = comorbidity
+    ? `KNOWN CASE OF ${comorbidity.toUpperCase()}, CURRENTLY BEING MANAGED ON ?\nHPC: PATIENT IS A ${v('er-ancstatus') || 'REGULAR ANC ATTENDANT'}${referral ? ' REFERRED FROM ' + referral.toUpperCase() : ''}`
+    : `HPC: PATIENT IS A ${v('er-ancstatus') || 'REGULAR ANC ATTENDANT'} WITH NO KNOWN COMORBIDITIES${referral ? ' REFERRED FROM ' + referral.toUpperCase() : ''}`;
+  const veStr = v('er-ve') ? `\nVE: ${v('er-ve').toUpperCase()}` : '';
+
+  const out = `OBS ER
+
+NAME: ${v('er-name') || '?'}
+AGE: ${v('er-age') || '?'}   PARITY: G${v('er-g') || '?'} P${v('er-p') || '?'} + ${v('er-losses') || '0'}
+EDD: ${v('er-edd') || '?'}
+EGA: ${v('er-egaw') || '?'} W ${v('er-egad') || '0'} D
+
+PC: ${v('er-pc') || '?'}
+
+${hpcLine}
+
+ON DIRECT QUESTIONING
+${odqStr}
+
+SYSTEMIC ENQUIRY
+${seStr}
+
+PAST MEDICAL & SURGICAL HISTORY
+HPT${v('er-hpt') || '-'}, DM${v('er-dm') || '-'}, SCD${v('er-scd') || '-'}, ASTHMA${v('er-asthma') || '-'}
+SURGERIES / TRANSFUSIONS: ${v('er-surg') || 'NONE'}
+DRUG / HERBAL / ALLERGY HISTORY: ${v('er-drug') || 'NO KNOWN DRUG ALLERGIES'}
+
+SOCIAL HISTORY
+LIVES AT ${v('er-lives') || '?'}, WORKS AS ${v('er-occ') || '?'}, NHIS${v('er-nhis') || '+'}, ${v('er-transfuse') || 'ACCEPTS BLOOD TRANSFUSION'}
+
+OBSTETRIC HISTORY — G${v('er-g') || '?'} P${v('er-p') || '?'} + ${v('er-losses') || '0'}
+${getObsHistoryString('er')}
+INDEX PREGNANCY
+${buildBookingBlock('er')}
+________________________________________
+
+ON EXAMINATION
+YOUNG WOMAN NOT IN OBVIOUS RESP DISTRESS, ${v('er-pale') || 'NOT PALE'}, ${v('er-jau') || 'ANICTERIC'}, AFEBRILE (${v('er-temp') || '?'}°C), ${v('er-oedema') || 'NO PEDAL OEDEMA'}, HYDRATION ${v('er-hyd') || 'FAIR'}
+
+${buildObsExam('er')}${veStr}
+________________________________________
+
+INVESTIGATIONS
+${buildScanBlock('er')}
+
+URINE PROTEINS: ${v('er-uproteins') || 'NIL'}
+
+PLAN + ${doc || '?'}
+${v('er-plan') || '?'}`;
+
+  document.getElementById('outtext-obser').textContent = out;
+  document.getElementById('out-obser').classList.add('visible');
+  document.getElementById('out-obser').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── GYNAE CLINIC ───
+function generateGynaeClinic() {
+  const doc = v('gc-doc').toUpperCase();
+  saveDoctorName(doc);
+  const seStr = getODQString('odq-gc-se', ODQ_SE);
+  const abdMass = v('gc-abdmass');
+  const abdLine = abdMass
+    ? `ABD: FULL SOFT, MWR, NON-TENDER, ${abdMass.toUpperCase()}`
+    : `ABD: FULL SOFT, MWR, NON-TENDER, LIVER NOT ENLARGED, SPLEEN NOT ENLARGED AND KIDNEYS NOT BALLOTABLE`;
+
+  const out = `GYNAE CLINIC
+
+NAME: ${v('gc-name') || '?'}
+AGE: ${v('gc-age') || '?'}
+GRAVIDITY & PARITY: G${v('gc-g') || '?'} P${v('gc-p') || '?'} + ${v('gc-losses') || '0'}
+LMP: ${v('gc-lmp') || '?'}
+STREET ADDRESS: ${v('gc-address') || '?'}
+
+PC: ${v('gc-pc') || '?'}
+
+ODQ:
+${v('gc-odq') || '?'}
+
+SYSTEMIC ENQUIRY
+${seStr}
+
+GYNAECOLOGICAL HISTORY
+MENSTRUAL HISTORY: MENARCHE AT ${v('gc-menarche') || '?'}
+CYCLE LENGTH: ${v('gc-cycle') || '?'} DAYS, DURATION OF FLOW: ${v('gc-flowdur') || '?'} DAYS, DYSMENORRHOEA${v('gc-dysm') || '-'}, VAGINAL DISCHARGE${v('gc-vd') || '-'}, INTERMENSTRUAL BLEEDING${v('gc-imb') || '-'}
+
+SEXUAL HISTORY: COITARCHE AT ${v('gc-coitarche') || '?'}, NUMBER OF LIFETIME SEXUAL PARTNERS: ${v('gc-partners') || '?'}
+PAP SMEAR: ${v('gc-pap') || '?'}
+BREAST EXAM: ${v('gc-breast') || '?'}
+
+CONTRACEPTIVE HISTORY: ${v('gc-contra') || 'NIL'}
+
+PAST OBSTETRIC HISTORY
+${getObsHistoryString('gc')}
+
+PAST MEDICAL / SURGICAL HISTORY:
+${v('gc-pmhx') || 'NIL OF NOTE'}
+DRUG HISTORY: ${v('gc-drug') || 'NO KNOWN DRUG ALLERGIES'}
+
+FAMILY HISTORY: ${v('gc-fhx') || 'NIL OF NOTE'}
+
+SOCIAL HISTORY
+${v('gc-marital') || 'MARRIED'}, LEVEL OF EDUCATION: ${v('gc-edu') || '?'}, OCCUPATION: ${v('gc-occ') || '?'}, HUSBAND'S OCCUPATION: ${v('gc-husbocc') || '?'}, NHIS${v('gc-nhis') || '+'}, ${v('gc-transfuse') || 'ACCEPTS BLOOD TRANSFUSION'}
+
+O/E: YOUNG WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('gc-pale') || 'NOT PALE'}, ANICTERIC, AFEBRILE (${v('gc-temp') || '?'}°C), HYDRATION FAIR
+
+CVS: P- ${v('gc-pr') || '?'} BPM, BP- ${v('gc-bps') || '?'}/${v('gc-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v('gc-rr') || '?'} CPM, SPO2- ${v('gc-spo2') || '?'}%, CHEST CLINICALLY CLEAR
+${abdLine}
+CNS: ALERT AND CONSCIOUS, ORIENTED IN TPP
+
+PLAN + ${doc || '?'}
+${v('gc-plan') || '?'}`;
+
+  document.getElementById('outtext-gynaeclinic').textContent = out;
+  document.getElementById('out-gynaeclinic').classList.add('visible');
+  document.getElementById('out-gynaeclinic').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── LW C/S NOTE ───
+function generateLWCS() {
+  const doc = v('lw-doc').toUpperCase();
+  const surgeon = v('lw-surgeon').toUpperCase();
+  saveDoctorName(surgeon || doc);
+  const date = v('lw-date') || today();
+  const useStandard = document.getElementById('lw-standard-mgt').value === 'yes';
+  const mgt = useStandard ? LW_STANDARD_MGT : (v('lw-custom-mgt') || '?');
+
+  const out = `LABOUR WARD — PROCEDURE NOTES (${date})
+
+NAME: ${v('lw-name') || '?'}
+AGE: ${v('lw-age') || '?'} YEARS
+EGA: ${v('lw-egaw') || '?'} W ${v('lw-egad') || '0'} D
+NOW P${v('lw-parity') || '?'}
+
+SURGERY: ${v('lw-cstype') || 'EMERGENCY'} CAESAREAN SECTION
+INDICATION: ${v('lw-indication') || '?'}
+
+SURGEON: ${surgeon || '?'}
+SURGEON'S ASSISTANT: ${v('lw-assist') || '?'}
+ANAESTHESIA: ${v('lw-anatype') || 'SPINAL'} BY ${v('lw-anaest') || '?'}
+SCRUB NURSE: ${v('lw-scrub') || '?'}
+
+FINDINGS
+${v('lw-baby') || 'LIVE'}, BW- ${v('lw-bw') || '?'} KG, APGARS ${v('lw-apg1') || '?'}/10, ${v('lw-apg2') || '?'}/10, PRESENTATION: ${v('lw-pres') || 'CEPHALIC'}, LIQUOR ${v('lw-liquor') || 'CLEAR AND ADEQUATE'}, ${v('lw-placenta') || 'NORMALLY SITED'} PLACENTA, EBL= ${v('lw-ebl') || '?'} ML${v('lw-extra-findings') ? '\n' + v('lw-extra-findings').toUpperCase() : ''}
+
+PROCEDURE
+AFTER ${v('lw-anatype') || 'SPINAL'} ANAESTHESIA WAS GIVEN, PATIENT WAS POSITIONED SUPINE. UNDER ASEPTIC CONDITIONS ABDOMEN WAS CLEANED AND DRAPED. ABDOMEN WAS ENTERED BY A PFANNENSTIEL INCISION THROUGH THE LAYERS OF THE ANTERIOR ABDOMINAL WALL. THE REST OF THE ABDOMEN WERE BLUNTLY DISSECTED TO ACCESS THE UTERUS. ABDOMEN WAS STRETCHED, BLADDER RETRACTOR WAS PLACED. A LOWER UTERINE SEGMENT C/S WAS DONE AND BABY DELIVERED WITH ABOVE FINDINGS. THE PLACENTA WAS DELIVERED BY CONTROLLED CORD TRACTION (CCT). UTERUS WAS EXTERIORISED AND HAEMOSTASIS WAS SECURED. UTERUS WAS CLEANED AND FOUND EMPTIED. IT WAS THEN REPAIRED IN TWO LAYERS BY CONTINUOUS SUTURING USING VICRYL 1. HAEMOSTATIC SUTURES WERE PLACED. THE ABDOMEN WAS CLOSED IN LAYERS USING VICRYL 1 TO FASCIA; VICRYL FOR SUBCUT. SKIN WAS CLOSED USING 2-0 IN SUBCUTICULAR FASHION.
+
+IMMEDIATE POST-OP CONDITION WAS SATISFACTORY.
+
+POST-OPERATIVE MANAGEMENT
+${mgt}
+
+PLAN + ${doc || surgeon || '?'}`;
+
+  document.getElementById('outtext-lwcs').textContent = out;
+  document.getElementById('out-lwcs').classList.add('visible');
+  document.getElementById('out-lwcs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ─── GYNAE THEATRE ───
+function generateGynaeTheatre() {
+  const doc = v('gt-doc').toUpperCase();
+  const surgeon = v('gt-surgeon').toUpperCase();
+  saveDoctorName(surgeon || doc);
+  const date = v('gt-date') || today();
+  const useStandard = document.getElementById('gt-standard-mgt').value === 'yes';
+  const mgt = useStandard ? GT_STANDARD_MGT : (v('gt-custom-mgt') || '?');
+
+  const out = `GYNAE THEATRE — PROCEDURE NOTES (${date})
+
+NAME: ${v('gt-name') || '?'}
+AGE: ${v('gt-age') || '?'} YRS
+PARITY: G${v('gt-g') || '?'} P${v('gt-p') || '?'} + ${v('gt-losses') || '0'}
+
+TYPE OF SURGERY: ${v('gt-surgery') || '?'}
+INDICATION: ${v('gt-indication') || '?'}
+
+SURGEON: ${surgeon || '?'}
+ASSISTANT: ${v('gt-assist') || '?'}
+ANAESTHETIST: ${v('gt-anaest') || '?'}
+ANAESTHESIA: ${v('gt-anatype') || 'SPINAL'}
+SCRUB NURSE: ${v('gt-scrub') || '?'}
+
+FINDINGS:
+${v('gt-findings') || '?'}
+
+PROCEDURE NOTES:
+${v('gt-procedure') || '?'}
+
+POSTOP MANAGEMENT:
+${mgt}
+
+PLAN + ${doc || surgeon || '?'}`;
+
+  document.getElementById('outtext-gynaetheatre').textContent = out;
+  document.getElementById('out-gynaetheatre').classList.add('visible');
+  document.getElementById('out-gynaetheatre').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Read URL param to open specific template directly
+  const urlParams = new URLSearchParams(window.location.search);
+  const tplParam = urlParams.get('tpl');
+  if (tplParam && templates.includes(tplParam)) {
+    showTemplate(tplParam);
+  }
+
+  // Set today's date in date fields
+  const dateFields = ['labs-date', 'tf-date', 'tf-xdate', 'dc-dod'];
+  dateFields.forEach(id => { const el = document.getElementById(id); if (el) el.placeholder = today(); });
+
+  // Build ODQ grids — Phase 1
+  buildODQ('odq-svd', ODQ_STANDARD);
+  buildODQ('odq-cs', ODQ_STANDARD);
+  buildODQ('odq-ap', ODQ_AP);
+  buildODQ('odq-rnd', ODQ_STANDARD);
+  buildODQ('odq-rec', ODQ_REC);
+
+  // Build ODQ grids — Phase 2
+  buildODQ('odq-anc', ODQ_OBSTETRIC);
+  buildODQ('odq-anc-se', ODQ_SE);
+  buildODQ('odq-er', ODQ_OBSTETRIC);
+  buildODQ('odq-er-se', ODQ_SE);
+  buildODQ('odq-gc-se', ODQ_SE);
+
+  // Pre-fill discharge meds
+  updateDischargeMeds();
+
+  // Render saved doctors
+  renderAllDocDropdowns();
+});
+</script>
+</body>
+</html>
