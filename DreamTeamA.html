@@ -43,7 +43,7 @@ html,body{background:#0a1628!important;color:#fff!important;color-scheme:dark;fo
 .btn-lookup{padding:11px 24px;background:linear-gradient(135deg,#1e6fa5,#2196c4);border:none;border-radius:10px;color:#fff!important;-webkit-text-fill-color:#fff!important;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;cursor:pointer;align-self:flex-end;}
 .result-hidden{display:none;}
 .result-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:100px;font-size:13px;font-weight:700;margin-bottom:18px;}
-.badge-obs{background:rgba(33,150,196,.2);border:1px solid #2196c4;color:#64b5d9!important;-webkit-text-fill-color:#64b5d9!important;}
+.badge-mat{background:rgba(33,150,196,.2);border:1px solid #2196c4;color:#64b5d9!important;-webkit-text-fill-color:#64b5d9!important;}
 .badge-gynae{background:rgba(46,204,113,.15);border:1px solid #2ecc71;color:#2ecc71!important;-webkit-text-fill-color:#2ecc71!important;}
 .badge-float{background:rgba(243,156,18,.15);border:1px solid #f39c12;color:#f39c12!important;-webkit-text-fill-color:#f39c12!important;}
 .badge-leave{background:rgba(231,76,60,.15);border:1px solid #e74c3c;color:#e74c3c!important;-webkit-text-fill-color:#e74c3c!important;}
@@ -78,7 +78,7 @@ html,body{background:#0a1628!important;color:#fff!important;color-scheme:dark;fo
 .resident-box .r-name{font-size:14px;font-weight:600;color:#fff!important;-webkit-text-fill-color:#fff!important;}
 .resident-box .r-num a{color:#2196c4!important;-webkit-text-fill-color:#2196c4!important;text-decoration:none;font-size:13px;}
 .open-btn{background:#2196c4;color:#fff!important;-webkit-text-fill-color:#fff!important;border:none;border-radius:6px;padding:3px 10px;font-size:11px;font-family:'Poppins',sans-serif;cursor:pointer;margin-left:6px;font-weight:600;}
-.unknown-box{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:12px;padding:20px;text-align:center;color:rgba(255,255,255,.7)!important;-webkit-text-fill-color:rgba(255,255,255,.7)!important;font-size:13px;}
+.unknown-box{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:12px;padding:20px;text-align:center;color:rgba(255,255,255,.7)!important;font-size:13px;}
 .scenario-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:18px;}
 .scenario-card{padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(30,111,165,.25);border-radius:12px;cursor:pointer;transition:all .2s;}
 .scenario-card:hover,.scenario-card.selected{background:rgba(33,150,196,.15);border-color:#2196c4;}
@@ -110,7 +110,6 @@ html,body{background:#0a1628!important;color:#fff!important;color-scheme:dark;fo
 .contact-card .c-name{font-size:13px;font-weight:600;color:#fff!important;-webkit-text-fill-color:#fff!important;margin-bottom:6px;}
 .contact-card .c-num a{color:#2196c4!important;-webkit-text-fill-color:#2196c4!important;text-decoration:none;font-size:12px;}
 .contact-cat{font-size:11px;font-weight:700;color:#64b5d9!important;-webkit-text-fill-color:#64b5d9!important;letter-spacing:1px;text-transform:uppercase;margin:18px 0 8px;}
-.tutorials-list{margin-top:0;}
 .tutorial-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05);}
 .tutorial-row:last-child{border-bottom:none;}
 .tutorial-date{font-size:11px;font-weight:700;color:#9b59b6!important;-webkit-text-fill-color:#9b59b6!important;background:rgba(155,89,182,.1);padding:3px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;}
@@ -226,44 +225,45 @@ function getPersonOnLeave(d){
   return null;
 }
 
+// Schedule: mat1=MAT1, mat2=MAT2, er=OBS ER, g1=Gynae1, g2=Gynae2, lw=LW1
 const SCHED=[
-  {s:'2026-06-01',e:'2026-06-07', o1:'Samira',  o2:'Winston', f1:'Messiah', f2:'Bertha',  g1:'Efua',          g2:'Daniel'},
-  {s:'2026-06-08',e:'2026-06-14', o1:'Bertha',  o2:'Messiah', f1:'Daniel',  f2:'Efua',    g1:'Samira',        g2:'Winston'},
-  {s:'2026-06-15',e:'2026-06-21', o1:'Messiah', o2:'Samira',  f1:'Efua',    f2:'Daniel',  g1:'Bertha',        g2:'Winston'},
-  {s:'2026-06-22',e:'2026-06-24', o1:'Samira',  o2:'Efua',    f1:'Dan',     f2:'Bertha',  g1:'Winston',       g2:'Messiah'},
-  {s:'2026-06-25',e:'2026-06-28', o1:'Samira',  o2:'Efua',    f1:'Dan',     f2:'Bertha',  g1:'Fatima/Winston',g2:'Messiah'},
-  {s:'2026-06-29',e:'2026-07-05', o1:'Efua',    o2:'Dan',     f1:'Bertha',  f2:'Fatima',  g1:'Messiah',       g2:'Samira'},
-  {s:'2026-07-06',e:'2026-07-12', o1:'Dan',     o2:'Bertha',  f1:'Fatima',  f2:'Messiah', g1:'Samira',        g2:'Efua'},
-  {s:'2026-07-13',e:'2026-07-19', o1:'Bertha',  o2:'Fatima',  f1:'Messiah', f2:'Samira',  g1:'Efua',          g2:'Dan'},
-  {s:'2026-07-20',e:'2026-07-22', o1:'Fatima',  o2:'Messiah', f1:'Samira',  f2:'Efua',    g1:'Dan',           g2:'Bertha'},
-  {s:'2026-07-23',e:'2026-07-23', o1:'Fatima',  o2:'Messiah', f1:'Samira',  f2:'Efua',    g1:'Dan/Winston',   g2:'Bertha'},
-  {s:'2026-07-24',e:'2026-07-26', o1:'Fatima',  o2:'Messiah', f1:'Samira',  f2:'Efua',    g1:'Winston',       g2:'Bertha'},
-  {s:'2026-07-27',e:'2026-08-02', o1:'Messiah', o2:'Samira',  f1:'Efua',    f2:'Winston', g1:'Bertha',        g2:'Fatima'},
-  {s:'2026-08-03',e:'2026-08-09', o1:'Samira',  o2:'Efua',    f1:'Winston', f2:'Bertha',  g1:'Fatima',        g2:'Messiah'},
-  {s:'2026-08-10',e:'2026-08-16', o1:'Efua',    o2:'Winston', f1:'Bertha',  f2:'Fatima',  g1:'Messiah',       g2:'Samira'},
-  {s:'2026-08-17',e:'2026-08-18', o1:'Winston', o2:'Bertha',  f1:'Fatima',  f2:'Messiah', g1:'Samira',        g2:'Efua'},
-  {s:'2026-08-19',e:'2026-08-19', o1:'Winston', o2:'Bertha',  f1:'Fatima',  f2:'Messiah', g1:'Samira',        g2:'Efua/Dan'},
-  {s:'2026-08-20',e:'2026-08-23', o1:'Winston', o2:'Bertha',  f1:'Fatima',  f2:'Messiah', g1:'Samira',        g2:'Dan'},
-  {s:'2026-08-24',e:'2026-08-30', o1:'Bertha',  o2:'Fatima',  f1:'Messiah', f2:'Samira',  g1:'Dan',           g2:'Winston'},
-  {s:'2026-08-31',e:'2026-09-06', o1:'Fatima',  o2:'Messiah', f1:'Samira',  f2:'Dan',     g1:'Winston',       g2:'Bertha'},
-  {s:'2026-09-07',e:'2026-09-13', o1:'Messiah', o2:'Samira',  f1:'Dan',     f2:'Winston', g1:'Bertha',        g2:'Fatima'},
-  {s:'2026-09-14',e:'2026-09-14', o1:'Samira',  o2:'Dan',     f1:'Winston', f2:'Bertha',  g1:'Fatima',        g2:'Messiah'},
-  {s:'2026-09-15',e:'2026-09-15', o1:'Samira',  o2:'Dan',     f1:'Winston', f2:'Bertha/Efua',g1:'Fatima',     g2:'Messiah'},
-  {s:'2026-09-16',e:'2026-09-20', o1:'Samira',  o2:'Dan',     f1:'Winston', f2:'Efua',    g1:'Fatima',        g2:'Messiah'},
-  {s:'2026-09-21',e:'2026-09-27', o1:'Dan',     o2:'Winston', f1:'Efua',    f2:'Fatima',  g1:'Messiah',       g2:'Samira'},
-  {s:'2026-09-28',e:'2026-10-04', o1:'Winston', o2:'Efua',    f1:'Fatima',  f2:'Messiah', g1:'Samira',        g2:'Dan'},
-  {s:'2026-10-05',e:'2026-10-09', o1:'Efua',    o2:'Fatima',  f1:'Messiah', f2:'Samira',  g1:'Dan',           g2:'Winston'},
-  {s:'2026-10-10',e:'2026-10-11', o1:'Efua',    o2:'Fatima',  f1:'Messiah/Bertha',f2:'Samira',g1:'Dan',       g2:'Winston'},
-  {s:'2026-10-12',e:'2026-10-18', o1:'Fatima',  o2:'Bertha',  f1:'Samira',  f2:'Dan',     g1:'Winston',       g2:'Efua'},
-  {s:'2026-10-19',e:'2026-10-25', o1:'Bertha',  o2:'Samira',  f1:'Dan',     f2:'Winston', g1:'Efua',          g2:'Fatima'},
-  {s:'2026-10-26',e:'2026-11-01', o1:'Samira',  o2:'Dan',     f1:'Winston', f2:'Efua',    g1:'Fatima',        g2:'Bertha'},
-  {s:'2026-11-02',e:'2026-11-04', o1:'Dan',     o2:'Winston', f1:'Efua',    f2:'Fatima',  g1:'Bertha',        g2:'Samira'},
-  {s:'2026-11-05',e:'2026-11-05', o1:'Dan',     o2:'Winston', f1:'Efua',    f2:'Fatima',  g1:'Bertha',        g2:'Samira/Messiah'},
-  {s:'2026-11-06',e:'2026-11-08', o1:'Dan',     o2:'Winston', f1:'Efua',    f2:'Fatima',  g1:'Bertha',        g2:'Messiah'},
-  {s:'2026-11-09',e:'2026-11-15', o1:'Winston', o2:'Efua',    f1:'Fatima',  f2:'Bertha',  g1:'Messiah',       g2:'Dan'},
-  {s:'2026-11-16',e:'2026-11-22', o1:'Efua',    o2:'Fatima',  f1:'Bertha',  f2:'Messiah', g1:'Dan',           g2:'Winston'},
-  {s:'2026-11-23',e:'2026-11-29', o1:'Fatima',  o2:'Bertha',  f1:'Messiah', f2:'Dan',     g1:'Winston',       g2:'Efua'},
-  {s:'2026-11-30',e:'2026-12-01', o1:'Bertha',  o2:'Messiah', f1:'Dan',     f2:'Winston', g1:'Efua',          g2:'Fatima'},
+  {s:'2026-06-01',e:'2026-06-07', m1:'',       m2:'',        er:'',                g1:'',        g2:'',        lw:''},
+  {s:'2026-06-08',e:'2026-06-14', m1:'Bertha',  m2:'Messiah', er:'Efua',            g1:'Samira',  g2:'Winston', lw:'Daniel'},
+  {s:'2026-06-15',e:'2026-06-21', m1:'Messiah', m2:'Efua',    er:'Samira',          g1:'Winston', g2:'Daniel',  lw:'Bertha'},
+  {s:'2026-06-22',e:'2026-06-24', m1:'Efua',    m2:'Samira',  er:'Winston',         g1:'Daniel',  g2:'Bertha',  lw:'Messiah'},
+  {s:'2026-06-25',e:'2026-06-28', m1:'Efua',    m2:'Samira',  er:'Fatima/Winston',  g1:'Daniel',  g2:'Bertha',  lw:'Messiah'},
+  {s:'2026-06-29',e:'2026-07-05', m1:'Samira',  m2:'Fatima',  er:'Daniel',          g1:'Bertha',  g2:'Messiah', lw:'Efua'},
+  {s:'2026-07-06',e:'2026-07-12', m1:'Fatima',  m2:'Daniel',  er:'Bertha',          g1:'Messiah', g2:'Efua',    lw:'Samira'},
+  {s:'2026-07-13',e:'2026-07-19', m1:'Dan',     m2:'Bertha',  er:'Messiah',         g1:'Efua',    g2:'Samira',  lw:'Fatima'},
+  {s:'2026-07-20',e:'2026-07-22', m1:'Bertha',  m2:'Messiah', er:'Efua',            g1:'Samira',  g2:'Fatima',  lw:'Daniel'},
+  {s:'2026-07-23',e:'2026-07-23', m1:'Bertha',  m2:'Messiah', er:'Efua',            g1:'Samira',  g2:'Fatima',  lw:'Dan/Winston'},
+  {s:'2026-07-24',e:'2026-07-26', m1:'Bertha',  m2:'Messiah', er:'Efus',            g1:'Fatima',  g2:'Winston', lw:'—'},
+  {s:'2026-07-27',e:'2026-08-02', m1:'Messiah', m2:'Efua',    er:'Samira',          g1:'Fatima',  g2:'Winston', lw:'Bertha'},
+  {s:'2026-08-03',e:'2026-08-09', m1:'Efua',    m2:'Samira',  er:'Fatima',          g1:'Winston', g2:'Bertha',  lw:'Messiah'},
+  {s:'2026-08-10',e:'2026-08-16', m1:'Samira',  m2:'Fatima',  er:'Winston',         g1:'Bertha',  g2:'Messiah', lw:'Efua'},
+  {s:'2026-08-17',e:'2026-08-18', m1:'Fatima',  m2:'Winston', er:'Bertha',          g1:'Messiah', g2:'Efua',    lw:'Samira'},
+  {s:'2026-08-19',e:'2026-08-19', m1:'Fatima',  m2:'Winston', er:'Bertha',          g1:'Messiah', g2:'Dan/Efua',lw:'Samira'},
+  {s:'2026-08-20',e:'2026-08-23', m1:'Fatima',  m2:'Winston', er:'Bertha',          g1:'Messiah', g2:'Dan',     lw:'Samira'},
+  {s:'2026-08-24',e:'2026-08-30', m1:'Winston', m2:'Bertha',  er:'Messiah',         g1:'Dan',     g2:'Samira',  lw:'Fatima'},
+  {s:'2026-08-31',e:'2026-09-06', m1:'Bertha',  m2:'Messiah', er:'Dan',             g1:'Samira',  g2:'Fatima',  lw:'Winston'},
+  {s:'2026-09-07',e:'2026-09-13', m1:'Messiah', m2:'Dan',     er:'Samira',          g1:'Fatima',  g2:'Winston', lw:'Bertha'},
+  {s:'2026-09-14',e:'2026-09-14', m1:'Daniel',  m2:'Samira',  er:'Fatima',          g1:'Winston', g2:'Bertha',  lw:'Messiah'},
+  {s:'2026-09-15',e:'2026-09-15', m1:'Daniel',  m2:'Samira',  er:'Fatima',          g1:'Winston', g2:'Bertha/Efua',lw:'Messiah'},
+  {s:'2026-09-16',e:'2026-09-20', m1:'Daniel',  m2:'Samira',  er:'Fatima',          g1:'Winston', g2:'Efua',    lw:'Messiah'},
+  {s:'2026-09-21',e:'2026-09-27', m1:'Samira',  m2:'Fatima',  er:'Winston',         g1:'Efua',    g2:'Messiah', lw:'Daniel'},
+  {s:'2026-09-28',e:'2026-10-04', m1:'Fatima',  m2:'Winston', er:'Efua',            g1:'Messiah', g2:'Daniel',  lw:'Samira'},
+  {s:'2026-10-05',e:'2026-10-09', m1:'Winston', m2:'Efua',    er:'Messiah',         g1:'Daniel',  g2:'Samira',  lw:'Fatima'},
+  {s:'2026-10-10',e:'2026-10-11', m1:'Winston', m2:'Efua',    er:'Messiah/Bertha',  g1:'Daniel',  g2:'Samira',  lw:'Fatima'},
+  {s:'2026-10-12',e:'2026-10-18', m1:'Efua',    m2:'Bertha',  er:'Daniel',          g1:'Samira',  g2:'Fatima',  lw:'Winston'},
+  {s:'2026-10-19',e:'2026-10-25', m1:'Bertha',  m2:'Daniel',  er:'Samira',          g1:'Fatima',  g2:'Winston', lw:'Efua'},
+  {s:'2026-10-26',e:'2026-11-01', m1:'Daniel',  m2:'Samira',  er:'Fatima',          g1:'Winston', g2:'Efua',    lw:'Bertha'},
+  {s:'2026-11-02',e:'2026-11-04', m1:'Samira',  m2:'Fatima',  er:'Winston',         g1:'Efua',    g2:'Bertha',  lw:'Daniel'},
+  {s:'2026-11-05',e:'2026-11-05', m1:'Samira/Messiah',m2:'Fatima',er:'Winston',    g1:'Efua',    g2:'Bertha',  lw:'Daniel'},
+  {s:'2026-11-06',e:'2026-11-08', m1:'Messiah', m2:'Fatima',  er:'Winston',         g1:'Efua',    g2:'Bertha',  lw:'Daniel'},
+  {s:'2026-11-09',e:'2026-11-15', m1:'Fatima',  m2:'Winston', er:'Efua',            g1:'Bertha',  g2:'Daniel',  lw:'Messiah'},
+  {s:'2026-11-16',e:'2026-11-22', m1:'Winston', m2:'Efua',    er:'Bertha',          g1:'Daniel',  g2:'Messiah', lw:'Fatima'},
+  {s:'2026-11-23',e:'2026-11-29', m1:'Efua',    m2:'Bertha',  er:'Daniel',          g1:'Messiah', g2:'Fatima',  lw:'Winston'},
+  {s:'2026-11-30',e:'2026-12-01', m1:'Bertha',  m2:'Daniel',  er:'Messiah',         g1:'Fatima',  g2:'Winston', lw:'Efua'},
 ];
 
 function getWeekRow(d){
@@ -278,8 +278,8 @@ function getStation(name,d){
   if(!row)return 'unknown';
   const aliases=name==='Daniel'?['Daniel','Dan']:[name];
   const fields=[
-    {k:'o1',st:'MatCover_1'},{k:'o2',st:'MatCover_2'},
-    {k:'f1',st:'Float_1'},{k:'f2',st:'Float_2'},
+    {k:'m1',st:'MAT_1'},{k:'m2',st:'MAT_2'},
+    {k:'er',st:'OBS_ER'},{k:'lw',st:'LW_1'},
     {k:'g1',st:'Gynae_1'},{k:'g2',st:'Gynae_2'},
   ];
   for(const f of fields){
@@ -289,23 +289,69 @@ function getStation(name,d){
   return 'unknown';
 }
 
+// FP schedule - LW1 is FP station
 const FP={
-  Messiah:['2026-07-06','2026-07-12'],
-  Samira: ['2026-07-13','2026-07-19'],
-  Efua:   ['2026-07-20','2026-07-26'],
-  Winston:['2026-07-27','2026-08-02'],
-  Bertha: ['2026-08-03','2026-08-09'],
-  Fatima: ['2026-08-10','2026-08-16'],
-  Daniel: ['2026-08-31','2026-09-06'],
+  Bertha: ['2026-07-27','2026-08-02'],
+  Messiah:['2026-08-03','2026-08-09'],
+  Efua:   ['2026-08-10','2026-08-16'],
+  Samira: ['2026-08-17','2026-08-18'],
+  Fatima: ['2026-08-13','2026-08-16'],
+  Winston:['2026-08-31','2026-09-06'],
+  Daniel: ['2026-09-21','2026-09-27'],
 };
 
+// Read FP from schedule LW column directly
 function isOnFP(name,d){
-  if(!FP[name])return false;
-  const ds=dateStr(d);
-  return ds>=FP[name][0]&&ds<=FP[name][1];
+  const row=getWeekRow(d);
+  if(!row)return false;
+  const lw=row.lw||'';
+  const aliases=name==='Daniel'?['Daniel','Dan']:[name];
+  for(const a of aliases){if(lw.includes('(FP)')&&lw.includes(a))return true;}
+  // Also check by name in LW and if that week has FP tag
+  return false;
 }
-function isFPMThu(name,d){return isOnFP(name,d)&&d.getDay()>=1&&d.getDay()<=4;}
-function isFPFri(name,d){return isOnFP(name,d)&&d.getDay()===5;}
+
+// Better FP check - look at the schedule data which has (FP) tags embedded
+const FP_WEEKS={
+  Bertha: {from:'2026-07-27',to:'2026-08-02'},
+  Messiah:{from:'2026-08-03',to:'2026-08-09'},
+  Efua:   {from:'2026-08-10',to:'2026-08-16'},
+  Samira: {from:'2026-08-17',to:'2026-08-18'},
+  Fatima: {from:'2026-08-10',to:'2026-08-16'},
+  Winston:{from:'2026-08-31',to:'2026-09-06'},
+  Daniel: {from:'2026-09-21',to:'2026-09-27'},
+};
+
+// Read FP directly from image - LW1 FP assignments
+const FP_SCHEDULE={
+  Bertha: ['2026-07-27','2026-08-02'],
+  Messiah:['2026-08-03','2026-08-09'],
+  Efua:   ['2026-08-10','2026-08-16'],
+  Samira: ['2026-08-17','2026-08-18'],
+  Fatima: ['2026-08-10','2026-08-16'],
+  Winston:['2026-08-31','2026-09-06'],
+  Daniel: ['2026-09-21','2026-09-27'],
+};
+
+// From image: FP tags appear in LW1 column for these weeks
+const FP_MAP={
+  'Bertha': ['2026-07-27','2026-08-02'],
+  'Messiah':['2026-08-03','2026-08-09'],
+  'Efua':   ['2026-08-10','2026-08-16'],
+  'Samira': ['2026-08-17','2026-08-18'],
+  'Fatima': ['2026-08-10','2026-08-16'],
+  'Winston':['2026-08-31','2026-09-06'],
+  'Daniel': ['2026-09-21','2026-09-27'],
+};
+
+function isFPWeek(name,d){
+  const fp=FP_MAP[name];
+  if(!fp)return false;
+  const ds=dateStr(d);
+  return ds>=fp[0]&&ds<=fp[1];
+}
+function isFPMThu(name,d){return isFPWeek(name,d)&&d.getDay()>=1&&d.getDay()<=4;}
+function isFPFri(name,d){return isFPWeek(name,d)&&d.getDay()===5;}
 
 const RESIDENTS={
   obs:[
@@ -315,7 +361,7 @@ const RESIDENTS={
     {from:'2026-06-22',to:'2026-06-30',name:'Dr Arab',num:'+233 24 403 7389'},
   ],
   gynae:[
-    {from:'2026-06-01',to:'2026-06-30',name:'Dr Patamia',num:''},
+    {from:'2026-06-01',to:'2026-06-30',name:'Dr Patamia',num:'0532963680'},
   ],
 };
 function getResident(type,d){
@@ -324,7 +370,6 @@ function getResident(type,d){
   return null;
 }
 
-// ── TUTORIALS ─────────────────────────────────────────────────────────────────
 const TUTORIALS=[
   {date:'2026-06-09',topic:'Pre-and-post operative care of the obstetrics and gynaecology patient',presenter:'Efua',presenterFull:'Dr Efua Kyerewaa Dwamena',supervisor:'Dr Fidelis'},
   {date:'2026-06-16',topic:'Normal Labour / WHO Labour Care Guide',presenter:'Samira',presenterFull:'Dr Samira Braimah Shardow',supervisor:'Dr Takyi-Ansah'},
@@ -353,26 +398,15 @@ const TUTORIALS=[
   {date:'2026-11-24',topic:'Pelvic Inflammatory Disease',presenter:'Bertha',presenterFull:'Dr Bertha Omechey Narh',supervisor:'TBC'},
 ];
 
-function getTutorialForDate(ds){
-  return TUTORIALS.find(t=>t.date===ds)||null;
-}
-
+function getTutorialForDate(ds){return TUTORIALS.find(t=>t.date===ds)||null;}
 function getTutorialReminder(name,ds){
-  // Check if 2 days from now is a tutorial where this person presents
   const d=toD(ds);
-  const twoDays=new Date(d);
-  twoDays.setDate(twoDays.getDate()+2);
-  const twoDs=dateStr(twoDays);
-  const t=TUTORIALS.find(t=>t.date===twoDs&&t.presenter===name);
-  return t||null;
+  const td=new Date(d);td.setDate(td.getDate()+2);
+  const tds=dateStr(td);
+  return TUTORIALS.find(t=>t.date===tds&&t.presenter===name)||null;
 }
+function formatTutorialDate(ds){const d=toD(ds);return d.getDate()+' '+MONTHS[d.getMonth()];}
 
-function formatTutorialDate(ds){
-  const d=toD(ds);
-  return d.getDate()+' '+MONTHS[d.getMonth()];
-}
-
-// ── DUTIES ────────────────────────────────────────────────────────────────────
 const GENERAL=[
   'Morning meeting at 8:00am — sign register',
   'Be part of morning ward round',
@@ -390,25 +424,32 @@ const GENERAL=[
 ];
 
 const OVERVIEW={
-  MatCover:[
+  MAT:[
     'Permanently stationed on the maternity ward all week — Monday to Friday',
     'No rotation to any other area',
-    'Responsible for ward rounds, patient reviews, admissions, documentation, investigations, follow-up tasks and all activities concerning obstetric inpatients',
+    'Responsible for ward rounds, patient reviews, admissions, documentation, investigations and all activities concerning obstetric inpatients',
     'Station does not change throughout the week',
   ],
   Gynae:[
     'Responsible for Ward E, Chenard A and any gynae patients admitted elsewhere including Maternity Floor 6',
     'Two Gynae HOs coordinate internally for breaks and coverage',
   ],
-  Float:[
-    'Floater is an internal scheduling term — if asked, you are working with the obstetrics team',
-    'Float 1 = Labour Ward. Float 2 = Obs ER',
-    'Your purpose is to support the obstetrics service and provide relief coverage',
+  ER:[
+    'Assigned to Obs ER — working with the Obs ER resident',
+    'Your purpose is to support the obstetrics service and provide emergency coverage',
+    'Clerk all admission cases fully — involve relatives in payment before they leave',
+    'If ER too busy — call resident immediately',
+    'Do not send every emergency to Labour Ward — it clogs it up',
+  ],
+  LW:[
+    'Assigned to Labour Ward 1 — working with the Labour Ward team',
+    'Your purpose is to support Labour Ward and theatre',
+    'Float 1 = Labour Ward. This is your primary station this week',
   ],
 };
 
 const DUTIES={
-  MatCover:{
+  MAT:{
     1:[
       {t:'7:30am',d:'Work starts'},
       {t:'8:00am',d:'Morning meeting — sign register'},
@@ -417,13 +458,13 @@ const DUTIES={
       {t:'After ward round',d:'Carry out all plans and to-dos, chase investigations'},
       {t:'All day',d:'Manage Barbara ward and Roses ward — both HOs must know what is happening across all wards and side wards'},
       {t:'All day',d:'Receive and review all new admissions'},
-      {t:'Afternoon',d:'Allow floaters to cover your ward while you take a break'},
+      {t:'Afternoon',d:'Allow ER/LW officers to cover your ward while you take a break'},
     ],
     2:[
       {t:'All day',d:'Review all patients, plan discharges, carry out investigations, implement resident plans'},
       {t:'All day',d:'Complete documentation, address all outstanding ward tasks'},
       {t:'All day',d:'Remain on the ward — do not rotate elsewhere today'},
-      {t:'Afternoon',d:'Allow floaters to relieve you for a rest break'},
+      {t:'Afternoon',d:'Allow ER/LW officers to relieve you for a rest break'},
     ],
     3:[
       {t:'All day',d:'Remain on ward — reviews, management, documentation, admissions, discharges, implementation of resident plans'},
@@ -452,7 +493,7 @@ const DUTIES={
       {t:'Morning',d:'Quick inpatient review with resident on cover'},
       {t:'⚠️ SVD patients',d:'See Medications & Labs tab — SVD Discharge checklist',w:true,l:'svd'},
       {t:'⚠️ C/S post-op',d:'See Medications & Labs tab — Post-Op Day 1 checklist',w:true,l:'postop1'},
-      {t:'Morning',d:'Shift system with floaters — floaters cover ward till 2pm to give Mat Cover officers rest'},
+      {t:'Morning',d:'Shift system with ER/LW officers — they cover ward till 2pm to give Mat Cover officers rest'},
     ],
     0:[
       {t:'If ON DUTY',d:'Starts 6:00am — runs to 8:00am Monday. Remain on ward. Use internal shift system for rest.'},
@@ -518,13 +559,12 @@ const DUTIES={
       {t:'If NOT on duty',d:'Cover ward in shift system'},
     ],
   },
-  Float:{
+  ER:{
     1:[
       {t:'Morning',d:'Full ward round on Maternity Floor 4 — participate fully'},
       {t:'After ward round',d:'Help carry out all plans made during the round'},
-      {t:'After ward round',d:'Float 1 supports Barbara ward, Float 2 supports Roses ward'},
-      {t:'⚠️ Note',d:'Both floaters must know what is happening across all wards and side wards',w:true},
-      {t:'Afternoon',d:'Create relief system for Mat Cover officers — one officer rests while you temporarily cover, then they return and you step away'},
+      {t:'All day',d:'Support Barbara and Roses wards — know what is happening across all wards'},
+      {t:'Afternoon',d:'Create relief system for Mat Cover officers — temporarily cover their ward while they rest'},
     ],
     2:[
       {t:'Morning',d:'Attend Gynae ward round — familiarise with patients, plans and workflow'},
@@ -534,31 +574,19 @@ const DUTIES={
     3:[
       {t:'Morning',d:'Gynae Clinic — assist with patient flow, documentation, clinic activities and general support'},
       {t:'After clinic',d:'Follow up at blood bank for Thursday theatre cases'},
-      {t:'After clinic',d:'Relieve Gynae Team so they can rest — maintain ward coverage until Gynae Team returns'},
+      {t:'After clinic',d:'Relieve Gynae Team so they can rest'},
     ],
     4:[
-      {t:'Morning',d:'Both Float 1 & 2 assigned to Gynae Theatre'},
-      {t:'All day',d:'Theatre documentation, operation notes, fill operations book completely, histopath forms, ledgers, theatre workflow'},
-      {t:'4hrs post-op',d:'Recovery reviews, four-hour post-operative reviews, post-operative notes, return patients to ward'},
+      {t:'Morning',d:'Assigned to Gynae Theatre — theatre documentation, operation notes, fill operations book, histopath forms, ledgers, theatre workflow'},
+      {t:'4hrs post-op',d:'Recovery reviews, post-operative notes, return patients to ward'},
       {t:'All day',d:'Internal shift for rest breaks'},
     ],
     5:[
-      {t:'9:30am',d:'Both Float 1 & 2 at ANC clinic'},
-      {t:'8:00am–5:00pm',d:'Float 1 at Labour Ward 1'},
-      {t:'5:00pm–8:00am Sat',d:'Float 1 moves to Labour Ward/Theatre duty station'},
-      {t:'5:00pm–8:00am Sat',d:'Float 2 moves to Obs ER duty station'},
+      {t:'9:30am',d:'ANC clinic'},
+      {t:'All day',d:'Obs ER with Obs ER resident'},
+      {t:'5:00pm–8:00am Sat',d:'Obs ER — primary duty station'},
       {t:'⚠️ Note',d:'Do not send every emergency to Labour Ward — it clogs it up',w:true},
       {t:'⚠️ Note',d:'Clerk all admission cases fully — involve relatives in payment before they leave',w:true},
-      {t:'Float 1 from 5pm',d:'Theatre documentation, operation notes, fill operations book, histopath forms, ledgers, recovery ward reviews'},
-      {t:'Float 1',d:'Learn: management of presentations in labour, augmentation of labour, full V/E in labour'},
-      {t:'Float 1',d:'Learn surgical knots in your own time — NOT on the patient'},
-      {t:'Float 1',d:'Suture episiotomies when you find the time'},
-      {t:'Float 1',d:'Learn manual removal of placenta under supervision'},
-      {t:'Float 1',d:'Aim for 10 Caesarean sections during the 6 months'},
-      {t:'Float 1',d:'First examination of newborns before midwives discharge them'},
-      {t:'Float 1',d:'Examine and discharge post-op cases from recovery ward'},
-      {t:'Float 1',d:'Assist surgeon in as many cases as possible — fill logbook PROSPECTIVELY, not retrospectively'},
-      {t:'Float 2 from 5pm',d:'Support Obs ER operations, assist with cases, documentation, clerk all cases fully'},
       {t:'6:30am Sat',d:'Begin early reviews'},
       {t:'8:00am Sat',d:'Official handover — all major tasks done by 10:00am'},
     ],
@@ -567,7 +595,49 @@ const DUTIES={
       {t:'Till 2:00pm',d:'Cover ward to give Mat Cover officers rest'},
     ],
     0:[
-      {t:'If ON DUTY',d:'8:00am–8:00am Monday — Float 1 at Labour Ward, Float 2 at Obs ER. Use internal shift system for rest.'},
+      {t:'If ON DUTY',d:'8:00am–8:00am Monday — Obs ER duty station. Use internal shift system for rest.'},
+      {t:'If NOT on duty',d:'Come in during the afternoon — prep Monday ward round notes, assist with handovers, familiarise with patients for Monday presentation'},
+    ],
+  },
+  LW:{
+    1:[
+      {t:'Morning',d:'Full ward round on Maternity Floor 4 — participate fully'},
+      {t:'After ward round',d:'Help carry out all plans, support Barbara ward'},
+      {t:'All day',d:'Know what is happening across all wards and side wards'},
+      {t:'Afternoon',d:'Create relief system for Mat Cover officers'},
+    ],
+    2:[
+      {t:'Morning',d:'Attend Gynae ward round — familiarise with patients, plans and workflow'},
+      {t:'After Obs ward activities slow',d:'Relieve Mat Cover officers for rest and meal'},
+    ],
+    3:[
+      {t:'Morning',d:'Gynae Clinic — assist with patient flow, documentation, clinic activities'},
+      {t:'After clinic',d:'Follow up at blood bank for Thursday theatre cases'},
+      {t:'After clinic',d:'Relieve Gynae Team so they can rest'},
+    ],
+    4:[
+      {t:'Morning',d:'Assigned to Gynae Theatre — theatre documentation, operation notes, fill operations book, histopath forms, ledgers'},
+      {t:'4hrs post-op',d:'Recovery reviews, post-operative notes, return patients to ward'},
+      {t:'All day',d:'Internal shift for rest breaks'},
+    ],
+    5:[
+      {t:'9:30am',d:'ANC clinic'},
+      {t:'8:00am–5:00pm',d:'Labour Ward 1'},
+      {t:'5:00pm–8:00am Sat',d:'Labour Ward/Theatre — primary duty station'},
+      {t:'LW/Theatre',d:'Theatre documentation, operation notes, fill operations book, histopath forms, ledgers, recovery ward reviews'},
+      {t:'LW/Theatre',d:'Learn: management of presentations in labour, augmentation of labour, full V/E in labour'},
+      {t:'LW/Theatre',d:'Assist surgeon in as many cases as possible — fill logbook PROSPECTIVELY, not retrospectively'},
+      {t:'LW/Theatre',d:'Aim for 10 Caesarean sections during the 6 months'},
+      {t:'LW/Theatre',d:'First examination of newborns before midwives discharge them'},
+      {t:'6:30am Sat',d:'Begin early reviews'},
+      {t:'8:00am Sat',d:'Official handover — all major tasks done by 10:00am'},
+    ],
+    6:[
+      {t:'Morning',d:'Run shift with Mat Cover — handle plans and to-dos'},
+      {t:'Till 2:00pm',d:'Cover ward to give Mat Cover officers rest'},
+    ],
+    0:[
+      {t:'If ON DUTY',d:'8:00am–8:00am Monday — Labour Ward duty station. Use internal shift system for rest.'},
       {t:'If NOT on duty',d:'Come in during the afternoon — prep Monday ward round notes, assist with handovers, familiarise with patients for Monday presentation'},
     ],
   },
@@ -591,7 +661,6 @@ function lookupSchedule(){
     const[ls,le]=LEAVE[name];
     badge.className='result-badge badge-leave';
     badge.innerHTML='🏖️ On Leave';
-    // Still show tutorial info even on leave
     let lvHtml=`<div class="leave-notice"><div class="l-icon">🏖️</div><div class="l-title">${name} is on leave</div><div class="l-text">Leave period: <strong>${toD(ls).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})} — ${toD(le).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</strong><br>Rest well and return refreshed!</div></div>`;
     lvHtml+=buildTutorialHtml(name,ds,dow);
     content.innerHTML=lvHtml;
@@ -605,12 +674,12 @@ function lookupSchedule(){
   }
 
   const SM={
-    MatCover_1:{dept:'MatCover',label:'Mat Cover',cover:'Mat Cover 1',icon:'🩺',badge:'badge-obs'},
-    MatCover_2:{dept:'MatCover',label:'Mat Cover',cover:'Mat Cover 2',icon:'🩺',badge:'badge-obs'},
-    Float_1:   {dept:'Float',  label:'Floater',  cover:'Float 1 (Labour Ward)',icon:'🔄',badge:'badge-float'},
-    Float_2:   {dept:'Float',  label:'Floater',  cover:'Float 2 (Obs ER)',     icon:'🔄',badge:'badge-float'},
-    Gynae_1:   {dept:'Gynae',  label:'Gynaecology',cover:'Gynae 1',            icon:'🌿',badge:'badge-gynae'},
-    Gynae_2:   {dept:'Gynae',  label:'Gynaecology',cover:'Gynae 2',            icon:'🌿',badge:'badge-gynae'},
+    MAT_1:  {dept:'MAT', label:'Mat Cover',  cover:'MAT 1',           icon:'🩺', badge:'badge-mat'},
+    MAT_2:  {dept:'MAT', label:'Mat Cover',  cover:'MAT 2',           icon:'🩺', badge:'badge-mat'},
+    OBS_ER: {dept:'ER',  label:'Obs ER',     cover:'Obs ER',          icon:'🚨', badge:'badge-float'},
+    LW_1:   {dept:'LW',  label:'Labour Ward',cover:'LW 1 (Labour Ward)',icon:'🔄',badge:'badge-float'},
+    Gynae_1:{dept:'Gynae',label:'Gynaecology',cover:'Gynae 1',        icon:'🌿', badge:'badge-gynae'},
+    Gynae_2:{dept:'Gynae',label:'Gynaecology',cover:'Gynae 2',        icon:'🌿', badge:'badge-gynae'},
   };
   const sm=SM[st];
   const dept=sm.dept;
@@ -620,22 +689,18 @@ function lookupSchedule(){
 
   let html='';
 
-  // Tutorial banners
   html+=buildTutorialHtml(name,ds,dow);
 
-  // Resident
   const resType=dept==='Gynae'?'gynae':'obs';
   const res=getResident(resType,d);
   if(res){
     html+=`<div class="resident-box"><div class="r-label">Your Resident Today</div><div class="r-name">${res.name}</div>${res.num?`<div class="r-num"><a href="tel:${res.num.replace(/\s/g,'')}">📞 ${res.num}</a></div>`:''}</div>`;
   }
 
-  // General
   html+=`<div class="duties-section"><div class="duties-label">All HOs — Every Day</div>`;
   GENERAL.forEach(g=>{html+=`<div class="duty-item"><div class="bullet"></div><div>${g}</div></div>`;});
   html+=`</div>`;
 
-  // Overview
   const ov=OVERVIEW[dept]||[];
   if(ov.length){
     html+=`<div class="duties-section"><div class="duties-label">${sm.label} — Station Overview</div>`;
@@ -643,13 +708,12 @@ function lookupSchedule(){
     html+=`</div>`;
   }
 
-  // FP check
-  const fpMThu=dept==='Float'&&isFPMThu(name,d);
-  const fpFri=dept==='Float'&&isFPFri(name,d);
+  const fpMThu=dept==='LW'&&isFPMThu(name,d);
+  const fpFri=dept==='LW'&&isFPFri(name,d);
 
   if(fpMThu||fpFri){
-    const[fps,fpe]=FP[name];
-    html+=`<div class="fp-banner"><strong>🏥 FAMILY PLANNING WEEK</strong>Your FP rotation: ${toD(fps).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${toD(fpe).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>`;
+    const fp=FP_MAP[name];
+    html+=`<div class="fp-banner"><strong>🏥 FAMILY PLANNING WEEK</strong>Your FP rotation: ${toD(fp[0]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${toD(fp[1]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>`;
     const fpd=fpMThu
       ?[{t:'8:00am–5:00pm',d:'Family Planning unit — attend and assist with Family Planning clinic'}]
       :[{t:'8:00am',d:'Join the team for the full 24-hour Friday duty — Family Planning rotation ends today'}];
@@ -675,31 +739,17 @@ function lookupSchedule(){
 
 function buildTutorialHtml(name,ds,dow){
   let html='';
-  // Check if today is the tutorial day (Tuesday)
-  const todayTutorial=getTutorialForDate(ds);
-  if(todayTutorial&&dow===2){
-    if(todayTutorial.presenter===name){
-      html+=`<div class="tutorial-banner presenter">
-        <div class="tb-label">🎤 You Are Presenting Tonight</div>
-        <div class="tb-topic">${todayTutorial.topic}</div>
-        <div class="tb-meta">📅 Tonight at 7:00pm &nbsp;|&nbsp; Supervisor: ${todayTutorial.supervisor}</div>
-      </div>`;
+  const todayT=getTutorialForDate(ds);
+  if(todayT&&dow===2){
+    if(todayT.presenter===name){
+      html+=`<div class="tutorial-banner presenter"><div class="tb-label">🎤 You Are Presenting Tonight</div><div class="tb-topic">${todayT.topic}</div><div class="tb-meta">📅 Tonight at 7:00pm &nbsp;|&nbsp; Supervisor: ${todayT.supervisor}</div></div>`;
     } else {
-      html+=`<div class="tutorial-banner">
-        <div class="tb-label">📚 Tutorial Tonight — 7:00pm</div>
-        <div class="tb-topic">${todayTutorial.topic}</div>
-        <div class="tb-meta">Presenter: ${todayTutorial.presenterFull} &nbsp;|&nbsp; Supervisor: ${todayTutorial.supervisor}</div>
-      </div>`;
+      html+=`<div class="tutorial-banner"><div class="tb-label">📚 Tutorial Tonight — 7:00pm</div><div class="tb-topic">${todayT.topic}</div><div class="tb-meta">Presenter: ${todayT.presenterFull} &nbsp;|&nbsp; Supervisor: ${todayT.supervisor}</div></div>`;
     }
   }
-  // Check if 2 days from now is the tutorial (Sunday reminder)
   const reminder=getTutorialReminder(name,ds);
   if(reminder){
-    html+=`<div class="tutorial-reminder">
-      <div class="tr-label">⏰ Presentation in 2 Days</div>
-      <div class="tr-topic">${reminder.topic}</div>
-      <div class="tr-meta">📅 ${formatTutorialDate(reminder.date)} at 7:00pm &nbsp;|&nbsp; Supervisor: ${reminder.supervisor}</div>
-    </div>`;
+    html+=`<div class="tutorial-reminder"><div class="tr-label">⏰ Presentation in 2 Days</div><div class="tr-topic">${reminder.topic}</div><div class="tr-meta">📅 ${formatTutorialDate(reminder.date)} at 7:00pm &nbsp;|&nbsp; Supervisor: ${reminder.supervisor}</div></div>`;
   }
   return html;
 }
@@ -712,67 +762,32 @@ function openMeds(id){
   setTimeout(()=>selectScenario(id),150);
 }
 
-// ── SCENARIOS ─────────────────────────────────────────────────────────────────
 const SCENARIOS=[
-  {id:'cs',icon:'🔪',title:'Pre-op Caesarean Section',sub:'Admission checklist & medications',
-   checklist:['Check that the working EDD is correct — discuss with resident if unsure','Note the indication for the surgery and note any allergies','Confirm from records and blood bank slips that relations have donated blood','Do a full clerking of the patient','Ensure a sickling test and current Hb are in the records — if Hb is more than a week old, do a new one using haemo-check','If Hb < 10g/dl — inform resident, you may need to transfuse depending on the level of anaemia','Be clear on the reasons for admission and the operation to be done — refer to the antenatal card','Check the notes and examine the patient thoroughly to make sure she is fit for the surgery prescribed','Read and effect any instructions on the antenatal card','Take blood for grouping and cross-matching — 2 pints (if placenta praevia request 4 pints). Attach blood donation slips to X-matching form','Prescribe medications for use before surgery and post-operatively for relatives to buy','Check anaesthesia clearance chart/form for any additional orders'],
-   meds:[{drug:'IV Augmentin',dose:'1.2g 8hrly',dur:'1 day'},{drug:'IV Flagyl',dose:'500mg 8hrly',dur:'1 day'},{drug:'IV Fluids',dose:'1L N/S + 1L DNS + 1L R/L',dur:''},{drug:'PR Diclofenac',dose:'100mg BD',dur:'5 days',note:'Do NOT prescribe for patients with ulcer, kidney problems or hypertensive disease in pregnancy — use Supp Paracetamol 1g tds x5 days instead'},{drug:'IV Paracetamol',dose:'1g tds/qid',dur:'1 day'},{drug:'IM Pethidine',dose:'100mg 8hrly',dur:'1 day',note:'Do NOT prescribe for sickle cell patients'},{drug:'SC Clexane',dose:'40mg daily',dur:'3 days',note:'Confirm duration and dose with junior resident on cover — may vary'},{drug:'Any other medications',dose:'Per antenatal card or anaesthetist orders',dur:'',note:'Check anaesthesia clearance chart/form'}],
-   notes:''},
-  {id:'gynae_preop',icon:'🏥',title:'Pre-op Gynaecology Theatre',sub:'Theatre prep checklist & medications',
-   checklist:['Review all pre-op cases on Ward E, Chenard A and Maternity 6th Floor','Check pre-op Hb > 10g/dl — if not, discuss with anaesthetist','X-matched blood ready in theatre — majors: 2 units, cancers: 4 units','Patients must have X-match fee ready — check with resident if unsure','Compile operation list with resident — submit to secretary before 12:00pm','Check patients admitted on wards including Maternity 6th Floor','Cross-check diary on Ward E — make sure operation list is complete','Be clear on reason for admission and operation — refer to OPD card','Full clerking of each patient','Read and effect instructions on anaesthetic pre-assessment forms','Take blood for grouping and X-matching — send to maternity blood bank, attach blood donation slips','Prescribe pre-op and post-op medications','Wednesday afternoon — visit blood bank to confirm blood for Thursday, ensure blood for at least first two cases','Visit theatre patients on wards — confirm all medications and IV fluids purchased'],
-   meds:[{drug:'IV Augmentin',dose:'1.2g 8hrly',dur:'1 day'},{drug:'IV Flagyl',dose:'500mg 8hrly',dur:'1 day'},{drug:'IV Fluids',dose:'1L N/S + 1L D/S + 1L R/L',dur:''},{drug:'PR Diclofenac',dose:'100mg BD',dur:'5 days'},{drug:'IV Tranexamic Acid',dose:'1g stat',dur:''},{drug:'IV Gelofusion',dose:'500ml',dur:'1 bag'},{drug:'IV Paracetamol',dose:'1g 8hrly',dur:'1 day'},{drug:'IM Pethidine',dose:'100mg tds',dur:'1 day'},{drug:'SC Clexane',dose:'40mg daily',dur:'3 days minimum',note:'For very obese patients or those at high risk for DVT'},{drug:'Any other medications',dose:'Per OPD card or anaesthetist orders',dur:''}],
-   notes:''},
-  {id:'iol',icon:'🤱',title:'Induction of Labour — Standard',sub:'Cytotec protocol',
-   checklist:['Confirm maturity and check there are no contraindications — breech, previous C/S etc.','Review the patient\'s Obs scan and NST','Confirm fetal heart rate is normal (110–160)','Set IV line before starting','Patient assessment for Cytotec should only be done with the duty resident until cleared independently','Refer to FIGO 2023 IOL chart on treatment room wall'],
-   meds:[{drug:'Cytotec (Misoprostol)',dose:'200mcg tablet — divide into 4 equal parts (50mcg each)',dur:'Most patients need only 1–2 doses, 4–6hrs apart',note:'Can cause fetal distress and uterine rupture — never give without resident review until cleared'},{drug:'IV Normal Saline',dose:'1L',dur:''}],
-   notes:'Most patients require one or two 50mcg doses only, 4–6hrs apart.'},
-  {id:'iol_highparity',icon:'⚠️',title:'Induction — High Parity (Para 5+)',sub:"Foley's catheter protocol",
-   checklist:['Cytotec may be contraindicated for Para 5 and above — discuss with resident first','Confirm maturity and absence of contraindications','Review Obs scan and NST','Confirm fetal heart rate is normal (110–160)','Set IV line'],
-   meds:[{drug:"Foley's Catheter",dose:'30ml balloon',dur:'As directed by resident',note:'Discuss with resident before proceeding'}],
-   notes:"Cytotec may be contraindicated in high parity patients. Always discuss with resident first."},
-  {id:'iol_prev_cs',icon:'🚫',title:'Induction — Previous C/S',sub:'Catheter only protocol',
-   checklist:['Cytotec is CONTRAINDICATED for previous C/S patients','Catheter induction only — discuss plan with resident','Confirm maturity and absence of contraindications','Review Obs scan and NST','Set IV line'],
-   meds:[{drug:"Foley's Catheter",dose:'30ml balloon',dur:'Catheter induction only',note:'Cytotec is CONTRAINDICATED for previous C/S patients'}],
-   notes:'Cytotec is CONTRAINDICATED for previous C/S patients. Catheter induction only.'},
-  {id:'iol_iufd',icon:'📋',title:'Induction — IUFD',sub:'Clotting profile required',
-   checklist:['Ensure recent FBC and CLOTTING PROFILE results are available','If no clotting profile available — do bedside clotting time first','Confirm Hb and sickling status','Set IV line','Discuss dose with resident and refer to FIGO 2023 IOL chart'],
-   meds:[{drug:'Cytotec (Misoprostol)',dose:'Per FIGO 2023 IOL chart',dur:'Discuss with resident',note:'Always check clotting profile before induction for IUFD patients'}],
-   notes:'Always confirm clotting profile before proceeding.'},
-  {id:'postop1',icon:'📅',title:'Post-Op Day 1 (C/S)',sub:'Review checklist',
-   checklist:['Check for any complaints','Examine for pallor','Check temperature, pulse and BP are normal and stable — refer to charts','Examine abdomen for unusual tenderness, uterine contraction and presence of bowel sounds','Exclude bleeding from operation site and heavy lochia','Check for adequate urine output','Order removal of urethral catheter on Day 1 if patient can mobilise','If bowel sounds present — commence oral sips. If tolerated, stop IV infusion and change to orals','Review treatment sheet — ensure drugs and dosages correctly copied and being given'],
-   meds:[],notes:''},
-  {id:'postop23',icon:'📆',title:'Post-Op Days 2 & 3 (C/S)',sub:'Wound check & discharge',
-   checklist:['Day 2 — Check Hb if not done on Day 1','Day 3 — Wound inspection. Order open wound dressing if appropriate','Day 3 — Check Hb if not done on Day 2','Day 3 — Discharges may be done — inform cover resident before any discharge','Day 7 — Remove nylon stitches for Pfannenstiel incisions','Day 10 — Remove nylon stitches for Midline incisions'],
-   meds:[],notes:'Always inform the cover resident before any discharges are made.'},
-  {id:'svd',icon:'✅',title:'SVD Discharge',sub:'Review checklist & medications',
-   checklist:['Check for pallor, contraction of the uterus, PIH','Assess the lochia','Check the episiotomy site is sound','Ensure appropriate drugs prescribed for discharge — analgesics, antibiotics, haematinics','Discharge home 24hrs post-delivery if stable — BP normal, no PPH'],
-   meds:[{drug:'Tab Erythromycin',dose:'500mg qid',dur:'1 week',note:'Or Amoxiclav 1g BD — for episiotomy, EOU, manual removal of placenta'},{drug:'Tab Flagyl',dose:'400mg tds',dur:'1 week',note:'For episiotomy, EOU, manual removal of placenta'},{drug:'Haematinics',dose:'As prescribed',dur:''},{drug:'Analgesics',dose:'As prescribed',dur:''}],
-   notes:''},
-  {id:'svd_sc',icon:'🩸',title:'SVD — Sickle Cell Patient',sub:'Extended observation',
-   checklist:['Observe on admission for 5 days','Ensure patient is well hydrated throughout','Ensure malaria treatment, antibiotics and analgesics are prescribed','Check Hb is not low prior to discharge','Discharge on usual haematinics'],
-   meds:[{drug:'Malaria treatment',dose:'As per protocol',dur:''},{drug:'Antibiotics',dose:'As per protocol',dur:''},{drug:'Analgesics',dose:'As per protocol',dur:''},{drug:'Haematinics (usual)',dose:'As per protocol',dur:''}],
-   notes:'Sickle cell SVD patients are observed for 5 days minimum before discharge.'},
-  {id:'clotting',icon:'🧪',title:'Bedside Clotting Time',sub:'Procedure guide',
-   checklist:['Take a venous blood sample','Put blood in an empty amoxiclav bottle — NOT a syringe','Wrap your hands around the bottle to keep it warm','Note the time it takes for the blood to clot','Normal clotting time — 9 minutes or less','If > 9 minutes — inform resident immediately'],
-   meds:[],notes:'Always use a bottle, not a syringe. Perform when no clotting profile is available.'},
+  {id:'cs',icon:'🔪',title:'Pre-op Caesarean Section',sub:'Admission checklist & medications',checklist:['Check that the working EDD is correct — discuss with resident if unsure','Note the indication for the surgery and note any allergies','Confirm from records and blood bank slips that relations have donated blood','Do a full clerking of the patient','Ensure a sickling test and current Hb are in the records — if Hb is more than a week old, do a new one using haemo-check','If Hb < 10g/dl — inform resident, you may need to transfuse','Be clear on the reasons for admission and the operation to be done — refer to the antenatal card','Check the notes and examine the patient thoroughly to make sure she is fit for the surgery','Read and effect any instructions on the antenatal card','Take blood for grouping and cross-matching — 2 pints (if placenta praevia request 4 pints). Attach blood donation slips to X-matching form','Prescribe medications for use before surgery and post-operatively','Check anaesthesia clearance chart/form for any additional orders'],meds:[{drug:'IV Augmentin',dose:'1.2g 8hrly',dur:'1 day'},{drug:'IV Flagyl',dose:'500mg 8hrly',dur:'1 day'},{drug:'IV Fluids',dose:'1L N/S + 1L DNS + 1L R/L',dur:''},{drug:'PR Diclofenac',dose:'100mg BD',dur:'5 days',note:'Do NOT prescribe for ulcer, kidney problems or hypertensive disease in pregnancy — use Supp Paracetamol 1g tds x5 days instead'},{drug:'IV Paracetamol',dose:'1g tds/qid',dur:'1 day'},{drug:'IM Pethidine',dose:'100mg 8hrly',dur:'1 day',note:'Do NOT prescribe for sickle cell patients'},{drug:'SC Clexane',dose:'40mg daily',dur:'3 days',note:'Confirm duration and dose with junior resident — may vary'},{drug:'Any other medications',dose:'Per antenatal card or anaesthetist orders',dur:'',note:'Check anaesthesia clearance chart/form'}],notes:''},
+  {id:'gynae_preop',icon:'🏥',title:'Pre-op Gynaecology Theatre',sub:'Theatre prep checklist & medications',checklist:['Review all pre-op cases on Ward E, Chenard A and Maternity 6th Floor','Check pre-op Hb > 10g/dl — if not, discuss with anaesthetist','X-matched blood ready in theatre — majors: 2 units, cancers: 4 units','Compile operation list with resident — submit to secretary before 12:00pm','Check patients admitted on wards including Maternity 6th Floor','Cross-check diary on Ward E — make sure operation list is complete','Full clerking of each patient','Read and effect instructions on anaesthetic pre-assessment forms','Take blood for grouping and X-matching — send to maternity blood bank, attach blood donation slips','Prescribe pre-op and post-op medications','Wednesday afternoon — visit blood bank to confirm blood for Thursday, ensure blood for at least first two cases','Visit theatre patients on wards — confirm all medications and IV fluids purchased'],meds:[{drug:'IV Augmentin',dose:'1.2g 8hrly',dur:'1 day'},{drug:'IV Flagyl',dose:'500mg 8hrly',dur:'1 day'},{drug:'IV Fluids',dose:'1L N/S + 1L D/S + 1L R/L',dur:''},{drug:'PR Diclofenac',dose:'100mg BD',dur:'5 days'},{drug:'IV Tranexamic Acid',dose:'1g stat',dur:''},{drug:'IV Gelofusion',dose:'500ml',dur:'1 bag'},{drug:'IV Paracetamol',dose:'1g 8hrly',dur:'1 day'},{drug:'IM Pethidine',dose:'100mg tds',dur:'1 day'},{drug:'SC Clexane',dose:'40mg daily',dur:'3 days minimum',note:'For very obese patients or those at high risk for DVT'},{drug:'Any other medications',dose:'Per OPD card or anaesthetist orders',dur:''}],notes:''},
+  {id:'iol',icon:'🤱',title:'Induction of Labour — Standard',sub:'Cytotec protocol',checklist:['Confirm maturity and check there are no contraindications — breech, previous C/S etc.','Review the patient\'s Obs scan and NST','Confirm fetal heart rate is normal (110–160)','Set IV line before starting','Patient assessment for Cytotec should only be done with the duty resident until cleared independently','Refer to FIGO 2023 IOL chart on treatment room wall'],meds:[{drug:'Cytotec (Misoprostol)',dose:'200mcg tablet — divide into 4 equal parts (50mcg each)',dur:'Most patients need only 1–2 doses, 4–6hrs apart',note:'Can cause fetal distress and uterine rupture — never give without resident review until cleared'},{drug:'IV Normal Saline',dose:'1L',dur:''}],notes:'Most patients require one or two 50mcg doses only, 4–6hrs apart.'},
+  {id:'iol_highparity',icon:'⚠️',title:'Induction — High Parity (Para 5+)',sub:"Foley's catheter protocol",checklist:['Cytotec may be contraindicated for Para 5 and above — discuss with resident first','Confirm maturity and absence of contraindications','Review Obs scan and NST','Confirm fetal heart rate is normal (110–160)','Set IV line'],meds:[{drug:"Foley's Catheter",dose:'30ml balloon',dur:'As directed by resident',note:'Discuss with resident before proceeding'}],notes:"Cytotec may be contraindicated in high parity patients. Always discuss with resident first."},
+  {id:'iol_prev_cs',icon:'🚫',title:'Induction — Previous C/S',sub:'Catheter only protocol',checklist:['Cytotec is CONTRAINDICATED for previous C/S patients','Catheter induction only — discuss plan with resident','Confirm maturity and absence of contraindications','Review Obs scan and NST','Set IV line'],meds:[{drug:"Foley's Catheter",dose:'30ml balloon',dur:'Catheter induction only',note:'Cytotec is CONTRAINDICATED for previous C/S patients'}],notes:'Cytotec is CONTRAINDICATED for previous C/S patients. Catheter induction only.'},
+  {id:'iol_iufd',icon:'📋',title:'Induction — IUFD',sub:'Clotting profile required',checklist:['Ensure recent FBC and CLOTTING PROFILE results are available','If no clotting profile available — do bedside clotting time first','Confirm Hb and sickling status','Set IV line','Discuss dose with resident and refer to FIGO 2023 IOL chart'],meds:[{drug:'Cytotec (Misoprostol)',dose:'Per FIGO 2023 IOL chart',dur:'Discuss with resident',note:'Always check clotting profile before induction for IUFD patients'}],notes:'Always confirm clotting profile before proceeding.'},
+  {id:'postop1',icon:'📅',title:'Post-Op Day 1 (C/S)',sub:'Review checklist',checklist:['Check for any complaints','Examine for pallor','Check temperature, pulse and BP are normal and stable — refer to charts','Examine abdomen for unusual tenderness, uterine contraction and presence of bowel sounds','Exclude bleeding from operation site and heavy lochia','Check for adequate urine output','Order removal of urethral catheter on Day 1 if patient can mobilise','If bowel sounds present — commence oral sips. If tolerated, stop IV infusion and change to orals','Review treatment sheet — ensure drugs and dosages correctly copied and being given'],meds:[],notes:''},
+  {id:'postop23',icon:'📆',title:'Post-Op Days 2 & 3 (C/S)',sub:'Wound check & discharge',checklist:['Day 2 — Check Hb if not done on Day 1','Day 3 — Wound inspection. Order open wound dressing if appropriate','Day 3 — Check Hb if not done on Day 2','Day 3 — Discharges may be done — inform cover resident before any discharge','Day 7 — Remove nylon stitches for Pfannenstiel incisions','Day 10 — Remove nylon stitches for Midline incisions'],meds:[],notes:'Always inform the cover resident before any discharges are made.'},
+  {id:'svd',icon:'✅',title:'SVD Discharge',sub:'Review checklist & medications',checklist:['Check for pallor, contraction of the uterus, PIH','Assess the lochia','Check the episiotomy site is sound','Ensure appropriate drugs prescribed — analgesics, antibiotics, haematinics','Discharge home 24hrs post-delivery if stable — BP normal, no PPH'],meds:[{drug:'Tab Erythromycin',dose:'500mg qid',dur:'1 week',note:'Or Amoxiclav 1g BD — for episiotomy, EOU, manual removal of placenta'},{drug:'Tab Flagyl',dose:'400mg tds',dur:'1 week',note:'For episiotomy, EOU, manual removal of placenta'},{drug:'Haematinics',dose:'As prescribed',dur:''},{drug:'Analgesics',dose:'As prescribed',dur:''}],notes:''},
+  {id:'svd_sc',icon:'🩸',title:'SVD — Sickle Cell Patient',sub:'Extended observation',checklist:['Observe on admission for 5 days','Ensure patient is well hydrated throughout','Ensure malaria treatment, antibiotics and analgesics are prescribed','Check Hb is not low prior to discharge','Discharge on usual haematinics'],meds:[{drug:'Malaria treatment',dose:'As per protocol',dur:''},{drug:'Antibiotics',dose:'As per protocol',dur:''},{drug:'Analgesics',dose:'As per protocol',dur:''},{drug:'Haematinics (usual)',dose:'As per protocol',dur:''}],notes:'Sickle cell SVD patients are observed for 5 days minimum before discharge.'},
+  {id:'clotting',icon:'🧪',title:'Bedside Clotting Time',sub:'Procedure guide',checklist:['Take a venous blood sample','Put blood in an empty amoxiclav bottle — NOT a syringe','Wrap your hands around the bottle to keep it warm','Note the time it takes for the blood to clot','Normal clotting time — 9 minutes or less','If > 9 minutes — inform resident immediately'],meds:[],notes:'Always use a bottle, not a syringe. Perform when no clotting profile is available.'},
 ];
 
 const grid=document.getElementById('scenarioGrid');
 SCENARIOS.forEach(sc=>{
-  const card=document.createElement('div');
-  card.className='scenario-card';
-  card.id='sc-card-'+sc.id;
+  const card=document.createElement('div');card.className='scenario-card';card.id='sc-card-'+sc.id;
   card.innerHTML=`<div class="s-icon">${sc.icon}</div><div class="s-title">${sc.title}</div><div class="s-sub">${sc.sub}</div>`;
-  card.onclick=()=>selectScenario(sc.id);
-  grid.appendChild(card);
+  card.onclick=()=>selectScenario(sc.id);grid.appendChild(card);
 });
 
 function selectScenario(id){
   document.querySelectorAll('.scenario-card').forEach(c=>c.classList.remove('selected'));
   const card=document.getElementById('sc-card-'+id);
   if(card){card.classList.add('selected');card.scrollIntoView({behavior:'smooth',block:'nearest'});}
-  const sc=SCENARIOS.find(s=>s.id===id);
-  if(!sc)return;
+  const sc=SCENARIOS.find(s=>s.id===id);if(!sc)return;
   const panel=document.getElementById('medPanel');
   let h=`<div class="med-panel-title">${sc.icon} ${sc.title}</div>`;
   if(sc.meds.length){
@@ -785,65 +800,82 @@ function selectScenario(id){
     sc.checklist.forEach((item,i)=>{h+=`<div class="checklist-item"><div class="check-box" id="chk_${id}_${i}" onclick="toggleCheck('chk_${id}_${i}','txt_${id}_${i}')"></div><div class="check-text" id="txt_${id}_${i}">${item}</div></div>`;});
   }
   if(sc.notes){h+=`<div class="note-box"><strong>⚠️ NOTE</strong>${sc.notes}</div>`;}
-  panel.innerHTML=h;
-  panel.classList.add('show');
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  panel.innerHTML=h;panel.classList.add('show');panel.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function toggleCheck(bid,tid){
-  document.getElementById(bid).classList.toggle('checked');
-  document.getElementById(tid).classList.toggle('done');
-}
+function toggleCheck(bid,tid){document.getElementById(bid).classList.toggle('checked');document.getElementById(tid).classList.toggle('done');}
 
-// ── POST DUTY ─────────────────────────────────────────────────────────────────
 const PD={
-  'Saturday — All HOs':['Quick inpatient review with resident on cover','Go review patients on ward and follow plan','Shift system — floaters cover ward till 2pm to give Mat Cover officers rest','Ensure proper handover to team taking over the day\'s duty'],
+  'Saturday — All HOs':['Quick inpatient review with resident on cover','Go review patients on ward and follow plan','Shift system — ER/LW officers cover ward till 2pm to give Mat Cover officers rest','Ensure proper handover to team taking over the day\'s duty'],
   'Saturday — Gynae HO (Post Duty)':['Write 24hr duty report with resident — summarise all operated cases','Get resident to read through and correct your report before Monday','Present duty report at Monday morning departmental meeting','Present full report on Ectopics, Acute PIDs, inevitable abortions and statistics','Proper handover of emergency cases especially those for MVA — specifically Gynae ER'],
   'Saturday — Mat Cover':['Quick inpatient review with resident on cover','SVD patients — see Medications & Labs tab for SVD Discharge checklist','C/S post-op patients — see Medications & Labs tab for Post-Op Day 1 checklist'],
-  'What to check — SVD Patients':['Check for pallor, contraction of the uterus, PIH','Assess the lochia','Check the episiotomy site is sound','Ensure appropriate drugs prescribed — analgesics, antibiotics (Erythromycin 500mg qid or Amoxiclav 1g BD + Flagyl 400mg tds x1 week), haematinics','Discharge home 24hrs post-delivery if stable — BP normal, no PPH'],
-  'What to check — C/S Post-Op Day 1':['Check for any complaints','Examine for pallor','Check temperature, pulse and BP are normal and stable — refer to charts','Examine abdomen for unusual tenderness, uterine contraction and bowel sounds','Exclude bleeding from operation site and heavy lochia','Check for adequate urine output','Order removal of urethral catheter on Day 1 if patient can mobilise','If bowel sounds present — commence oral sips. If tolerated, stop IV and change to orals','Review treatment sheet — ensure drugs and dosages correctly copied'],
+  'What to check — SVD Patients':['Check for pallor, contraction of the uterus, PIH','Assess the lochia','Check the episiotomy site is sound','Ensure appropriate drugs prescribed — analgesics, antibiotics, haematinics','Discharge home 24hrs post-delivery if stable — BP normal, no PPH'],
+  'What to check — C/S Post-Op Day 1':['Check for any complaints','Examine for pallor','Check temperature, pulse and BP — refer to charts','Examine abdomen for unusual tenderness, uterine contraction and bowel sounds','Exclude bleeding from operation site and heavy lochia','Check for adequate urine output','Order removal of urethral catheter on Day 1 if patient can mobilise','If bowel sounds present — commence oral sips. If tolerated, stop IV and change to orals','Review treatment sheet — ensure drugs and dosages correctly copied'],
   'Post-Op Day 2 & 3 — C/S':['Day 2 — Check Hb if not done on Day 1','Day 3 — Wound inspection. Order open wound dressing if appropriate','Day 3 — Check Hb if not done on Day 2','Day 3 — Discharges may be done — inform cover resident before any discharge','Day 7 — Remove nylon stitches for Pfannenstiel incisions','Day 10 — Remove nylon stitches for Midline incisions'],
 };
-let pdIdx=0;
-const pdEl=document.getElementById('postDutyContent');
-let pdH='';
+let pdIdx=0;const pdEl=document.getElementById('postDutyContent');let pdH='';
 for(const[sec,items] of Object.entries(PD)){
   pdH+=`<div class="section-label">${sec}</div>`;
   items.forEach(item=>{pdH+=`<div class="checklist-item"><div class="check-box" id="pd${pdIdx}" onclick="toggleCheck('pd${pdIdx}','pdt${pdIdx}')"></div><div class="check-text" id="pdt${pdIdx}">${item}</div></div>`;pdIdx++;});
 }
 pdEl.innerHTML=pdH;
 
-// ── TUTORIALS TAB ─────────────────────────────────────────────────────────────
 const tutEl=document.getElementById('tutorialContent');
-let tutH='<div class="duties-label" style="margin-bottom:12px">Every Tuesday at 7:00pm</div><div class="tutorials-list">';
+let tutH='<div class="duties-label" style="margin-bottom:12px">Every Tuesday at 7:00pm</div>';
 TUTORIALS.forEach(t=>{
   const d=toD(t.date);
-  const dateLabel=DAYS[d.getDay()].substring(0,3)+' '+d.getDate()+' '+MONTHS[d.getMonth()];
-  tutH+=`<div class="tutorial-row">
-    <div class="tutorial-date">${dateLabel}</div>
-    <div class="tutorial-info">
-      <div class="t-topic">${t.topic}</div>
-      <div class="t-meta">🎤 ${t.presenterFull} &nbsp;|&nbsp; Supervisor: ${t.supervisor}</div>
-    </div>
-  </div>`;
+  const dl=DAYS[d.getDay()].substring(0,3)+' '+d.getDate()+' '+MONTHS[d.getMonth()];
+  tutH+=`<div class="tutorial-row"><div class="tutorial-date">${dl}</div><div class="tutorial-info"><div class="t-topic">${t.topic}</div><div class="t-meta">🎤 ${t.presenterFull} &nbsp;|&nbsp; Supervisor: ${t.supervisor}</div></div></div>`;
 });
-tutH+='</div>';
 tutEl.innerHTML=tutH;
 
-// ── CONTACTS ──────────────────────────────────────────────────────────────────
 const CONTACTS={
-  'Team':[{role:'Consultant',name:'Dr Asare',num:'+233 24 422 9014'},{role:'Senior Resident',name:'Dr Bill Boafo',num:'+233 24 902 7691'},{role:'Senior Resident',name:'Dr S. L. Manu',num:'+233 20 302 8136'},{role:'Junior Resident — 3rd Year',name:'Dr Mervyn Mensah',num:'+233 50 334 1141'},{role:'Junior Resident — 3rd Year',name:'Dr Fidelis',num:'+233 24 965 0211'},{role:'Junior Resident — 1st Year',name:'Dr Arab',num:'+233 24 403 7389'}],
-  'House Officers':[{role:'House Officer',name:'Dr Efua Kyerewaa Dwamena',num:'0554645521'},{role:'House Officer',name:'Dr Samira Braimah Shardow',num:'0502735525'},{role:'House Officer',name:'Dr Winston Kyea Appiah',num:'0201645273'},{role:'House Officer',name:'Dr Bertha Omechey Narh',num:'0273101310'},{role:'House Officer',name:'Dr Daniel Ampofo-Nimoh',num:'0207351274'},{role:'House Officer',name:'Dr Messiah J.F. Essandoh',num:'0500777333'},{role:'House Officer (Alt)',name:'Dr Messiah J.F. Essandoh',num:'0552695313'},{role:'House Officer',name:'Dr Fatima Mahama',num:'0249015954'}],
-  'Support Staff':[{role:'Medical School Secretary',name:'',num:'+233 20 755 7000'},{role:'Phlebotomist — Gynae Cases',name:'Wisdom',num:'+233 20 695 0125'}],
-  'Wards & Departments':[{role:'Labour Ward 1',name:'',num:'—'},{role:'Theatre',name:'',num:'—'},{role:'Blood Bank (Maternity)',name:'',num:'—'},{role:'Gynae ER',name:'',num:'—'},{role:'Obs ER',name:'',num:'—'},{role:'Pharmacy',name:'',num:'—'}],
-  'Wards':[{role:'Ward E',name:'',num:'—'},{role:'Chenard A',name:'',num:'—'},{role:'Maternity 4th Floor',name:'',num:'—'},{role:'Maternity 6th Floor',name:'',num:'—'},{role:'Labour Ward Recovery',name:'',num:'—'}],
+  'Team':[
+    {role:'Consultant',name:'Dr Asare',num:'+233 24 422 9014'},
+    {role:'Senior Resident',name:'Dr Bill Boafo',num:'+233 24 902 7691'},
+    {role:'Senior Resident',name:'Dr S. L. Manu',num:'+233 20 302 8136'},
+    {role:'Senior Resident',name:'Dr Bowuo',num:'0202640429'},
+    {role:'Junior Resident — 3rd Year',name:'Dr Mervyn Mensah',num:'+233 50 334 1141'},
+    {role:'Junior Resident — 3rd Year',name:'Dr Fidelis',num:'+233 24 965 0211'},
+    {role:'Junior Resident — 3rd Year',name:'Dr Paulo',num:'+233 27 614 9999'},
+    {role:'Junior Resident — 3rd Year',name:'Dr Patamia',num:'0532963680'},
+    {role:'Junior Resident — 1st Year',name:'Dr Arab',num:'+233 24 403 7389'},
+  ],
+  'House Officers':[
+    {role:'House Officer',name:'Dr Efua Kyerewaa Dwamena',num:'0554645521'},
+    {role:'House Officer',name:'Dr Samira Braimah Shardow',num:'0502735525'},
+    {role:'House Officer',name:'Dr Winston Kyea Appiah',num:'0201645273'},
+    {role:'House Officer',name:'Dr Bertha Omechey Narh',num:'0273101310'},
+    {role:'House Officer',name:'Dr Daniel Ampofo-Nimoh',num:'0207351274'},
+    {role:'House Officer',name:'Dr Messiah J.F. Essandoh',num:'0500777333'},
+    {role:'House Officer (Alt)',name:'Dr Messiah J.F. Essandoh',num:'0552695313'},
+    {role:'House Officer',name:'Dr Fatima Mahama',num:'0249015954'},
+  ],
+  'Support Staff':[
+    {role:'Medical School Secretary',name:'',num:'+233 20 755 7000'},
+    {role:'Phlebotomist — Gynae Cases',name:'Wisdom',num:'+233 20 695 0125'},
+  ],
+  'Wards & Departments':[
+    {role:'Labour Ward 1',name:'',num:'—'},
+    {role:'Theatre',name:'',num:'—'},
+    {role:'Blood Bank (Maternity)',name:'',num:'—'},
+    {role:'Gynae ER',name:'',num:'—'},
+    {role:'Obs ER',name:'',num:'—'},
+    {role:'Pharmacy',name:'',num:'—'},
+  ],
+  'Wards':[
+    {role:'Ward E',name:'',num:'—'},
+    {role:'Chenard A',name:'',num:'—'},
+    {role:'Maternity 4th Floor',name:'',num:'—'},
+    {role:'Maternity 6th Floor',name:'',num:'—'},
+    {role:'Labour Ward Recovery',name:'',num:'—'},
+  ],
 };
-const ctEl=document.getElementById('contactsContent');
-let ctH='';
+const ctEl=document.getElementById('contactsContent');let ctH='';
 for(const[cat,contacts] of Object.entries(CONTACTS)){
   ctH+=`<div class="contact-cat">${cat}</div><div class="contacts-grid">`;
   contacts.forEach(c=>{
-    const num=c.num!=='—'?`<a href="tel:${c.num.replace(/\s/g,'')}">📞 ${c.num}</a>`:'📞 —';
+    const num=c.num&&c.num!=='—'?`<a href="tel:${c.num.replace(/\s/g,'')}">📞 ${c.num}</a>`:'📞 —';
     ctH+=`<div class="contact-card"><div class="c-role">${c.role}</div>${c.name?`<div class="c-name">${c.name}</div>`:''}<div class="c-num">${num}</div></div>`;
   });
   ctH+=`</div>`;
