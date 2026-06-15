@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efua & KT · Our Schedule</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #FDF6F9;
+  --surface: #FFFFFF;
+  --border: #EDE8F0;
+  --border-soft: #F5EFF8;
+
+  --pink: #F4A7C3;
+  --pink-soft: #FDE8F0;
+  --pink-deep: #E87DAD;
+  --pink-text: #C4527A;
+
+  --blue: #A8C8E8;
+  --blue-soft: #EAF4FB;
+  --blue-deep: #6AAAD4;
+  --blue-text: #3A7BAD;
+
+  --love: #F4A7C3;
+  --love-soft: #FDEEF5;
+  --love-glow: rgba(244,167,195,0.25);
+  --possible: #CDB4DB;
+  --possible-soft: #F5EEF8;
+  --possible-text: #8B5CA8;
+
+  --leave-bg: #F5F5F0;
+  --leave-text: #9CA3B0;
+
+  --gold: #F0B429;
+  --gold-soft: #FEF9EC;
+
+  --text: #2D2D3A;
+  --muted: #9CA3B0;
+  --dim: #C8C8D8;
+  --white: #FFFFFF;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-tag: 6px;
+  --shadow: 0 2px 12px rgba(180,140,200,0.10);
+  --shadow-love: 0 4px 20px rgba(244,167,195,0.30);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 20px 20px;
+  text-align: center;
+}
+.header-names {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.header-names .heart {
+  color: var(--pink-deep);
+  font-size: 18px;
+  margin: 0 6px;
+}
+.header-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── LEGEND ── */
+.legend {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.ldot {
+  width: 10px; height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── MONTH TABS ── */
+.tabs-wrap {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  align-items: center;
+}
+.tabs-wrap::-webkit-scrollbar { display: none; }
+
+.tab {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+.tab:hover { border-color: var(--pink); color: var(--pink-text); }
+.tab.active {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.view-toggle { margin-left: auto; display: flex; gap: 4px; flex-shrink: 0; }
+.vtab {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.vtab.active { background: var(--border); color: var(--text); border-color: var(--border); }
+
+/* ── SUMMARY BAR ── */
+.summary-bar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 0;
+  flex-wrap: wrap;
+}
+.summary-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+.summary-chip .chip-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.summary-chip.love-chip { border-color: var(--pink); background: var(--love-soft); color: var(--pink-text); }
+.summary-chip.possible-chip { border-color: var(--possible); background: var(--possible-soft); color: var(--possible-text); }
+
+/* ── CALENDAR ── */
+.cal-wrap { padding: 12px 12px 28px; }
+
+.month-section { display: none; }
+.month-section.visible { display: block; }
+
+.month-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 4px 0 10px 2px;
+}
+.month-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.month-meta {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.wday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.wday {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 0;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+/* ── DAY CELL ── */
+.day-cell {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 5px 7px;
+  min-height: 80px;
+  position: relative;
+  transition: transform 0.12s, box-shadow 0.12s;
+  cursor: default;
+}
+.day-cell:hover { transform: translateY(-2px); box-shadow: var(--shadow); z-index: 2; }
+.day-cell.empty { background: transparent; border-color: transparent; pointer-events: none; }
+
+.day-cell.is-today { border-color: var(--gold) !important; }
+.day-cell.is-love { border-color: var(--pink); background: var(--love-soft); box-shadow: var(--shadow-love); }
+.day-cell.is-possible { border-color: var(--possible); background: var(--possible-soft); }
+.day-cell.is-leave { background: var(--leave-bg); }
+.day-cell.kt-off-day { /* subtle indicator handled by tag */ }
+
+.day-num {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 5px;
+  line-height: 1;
+}
+.day-cell.is-today .day-num { color: var(--gold); }
+.day-cell.is-love .day-num { color: var(--pink-deep); }
+
+/* ── TAGS ── */
+.tag {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: var(--radius-tag);
+  margin-bottom: 3px;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-intensive  { background: var(--blue-soft);     color: var(--blue-text); }
+.t-lighter    { background: var(--pink-soft);      color: var(--pink-text); }
+.t-leave      { background: var(--leave-bg);       color: var(--leave-text); border: 1px solid var(--border); }
+.t-friday     { background: #FEF0F6;               color: #D4548A; }
+.t-duty       { background: var(--gold-soft);      color: #A07020; }
+.t-kt-work    { background: var(--blue-soft);      color: var(--blue-text); }
+.t-kt-off     { background: #EDFAF4;               color: #3A9A6A; }
+.t-love       { background: var(--love-soft);      color: var(--pink-text); border: 1.5px solid var(--pink); }
+.t-possible   { background: var(--possible-soft);  color: var(--possible-text); border: 1.5px solid var(--possible); }
+
+/* ── LIST VIEW ── */
+.list-wrap { padding: 12px 14px 28px; display: none; }
+.list-wrap.visible { display: block; }
+.list-month-section { display: none; }
+.list-month-section.visible { display: block; }
+
+.list-month-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--border);
+}
+
+.list-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 4px;
+  border: 1.5px solid transparent;
+}
+.list-row.row-love { background: var(--love-soft); border-color: var(--pink); }
+.list-row.row-possible { background: var(--possible-soft); border-color: var(--possible); }
+.list-row.row-leave { background: var(--leave-bg); }
+.list-row:not(.row-love):not(.row-possible):not(.row-leave) { background: var(--white); border-color: var(--border); }
+
+.list-date {
+  width: 56px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  padding-top: 2px;
+}
+.list-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.list-tags .tag { margin-bottom: 0; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 14px;
+  color: var(--dim);
+  font-size: 11px;
+  font-weight: 400;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-names">Efua <span class="heart">♡</span> KT</div>
+  <div class="header-sub">June – December 2026 · Schedule Overview</div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="ldot" style="background:var(--blue-soft);border:1px solid var(--blue)"></div>Efua intensive (MAT/Gynae)</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--pink-soft);border:1px solid var(--pink)"></div>Efua lighter (OBS ER/LW1)</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--leave-bg);border:1px solid var(--border)"></div>Efua on leave</div>
+  <div class="legend-item"><div class="ldot" style="background:#FEF0F6;border:1px solid #F4A7C3"></div>Friday 30hr shift</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--gold-soft);border:1px solid var(--gold)"></div>Duty weekend</div>
+  <div class="legend-item"><div class="ldot" style="background:#EDFAF4;border:1px solid #3A9A6A"></div>KT off</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--love-soft);border:1.5px solid var(--pink)"></div>♡ Love window</div>
+  <div class="legend-item"><div class="ldot" style="background:var(--possible-soft);border:1.5px solid var(--possible)"></div>♡ Possible</div>
+</div>
+
+<div class="tabs-wrap">
+  <button class="tab active" data-month="jun" onclick="showMonth(this,'jun')">June</button>
+  <button class="tab" data-month="jul" onclick="showMonth(this,'jul')">July</button>
+  <button class="tab" data-month="aug" onclick="showMonth(this,'aug')">August</button>
+  <button class="tab" data-month="sep" onclick="showMonth(this,'sep')">September</button>
+  <button class="tab" data-month="oct" onclick="showMonth(this,'oct')">October</button>
+  <button class="tab" data-month="nov" onclick="showMonth(this,'nov')">November</button>
+  <button class="tab" data-month="dec" onclick="showMonth(this,'dec')">December</button>
+  <div class="view-toggle">
+    <button class="vtab active" onclick="setView('cal',this)">Grid</button>
+    <button class="vtab" onclick="setView('list',this)">List</button>
+  </div>
+</div>
+
+<div id="summaryBar" class="summary-bar"></div>
+<div class="cal-wrap" id="calWrap"></div>
+<div class="list-wrap" id="listWrap"></div>
+
+<footer>Today is highlighted in gold &nbsp;·&nbsp; ♡ marks your windows together</footer>
+
+<script>
+// ─── EFUA STATION MAP ────────────────────────────────────────────────────────
+// Sourced precisely from rotation schedule image
+const efuaMap = {};
+function setRange(from, to, val) {
+  const d = new Date(from);
+  const end = new Date(to);
+  while (d <= end) {
+    const k = d.toISOString().slice(0,10);
+    efuaMap[k] = val;
+    d.setDate(d.getDate()+1);
+  }
+}
+
+// Week 2: 8–14 Jun
+setRange('2026-06-08','2026-06-14','OBS_ER');
+// Week 3: 15–21 Jun
+setRange('2026-06-15','2026-06-21','MAT2');
+// Week 4a: 22–24 Jun
+setRange('2026-06-22','2026-06-24','MAT1');
+// Week 4b: 25–28 Jun
+setRange('2026-06-25','2026-06-28','MAT1');
+// Week 5: 29 Jun – 5 Jul
+setRange('2026-06-29','2026-07-05','LW1');
+// Week 6: 6–12 Jul
+setRange('2026-07-06','2026-07-12','GYNAE1');
+// Week 7: 13–19 Jul
+setRange('2026-07-13','2026-07-19','GYNAE1');
+// Week 8a: 20–22 Jul
+setRange('2026-07-20','2026-07-22','OBS_ER');
+// Week 8b: 23 Jul
+setRange('2026-07-23','2026-07-23','OBS_ER');
+// Week 8c: 24–26 Jul
+setRange('2026-07-24','2026-07-26','OBS_ER');
+// Week 9: 27 Jul – 2 Aug
+setRange('2026-07-27','2026-08-02','MAT2');
+// Week 10: 3–9 Aug
+setRange('2026-08-03','2026-08-09','MAT1');
+// Week 11: 10–16 Aug — Gynae2 (FP)
+setRange('2026-08-10','2026-08-16','GYNAE2');
+// Week 12a: 17–18 Aug — LW1 (FP)
+setRange('2026-08-17','2026-08-18','LW1');
+// Week 12b: 19 Aug — Gynae2
+setRange('2026-08-19','2026-08-19','GYNAE2');
+// Week 12c onwards: LEAVE (Aug 20 – Sep 14)
+setRange('2026-08-20','2026-09-14','LEAVE');
+// Week 16b: 15 Sep — gap/off (shown as —)
+setRange('2026-09-15','2026-09-15','LEAVE');
+// Week 16c: 16–20 Sep — back but On Leave col shows Bertha; Efua returns
+// Row 16c: Efua = LEAVE (on leave column shows Bertha, Efua not listed = she was on leave and returns)
+setRange('2026-09-16','2026-09-20','LEAVE');
+// Week 17: 21–27 Sep — Gynae1
+setRange('2026-09-21','2026-09-27','GYNAE1');
+// Week 18: 28 Sep – 4 Oct — OBS_ER
+setRange('2026-09-28','2026-10-04','OBS_ER');
+// Week 19a: 5–9 Oct — MAT2
+setRange('2026-10-05','2026-10-09','MAT2');
+// Week 19b: 10–11 Oct — MAT2
+setRange('2026-10-10','2026-10-11','MAT2');
+// Week 20: 12–18 Oct — MAT1
+setRange('2026-10-12','2026-10-18','MAT1');
+// Week 21: 19–25 Oct — LW1
+setRange('2026-10-19','2026-10-25','LW1');
+// Week 22: 26 Oct – 1 Nov — Gynae2
+setRange('2026-10-26','2026-11-01','GYNAE2');
+// Week 23a: 2–4 Nov — Gynae1
+setRange('2026-11-02','2026-11-04','GYNAE1');
+// Week 23b: 5 Nov
+setRange('2026-11-05','2026-11-05','GYNAE1');
+// Week 23c: 6–8 Nov — Gynae1
+setRange('2026-11-06','2026-11-08','GYNAE1');
+// Week 24: 9–15 Nov — OBS_ER
+setRange('2026-11-09','2026-11-15','OBS_ER');
+// Week 25: 16–22 Nov — MAT2
+setRange('2026-11-16','2026-11-22','MAT2');
+// Week 26: 23–29 Nov — MAT1
+setRange('2026-11-23','2026-11-29','MAT1');
+// Week 27: 30 Nov – 1 Dec — LW1
+setRange('2026-11-30','2026-12-01','LW1');
+
+// ─── DUTY WEEKENDS (confirmed Sundays) ──────────────────────────────────────
+const dutyWeekends = new Set(['2026-06-28']);
+
+// ─── KT SCHEDULE ─────────────────────────────────────────────────────────────
+function getKtStatus(ds) {
+  const d = new Date(ds);
+  const work1s = new Date('2026-06-09'), work1e = new Date('2026-06-13');
+  const off1s  = new Date('2026-06-14'), off1e  = new Date('2026-06-17');
+  const cycleStart = new Date('2026-06-18');
+  if (d < work1s) return null;
+  if (d >= work1s && d <= work1e) return 'work';
+  if (d >= off1s  && d <= off1e)  return 'off';
+  const days = Math.floor((d - cycleStart) / 86400000);
+  if (days < 0) return null;
+  return (days % 15) < 10 ? 'work' : 'off';
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+const INTENSIVE = new Set(['MAT1','MAT2','GYNAE1','GYNAE2']);
+const LIGHTER   = new Set(['OBS_ER','LW1']);
+
+function stLabel(s) {
+  return {MAT1:'MAT 1',MAT2:'MAT 2',GYNAE1:'Gynae 1',GYNAE2:'Gynae 2',
+          OBS_ER:'OBS ER',LW1:'LW 1',LEAVE:'On Leave'}[s] || s;
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+function ds(y,m,d) { return `${y}-${pad(m)}-${pad(d)}`; }
+function dayOfWeek(dateStr) { return new Date(dateStr).getDay(); } // 0=Sun
+function isFri(dateStr) { return dayOfWeek(dateStr) === 5; }
+function isSat(dateStr) { return dayOfWeek(dateStr) === 6; }
+function isSun(dateStr) { return dayOfWeek(dateStr) === 0; }
+
+const TODAY = '2026-06-15';
+
+// ─── WEEK-LEVEL LOVE LOGIC ───────────────────────────────────────────────────
+// For a given date, find which Mon–Sun week it belongs to,
+// then count how many days in that week KT is off AND Efua is on LIGHTER station
+// Returns: 'love', 'possible', or null
+
+const weekLoveCache = {};
+
+function getWeekStart(dateStr) {
+  const d = new Date(dateStr);
+  const day = d.getDay(); // 0=Sun
+  const diff = (day === 0) ? -6 : 1 - day; // Mon-based
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0,10);
+}
+
+function computeWeekLove(dateStr) {
+  const ws = getWeekStart(dateStr);
+  if (weekLoveCache[ws] !== undefined) return weekLoveCache[ws];
+
+  // Check if this whole week Efua is on a lighter station (majority)
+  // We check: does the week contain at least some lighter days?
+  let lighterDays = 0, ktOffDays = 0, overlap = 0, leaveDays = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ws);
+    d.setDate(d.getDate() + i);
+    const dstr = d.toISOString().slice(0,10);
+    const station = efuaMap[dstr];
+    const kt = getKtStatus(dstr);
+    if (station === 'LEAVE') leaveDays++;
+    if (LIGHTER.has(station)) lighterDays++;
+    if (kt === 'off') ktOffDays++;
+    if (kt === 'off' && (LIGHTER.has(station) || station === 'LEAVE')) overlap++;
+  }
+
+  // Week is a "lighter week" if majority of days are lighter or leave
+  const isLighterWeek = (lighterDays >= 3) || (leaveDays >= 3);
+  const isLeaveWeek   = (leaveDays >= 4);
+
+  let result = null;
+  if (isLeaveWeek && overlap >= 2) result = 'love';
+  else if (isLeaveWeek && overlap === 1) result = 'possible';
+  else if (isLighterWeek && overlap >= 2) result = 'love';
+  else if (isLighterWeek && overlap === 1) result = 'possible';
+
+  weekLoveCache[ws] = result;
+  return result;
+}
+
+function getDayLove(dateStr) {
+  const station = efuaMap[dateStr];
+  const kt = getKtStatus(dateStr);
+  if (kt !== 'off') return null;
+  if (!station) return null;
+
+  // Only flag on days KT is off AND Efua is lighter/leave
+  if (!LIGHTER.has(station) && station !== 'LEAVE') return null;
+
+  // Use week-level logic
+  return computeWeekLove(dateStr);
+}
+
+// ─── BUILD ───────────────────────────────────────────────────────────────────
+const MONTHS = [
+  {id:'jun',label:'June 2026',    y:2026,m:6},
+  {id:'jul',label:'July 2026',    y:2026,m:7},
+  {id:'aug',label:'August 2026',  y:2026,m:8},
+  {id:'sep',label:'September 2026',y:2026,m:9},
+  {id:'oct',label:'October 2026', y:2026,m:10},
+  {id:'nov',label:'November 2026',y:2026,m:11},
+  {id:'dec',label:'December 2026',y:2026,m:12},
+];
+
+function countMonthLove(y,m) {
+  const last = new Date(y,m,0).getDate();
+  let love=0, possible=0;
+  for (let d=1;d<=last;d++) {
+    const dstr = ds(y,m,d);
+    const lv = getDayLove(dstr);
+    if (lv==='love') love++;
+    else if (lv==='possible') possible++;
+  }
+  return {love, possible};
+}
+
+function buildAll() {
+  const calWrap  = document.getElementById('calWrap');
+  const listWrap = document.getElementById('listWrap');
+  const summary  = document.getElementById('summaryBar');
+  calWrap.innerHTML = '';
+  listWrap.innerHTML = '';
+
+  MONTHS.forEach(({id,label,y,m}) => {
+    const {love,possible} = countMonthLove(y,m);
+    const isFirst = id==='jun';
+
+    // Summary bar (only for active month — updated on tab switch)
+    // Cal section
+    const calSec = document.createElement('div');
+    calSec.className = 'month-section' + (isFirst?' visible':'');
+    calSec.id = 'cal-'+id;
+
+    const last = new Date(y,m,0).getDate();
+    const firstDow = (new Date(y,m-1,1).getDay()+6)%7; // Mon=0
+
+    calSec.innerHTML = `
+      <div class="month-head">
+        <span class="month-title">${label}</span>
+        <span class="month-meta">${love} love window${love!==1?'s':''} · ${possible} possible</span>
+      </div>
+      <div class="wday-row">
+        ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="wday">${d}</div>`).join('')}
+      </div>
+      <div class="days-grid" id="grid-${id}"></div>
+    `;
+    calWrap.appendChild(calSec);
+
+    const grid = calSec.querySelector('.days-grid');
+    for (let i=0;i<firstDow;i++) {
+      const e=document.createElement('div'); e.className='day-cell empty'; grid.appendChild(e);
+    }
+    for (let d=1;d<=last;d++) {
+      grid.appendChild(buildCell(ds(y,m,d), d));
+    }
+
+    // List section
+    const lstSec = document.createElement('div');
+    lstSec.className = 'list-month-section' + (isFirst?' visible':'');
+    lstSec.id = 'list-'+id;
+    lstSec.innerHTML = `<div class="list-month-title">${label}</div>`;
+    for (let d=1;d<=last;d++) {
+      const row = buildListRow(ds(y,m,d), d);
+      if (row) lstSec.appendChild(row);
+    }
+    listWrap.appendChild(lstSec);
+  });
+
+  updateSummary('jun');
+}
+
+function buildCell(dateStr, d) {
+  const cell = document.createElement('div');
+  const station = efuaMap[dateStr];
+  const kt = getKtStatus(dateStr);
+  const love = getDayLove(dateStr);
+  const isToday = dateStr === TODAY;
+  const fri = isFri(dateStr);
+  const sat = isSat(dateStr);
+  const sun = isSun(dateStr);
+  const duty = dutyWeekends.has(dateStr);
+  // Duty monday
+  const prevDay = new Date(dateStr); prevDay.setDate(prevDay.getDate()-1);
+  const prevDs = prevDay.toISOString().slice(0,10);
+  const dutyMon = new Date(dateStr).getDay()===1 && dutyWeekends.has(prevDs);
+
+  let cls = 'day-cell';
+  if (isToday) cls += ' is-today';
+  if (love==='love') cls += ' is-love';
+  else if (love==='possible') cls += ' is-possible';
+  if (station==='LEAVE' && !love) cls += ' is-leave';
+  if (kt==='off') cls += ' kt-off-day';
+
+  let html = `<span class="day-num">${d}</span>`;
+
+  // Efua tag
+  if (station === 'LEAVE') {
+    html += `<span class="tag t-leave">E: On Leave</span>`;
+  } else if (duty && sun) {
+    html += `<span class="tag t-duty">E: Duty Wknd</span>`;
+  } else if (dutyMon) {
+    html += `<span class="tag t-duty">E: Duty Mon</span>`;
+  } else if (fri && station) {
+    html += `<span class="tag t-friday">E: 30hr shift</span>`;
+  } else if (sat && station) {
+    html += `<span class="tag t-friday">E: off 12pm</span>`;
+  } else if (station && INTENSIVE.has(station)) {
+    html += `<span class="tag t-intensive">E: ${stLabel(station)}</span>`;
+  } else if (station && LIGHTER.has(station)) {
+    html += `<span class="tag t-lighter">E: ${stLabel(station)}</span>`;
+  }
+
+  // KT tag
+  if (kt === 'work') {
+    html += `<span class="tag t-kt-work">KT: Working</span>`;
+  } else if (kt === 'off') {
+    html += `<span class="tag t-kt-off">KT: Off ✓</span>`;
+  }
+
+  // Love tag
+  if (love === 'love') {
+    html += `<span class="tag t-love">♡ Together</span>`;
+  } else if (love === 'possible') {
+    html += `<span class="tag t-possible">♡ Possible</span>`;
+  }
+
+  cell.className = cls;
+  cell.innerHTML = html;
+  return cell;
+}
+
+function buildListRow(dateStr, d) {
+  const station = efuaMap[dateStr];
+  const kt = getKtStatus(dateStr);
+  if (!kt && !station) return null;
+
+  const love = getDayLove(dateStr);
+  const fri = isFri(dateStr);
+  const sat = isSat(dateStr);
+  const sun = isSun(dateStr);
+  const duty = dutyWeekends.has(dateStr);
+  const prevDay = new Date(dateStr); prevDay.setDate(prevDay.getDate()-1);
+  const dutyMon = new Date(dateStr).getDay()===1 && dutyWeekends.has(prevDay.toISOString().slice(0,10));
+
+  const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayName = dayNames[new Date(dateStr).getDay()];
+
+  let rowCls = 'list-row';
+  if (love==='love') rowCls += ' row-love';
+  else if (love==='possible') rowCls += ' row-possible';
+  else if (station==='LEAVE') rowCls += ' row-leave';
+
+  let tags = '';
+
+  if (station==='LEAVE') tags += `<span class="tag t-leave">Efua: On Leave</span>`;
+  else if (duty && sun) tags += `<span class="tag t-duty">Efua: Duty Weekend · 6am–Mon 8pm</span>`;
+  else if (dutyMon) tags += `<span class="tag t-duty">Efua: Duty Mon · until 8pm</span>`;
+  else if (fri && station) tags += `<span class="tag t-friday">Efua: 30hr shift · 6am–Sat 12pm</span>`;
+  else if (sat && station) tags += `<span class="tag t-friday">Efua: Post-shift · off by 12pm</span>`;
+  else if (station && INTENSIVE.has(station)) tags += `<span class="tag t-intensive">Efua: ${stLabel(station)} · 7am–8pm</span>`;
+  else if (station && LIGHTER.has(station)) tags += `<span class="tag t-lighter">Efua: ${stLabel(station)} · closes 4:30pm</span>`;
+
+  if (kt==='work') tags += `<span class="tag t-kt-work">KT: 6am–7pm</span>`;
+  else if (kt==='off') tags += `<span class="tag t-kt-off">KT: Off ✓</span>`;
+
+  if (love==='love') tags += `<span class="tag t-love">♡ Love Window</span>`;
+  else if (love==='possible') tags += `<span class="tag t-possible">♡ Possible — confirm</span>`;
+
+  const row = document.createElement('div');
+  row.className = rowCls;
+  row.innerHTML = `<div class="list-date">${dayName} ${d}</div><div class="list-tags">${tags}</div>`;
+  return row;
+}
+
+function updateSummary(monthId) {
+  const mo = MONTHS.find(m=>m.id===monthId);
+  if (!mo) return;
+  const {love,possible} = countMonthLove(mo.y,mo.m);
+  const bar = document.getElementById('summaryBar');
+  bar.innerHTML = `
+    <div class="summary-chip love-chip"><div class="chip-dot" style="background:var(--pink)"></div>${love} love window${love!==1?'s':''}</div>
+    <div class="summary-chip possible-chip"><div class="chip-dot" style="background:var(--possible)"></div>${possible} possible</div>
+  `;
+}
+
+// ─── UI CONTROLS ─────────────────────────────────────────────────────────────
+function showMonth(btn, id) {
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.month-section').forEach(s=>s.classList.remove('visible'));
+  document.querySelectorAll('.list-month-section').forEach(s=>s.classList.remove('visible'));
+  const cal = document.getElementById('cal-'+id);
+  const lst = document.getElementById('list-'+id);
+  if (cal) cal.classList.add('visible');
+  if (lst) lst.classList.add('visible');
+  updateSummary(id);
+}
+
+let currentView = 'cal';
+function setView(v, btn) {
+  currentView = v;
+  document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('calWrap').style.display  = v==='cal'  ? 'block' : 'none';
+  const lw = document.getElementById('listWrap');
+  lw.style.display = v==='list' ? 'block' : 'none';
+  if (v==='list') lw.classList.add('visible');
+}
+
+buildAll();
+</script>
+</body>
+</html>
