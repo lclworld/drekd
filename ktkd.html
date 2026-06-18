@@ -368,7 +368,7 @@ function isSun(s){ return new Date(s).getDay()===0; }
 function isMon(s){ return new Date(s).getDay()===1; }
 function prevDs(dateStr){ const d=new Date(dateStr); d.setDate(d.getDate()-1); return d.toISOString().slice(0,10); }
 
-const TODAY = '2026-06-15';
+const TODAY = new Date().toISOString().slice(0,10);
 
 // ─── LOVE WINDOW LOGIC ───────────────────────────────────────────────────────
 // Rule 1: Efua on LEAVE + KT off = Love Window (always, no minimum)
