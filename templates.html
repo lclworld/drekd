@@ -364,6 +364,129 @@
   /* HIDDEN */
   .hidden { display: none !important; }
 
+  /* REMINDER TEXT (on-screen only, never in output) */
+  .reminder-note {
+    font-size: 11px;
+    color: #9AA8C4;
+    font-style: italic;
+    margin-top: 6px;
+    padding: 6px 10px;
+    background: #F0F3F9;
+    border-left: 2.5px solid #C5D0E6;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+
+  /* LOSS TAG BUILDER */
+  .loss-entries { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+  .loss-entry {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .loss-entry input[type="number"] {
+    width: 56px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    text-align: center;
+  }
+  .loss-entry select {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12.5px;
+  }
+  .loss-entry .loss-remove {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+  .btn-add-loss {
+    background: var(--accent-light);
+    color: var(--navy-light);
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* TWIN TOGGLE / SUB-OPTIONS */
+  .sub-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .switch {
+    position: relative;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--border);
+    border-radius: 24px;
+    transition: 0.2s;
+  }
+  .switch-slider::before {
+    content: "";
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; bottom: 3px;
+    background: var(--white);
+    border-radius: 50%;
+    transition: 0.2s;
+  }
+  .switch input:checked + .switch-slider { background: var(--accent); }
+  .switch input:checked + .switch-slider::before { transform: translateX(18px); }
+  .switch-label { font-size: 12.5px; font-weight: 600; color: var(--text); }
+
+  /* DELIVERY TYPE SELECTOR */
+  .dtype-options {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .dtype-btn {
+    flex: 1;
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .dtype-btn.active {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
   /* TOAST */
   .toast {
     position: fixed;
@@ -596,7 +719,10 @@
         <div class="field"><label>Date X-Matched</label><input type="text" id="tf-xdate" placeholder="DD/MM/25"></div>
         <div class="field"><label>Expiry Date</label><input type="text" id="tf-expiry" placeholder="DD/MM/YY"></div>
       </div>
-      <div class="field"><label>Start Time</label><input type="time" id="tf-starttime"></div>
+      <div class="field-row col2">
+        <div class="field"><label>Start Time</label><input type="time" id="tf-starttime"></div>
+        <div class="field"><label>Run For (hrs)</label><input type="number" step="0.5" id="tf-duration" placeholder="2"></div>
+      </div>
     </div>
 
     <button class="btn-generate" onclick="generateTransfusion()">Generate Transfusion Note</button>
@@ -619,23 +745,47 @@
         <div class="field"><label>Age (yrs)</label><input type="number" id="svd-age"></div>
       </div>
       <div class="field-row col2">
-        <div class="field"><label>Parity (Now P)</label><input type="number" id="svd-parity" placeholder="1"></div>
-        <div class="field"><label>Post-SVD Day</label><input type="number" id="svd-day" placeholder="2"></div>
+        <div class="field"><label>Gravidity</label><input type="number" id="svd-g"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="svd-p" placeholder="e.g. 2"></div>
       </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="svd-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('svd')">+ Add Loss</button>
+      </div>
+      <div class="field"><label>Post-SVD Day</label><input type="number" id="svd-day" placeholder="2"></div>
       <div class="field"><label>Managed as a case of</label><input type="text" id="svd-dx" placeholder="e.g. Anaemia in Pregnancy"></div>
     </div>
 
     <div class="card">
       <div class="card-title">Delivery Findings</div>
-      <div class="field-row col2">
-        <div class="field"><label>Baby</label>
-          <select id="svd-baby"><option value="LIVE MALE">Live Male</option><option value="LIVE FEMALE">Live Female</option></select>
-        </div>
-        <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="svd-bw"></div>
+      <div class="field"><label>Outcome</label>
+        <select id="svd-outcome" onchange="toggleSVDOutcome()">
+          <option value="LIVE">Live Birth</option>
+          <option value="STILLBIRTH">Stillbirth</option>
+          <option value="IUFD">IUFD</option>
+          <option value="MSB">Macerated Stillbirth (MSB)</option>
+        </select>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Apgar 1min</label><input type="number" max="10" id="svd-apg1"></div>
-        <div class="field"><label>Apgar 5min</label><input type="number" max="10" id="svd-apg2"></div>
+      <div id="svd-live-fields">
+        <div class="field-row col2">
+          <div class="field"><label>Baby</label>
+            <select id="svd-baby"><option value="LIVE MALE">Live Male</option><option value="LIVE FEMALE">Live Female</option></select>
+          </div>
+          <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="svd-bw"></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Apgar 1min</label><input type="number" max="10" id="svd-apg1"></div>
+          <div class="field"><label>Apgar 5min</label><input type="number" max="10" id="svd-apg2"></div>
+        </div>
+      </div>
+      <div id="svd-nonlive-fields" class="hidden">
+        <div class="field-row col2">
+          <div class="field"><label>Sex (if known)</label>
+            <select id="svd-nonlive-sex"><option value="MALE">Male</option><option value="FEMALE">Female</option><option value="UNDETERMINED">Undetermined</option></select>
+          </div>
+          <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="svd-nonlive-bw"></div>
+        </div>
       </div>
       <div class="field-row col2">
         <div class="field"><label>Presentation</label>
@@ -695,8 +845,10 @@
       <div class="field"><label>Lochia</label>
         <select id="svd-lochia"><option value="NORMAL">Normal</option><option value="OFFENSIVE">Offensive</option><option value="REDUCED">Reduced</option><option value="HEAVY">Heavy</option></select>
       </div>
+      <div class="field"><label>Additional Exam Findings (optional)</label><textarea id="svd-exam-extra" placeholder="Anything else worth noting beyond the standard fields above..."></textarea></div>
       <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="svd-hb"></div>
       <div class="field"><label>Fluid I/O Chart</label><input type="text" id="svd-io" placeholder="e.g. Adequate / Not maintained"></div>
+      <div class="reminder-note">Reminder: check HB on Post-SVD Day 1.</div>
     </div>
 
     <div class="card">
@@ -726,9 +878,15 @@
         <div class="field"><label>Age (yrs)</label><input type="number" id="cs-age"></div>
       </div>
       <div class="field-row col2">
-        <div class="field"><label>Parity (Now P)</label><input type="number" id="cs-parity" placeholder="1"></div>
-        <div class="field"><label>Post-op Day</label><input type="number" id="cs-day" placeholder="2"></div>
+        <div class="field"><label>Gravidity</label><input type="number" id="cs-g"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="cs-p" placeholder="e.g. 2"></div>
       </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="cs-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('cs')">+ Add Loss</button>
+      </div>
+      <div class="field"><label>Post-op Day</label><input type="number" id="cs-day" placeholder="2"></div>
       <div class="field-row col2">
         <div class="field"><label>C/S Type</label>
           <select id="cs-type"><option value="ELECTIVE">Elective</option><option value="EMERGENCY">Emergency</option></select>
@@ -740,15 +898,33 @@
 
     <div class="card">
       <div class="card-title">Operative Findings</div>
-      <div class="field-row col2">
-        <div class="field"><label>Baby</label>
-          <select id="cs-baby"><option value="LIVE MALE">Live Male</option><option value="LIVE FEMALE">Live Female</option></select>
-        </div>
-        <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="cs-bw"></div>
+      <div class="field"><label>Outcome</label>
+        <select id="cs-outcome" onchange="toggleCSOutcome()">
+          <option value="LIVE">Live Birth</option>
+          <option value="STILLBIRTH">Stillbirth</option>
+          <option value="IUFD">IUFD</option>
+          <option value="MSB">Macerated Stillbirth (MSB)</option>
+        </select>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Apgar 1min</label><input type="number" max="10" id="cs-apg1"></div>
-        <div class="field"><label>Apgar 5min</label><input type="number" max="10" id="cs-apg2"></div>
+      <div id="cs-live-fields">
+        <div class="field-row col2">
+          <div class="field"><label>Baby</label>
+            <select id="cs-baby"><option value="LIVE MALE">Live Male</option><option value="LIVE FEMALE">Live Female</option></select>
+          </div>
+          <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="cs-bw"></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Apgar 1min</label><input type="number" max="10" id="cs-apg1"></div>
+          <div class="field"><label>Apgar 5min</label><input type="number" max="10" id="cs-apg2"></div>
+        </div>
+      </div>
+      <div id="cs-nonlive-fields" class="hidden">
+        <div class="field-row col2">
+          <div class="field"><label>Sex (if known)</label>
+            <select id="cs-nonlive-sex"><option value="MALE">Male</option><option value="FEMALE">Female</option><option value="UNDETERMINED">Undetermined</option></select>
+          </div>
+          <div class="field"><label>BW (kg)</label><input type="number" step="0.01" id="cs-nonlive-bw"></div>
+        </div>
       </div>
       <div class="field-row col2">
         <div class="field"><label>Presentation</label>
@@ -821,8 +997,29 @@
           <select id="cs-lochia"><option value="NORMAL">Normal</option><option value="OFFENSIVE">Offensive</option><option value="REDUCED">Reduced</option><option value="HEAVY">Heavy</option></select>
         </div>
       </div>
+      <div class="field"><label>Additional Exam Findings (optional)</label><textarea id="cs-exam-extra" placeholder="Anything else worth noting beyond the standard fields above..."></textarea></div>
       <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="cs-hb"></div>
       <div class="field"><label>Fluid I/O Chart</label><input type="text" id="cs-io" placeholder="e.g. Adequate / Not maintained"></div>
+      <div class="reminder-note">Reminder: request post-op HB / FBC. If patient had PET, repeat PET labs.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Comorbidity &amp; Anticoagulation</div>
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="cs-comorbidity-toggle" onchange="updateCSAutoPlan()">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Patient has a comorbidity (extends Clexane to 5 days)</span>
+      </div>
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="cs-mgso4-toggle" onchange="updateCSAutoPlan()">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Currently on MgSO4</span>
+      </div>
+      <div class="field"><label>Post-Op Day 1 Plan (auto-filled — edit as needed)</label><textarea id="cs-autoplan" rows="5"></textarea></div>
     </div>
 
     <div class="card">
@@ -967,7 +1164,15 @@
         </div>
         <div class="field"><label>Day</label><input type="number" id="rnd-day" placeholder="2"></div>
       </div>
-      <div class="field"><label>Parity (Now P)</label><input type="number" id="rnd-parity"></div>
+      <div class="field-row col2">
+        <div class="field"><label>Gravidity</label><input type="number" id="rnd-g"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="rnd-p" placeholder="e.g. 2"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="rnd-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('rnd')">+ Add Loss</button>
+      </div>
       <div class="field"><label>Managed as / O/A of</label><input type="text" id="rnd-dx"></div>
     </div>
 
@@ -1001,8 +1206,21 @@
         <div class="field"><label>SpO2 (%)</label><input type="number" id="rnd-spo2"></div>
         <div class="field"><label>GCS</label><input type="text" id="rnd-gcs" placeholder="15/15"></div>
       </div>
+      <div class="field"><label>Additional Exam Findings (optional)</label><textarea id="rnd-exam-extra" placeholder="Anything else worth noting beyond the standard fields above..."></textarea></div>
       <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="rnd-hb"></div>
       <div class="field"><label>Fluid I/O Chart</label><input type="text" id="rnd-io"></div>
+      <div class="reminder-note">Reminder: post-op C/S → check HB/FBC. Post-SVD Day 1 → check HB. If PET → repeat PET labs.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Comorbidity</div>
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="rnd-comorbidity-toggle">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Patient has a comorbidity (extends Clexane to 5 days, if applicable)</span>
+      </div>
     </div>
 
     <div class="card">
@@ -1036,9 +1254,15 @@
         <div class="field"><label>Date of Discharge</label><input type="text" id="dc-dod" placeholder="DD/MM/25"></div>
       </div>
       <div class="field-row col2">
-        <div class="field"><label>Parity (Now P)</label><input type="number" id="dc-parity"></div>
-        <div class="field"><label>Discharge HB (g/dL)</label><input type="number" step="0.1" id="dc-hb"></div>
+        <div class="field"><label>Gravidity</label><input type="number" id="dc-g"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="dc-p" placeholder="e.g. 2"></div>
       </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="dc-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('dc')">+ Add Loss</button>
+      </div>
+      <div class="field"><label>Discharge HB (g/dL)</label><input type="number" step="0.1" id="dc-hb"></div>
       <div class="field"><label>Discharge Diagnosis</label><input type="text" id="dc-dx"></div>
     </div>
 
@@ -1092,17 +1316,54 @@
       </div>
       <div class="field-row col2">
         <div class="field"><label>Gravidity</label><input type="number" id="rec-g"></div>
-        <div class="field"><label>Parity</label><input type="number" id="rec-p"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="rec-p" placeholder="e.g. 2"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="rec-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('rec')">+ Add Loss</button>
       </div>
       <div class="field-row col2">
-        <div class="field"><label>Prev Losses</label><input type="number" id="rec-losses" value="0"></div>
         <div class="field"><label>EGA (weeks)</label><input type="number" id="rec-egaw"></div>
-      </div>
-      <div class="field-row col2">
         <div class="field"><label>EGA (days)</label><input type="number" max="6" id="rec-egad"></div>
-        <div class="field"><label>EDD</label><input type="text" id="rec-edd" placeholder="DD/MM/25"></div>
       </div>
-      <div class="field"><label>Indication for Elective C/S</label><input type="text" id="rec-indication" placeholder="e.g. Prev CS x2, Placenta Praevia"></div>
+      <div class="field"><label>EDD</label><input type="text" id="rec-edd" placeholder="DD/MM/25"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Delivery Type</div>
+      <div class="dtype-options">
+        <button type="button" class="dtype-btn active" id="rec-dtype-cs" onclick="setRecDeliveryType('cs')">C/S</button>
+        <button type="button" class="dtype-btn" id="rec-dtype-induction" onclick="setRecDeliveryType('induction')">Induction</button>
+      </div>
+
+      <div id="rec-cs-options">
+        <div class="field"><label>Urgency</label>
+          <select id="rec-cs-urgency" onchange="updateRecCatVisibility()">
+            <option value="ELECTIVE">Elective</option>
+            <option value="EMERGENCY">Emergency</option>
+          </select>
+        </div>
+        <div class="field hidden" id="rec-cs-cat-field">
+          <label>Category</label>
+          <select id="rec-cs-cat">
+            <option value="CAT 1">CAT 1</option>
+            <option value="CAT 2">CAT 2</option>
+            <option value="CAT 3">CAT 3</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="rec-induction-options" class="hidden">
+        <div class="field"><label>Induction Method</label>
+          <select id="rec-induction-method">
+            <option value="CATHETER">Catheter</option>
+            <option value="MISOPROSTOL">Misoprostol (Medication)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field"><label>Indication</label><input type="text" id="rec-indication" placeholder="e.g. Prev CS x2, Placenta Praevia, Post-dates"></div>
     </div>
 
     <div class="card">
@@ -1168,13 +1429,112 @@
         </div>
       </div>
       <div class="field"><label>FHR (BPM)</label><input type="number" id="rec-fhr"></div>
+      <div class="field"><label>Additional Exam Findings (optional)</label><textarea id="rec-exam-extra" placeholder="Anything else worth noting beyond the standard fields above..."></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Obstetric Scan</div>
+      <div class="field"><label>EFW (g)</label><input type="number" id="rec-scan-efw"></div>
+      <div class="field"><label>Lie</label>
+        <select id="rec-scan-lie"><option>LONGITUDINAL</option><option>TRANSVERSE</option><option>OBLIQUE</option></select>
+      </div>
+      <div class="field"><label>Presentation</label>
+        <select id="rec-scan-pres"><option>CEPHALIC</option><option>BREECH</option><option>SHOULDER</option></select>
+      </div>
+      <div class="field"><label>Placenta Location</label><input type="text" id="rec-scan-placenta" placeholder="e.g. Anterior fundal"></div>
+
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="rec-twin-toggle" onchange="toggleRecTwin()">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Twin Pregnancy</span>
+      </div>
+      <div id="rec-twin-fields" class="hidden">
+        <div class="field"><label>Twin B EFW (g)</label><input type="number" id="rec-scan-efw-twinb"></div>
+        <div class="field"><label>Twin Gestation Type</label>
+          <select id="rec-twin-type">
+            <option value="DCDA">DCDA</option>
+            <option value="MCDA">MCDA</option>
+            <option value="MCMA">MCMA</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Investigations</div>
+      <div id="rec-inv-induction">
+        <div class="sub-toggle-row">
+          <label class="switch">
+            <input type="checkbox" id="rec-nst-toggle" onchange="document.getElementById('rec-nst-field').classList.toggle('hidden', !this.checked)">
+            <span class="switch-slider"></span>
+          </label>
+          <span class="switch-label">NST done</span>
+        </div>
+        <div class="field hidden" id="rec-nst-field">
+          <label>NST Result</label>
+          <select id="rec-nst">
+            <option value="NORMAL">Normal</option>
+            <option value="SUSPICIOUS">Suspicious</option>
+            <option value="PATHOLOGICAL">Pathological</option>
+          </select>
+        </div>
+      </div>
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="rec-fbc-toggle" onchange="document.getElementById('rec-fbc-field').classList.toggle('hidden', !this.checked)">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">FBC done</span>
+      </div>
+      <div class="field hidden" id="rec-fbc-field"><label>HB (g/dL) — from FBC</label><input type="number" step="0.1" id="rec-fbc-hb"></div>
+      <div id="rec-inv-cs" class="hidden">
+        <div class="sub-toggle-row">
+          <label class="switch">
+            <input type="checkbox" id="rec-buecr-toggle" onchange="document.getElementById('rec-buecr-field').classList.toggle('hidden', !this.checked)">
+            <span class="switch-slider"></span>
+          </label>
+          <span class="switch-label">BUE/CR done</span>
+        </div>
+        <div class="field hidden" id="rec-buecr-field"><label>BUE/CR</label><input type="text" id="rec-buecr" placeholder="e.g. Normal / pending"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Family Planning (FP)</div>
+      <div class="odq-grid" id="rec-fp-options" style="gap:8px;">
+        <label style="display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">
+          <input type="checkbox" id="rec-fp-btl" value="BTL (AS PART OF C/S)"> BTL (with C/S)
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">
+          <input type="checkbox" id="rec-fp-ibtl" value="INTERVAL BTL"> Interval BTL
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">
+          <input type="checkbox" id="rec-fp-injectable" value="INJECTABLE"> Injectable
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">
+          <input type="checkbox" id="rec-fp-implant" value="IMPLANT"> Implant
+        </label>
+      </div>
+      <div class="field" style="margin-top:8px;"><label>Other (specify)</label><input type="text" id="rec-fp-other" placeholder="Leave blank if none"></div>
+    </div>
+
+    <div class="card" id="rec-anaesthesia-card">
+      <div class="card-title">Anaesthesia Clearance</div>
+      <div class="field"><label>Cleared for Anaesthesia?</label>
+        <select id="rec-anaesthesia-cleared">
+          <option value="CLEARED FOR ANAESTHESIA">Yes — Cleared</option>
+          <option value="PENDING ANAESTHESIA CLEARANCE">Pending</option>
+        </select>
+      </div>
     </div>
 
     <div class="card">
       <div class="card-title">Plan</div>
       <div class="field"><label>Senior Doctor</label><input type="text" id="rec-doc" oninput="updateDocDropdown('rec-doc')"></div>
       <div class="saved-doctors" id="saved-docs-rec"></div>
-      <div class="field"><label>Management Plan</label><textarea id="rec-plan" placeholder="e.g. Get items for C/S, GXM + BUE, consent form, cleared by anaesthesia..."></textarea></div>
+      <div class="field"><label>Management Plan (auto-filled — edit as needed)</label><textarea id="rec-plan" rows="6"></textarea></div>
     </div>
 
     <button class="btn-generate" onclick="generateReception()">Generate Reception Note</button>
@@ -1196,10 +1556,14 @@
         <div class="field"><label>Name</label><input type="text" id="anc-name"></div>
         <div class="field"><label>Age (yrs)</label><input type="number" id="anc-age"></div>
       </div>
-      <div class="field-row col3">
+      <div class="field-row col2">
         <div class="field"><label>Gravidity</label><input type="number" id="anc-g"></div>
-        <div class="field"><label>Parity</label><input type="number" id="anc-p"></div>
-        <div class="field"><label>Prev Losses</label><input type="number" id="anc-losses" value="0"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="anc-p" placeholder="e.g. 2"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="anc-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('anc')">+ Add Loss</button>
       </div>
       <div class="field-row col2">
         <div class="field"><label>EGA (weeks)</label><input type="number" id="anc-egaw"></div>
@@ -1324,24 +1688,42 @@
 
     <div class="card">
       <div class="card-title">Investigations</div>
-      <div class="card-title" style="border:none;padding:0;margin-bottom:8px;font-size:11px;">Obs Scan</div>
-      <div class="field-row col2">
-        <div class="field"><label>No. of Fetuses</label><input type="number" id="anc-scan-fetus" value="1"></div>
-        <div class="field"><label>Presentation</label><select id="anc-scan-pres"><option>CEPHALIC</option><option>BREECH</option><option>TRANSVERSE</option></select></div>
+
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="anc-scan-toggle" onchange="document.getElementById('anc-scan-fields').classList.toggle('hidden', !this.checked)">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Obs Scan done</span>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Placenta Location</label><input type="text" id="anc-scan-placenta" placeholder="e.g. Anterior / Posterior fundal"></div>
-        <div class="field"><label>Fetal Heart</label><select id="anc-scan-fh"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option></select></div>
+      <div id="anc-scan-fields" class="hidden">
+        <div class="field-row col2">
+          <div class="field"><label>No. of Fetuses</label><input type="number" id="anc-scan-fetus" value="1"></div>
+          <div class="field"><label>Presentation</label><select id="anc-scan-pres"><option>CEPHALIC</option><option>BREECH</option><option>TRANSVERSE</option></select></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Placenta Location</label><input type="text" id="anc-scan-placenta" placeholder="e.g. Anterior / Posterior fundal"></div>
+          <div class="field"><label>Fetal Heart</label><select id="anc-scan-fh"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option></select></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Liquor Volume</label><select id="anc-scan-liquor"><option value="ADEQUATE">Adequate</option><option value="REDUCED">Reduced</option><option value="INCREASED">Increased</option><option value="ABSENT">Absent</option></select></div>
+          <div class="field"><label>Scan EGA</label><input type="text" id="anc-scan-ega" placeholder="e.g. 36+2"></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Scan EDD</label><input type="text" id="anc-scan-edd" placeholder="DD/MM/25"></div>
+          <div class="field"><label>EFA (g)</label><input type="number" id="anc-scan-efa"></div>
+        </div>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Liquor Volume</label><select id="anc-scan-liquor"><option value="ADEQUATE">Adequate</option><option value="REDUCED">Reduced</option><option value="INCREASED">Increased</option><option value="ABSENT">Absent</option></select></div>
-        <div class="field"><label>Scan EGA</label><input type="text" id="anc-scan-ega" placeholder="e.g. 36+2"></div>
+
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="anc-uprotein-toggle" onchange="document.getElementById('anc-uprotein-field').classList.toggle('hidden', !this.checked)">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Urine Protein (dipstick) done</span>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Scan EDD</label><input type="text" id="anc-scan-edd" placeholder="DD/MM/25"></div>
-        <div class="field"><label>EFA (g)</label><input type="number" id="anc-scan-efa"></div>
-      </div>
-      <div class="field"><label>Urine Protein (dipstick)</label>
+      <div class="field hidden" id="anc-uprotein-field">
+        <label>Urine Protein Result</label>
         <select id="anc-uproteins"><option value="NIL">NIL</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option><option value="3+">3+</option></select>
       </div>
     </div>
@@ -1373,10 +1755,14 @@
         <div class="field"><label>Name</label><input type="text" id="er-name"></div>
         <div class="field"><label>Age (yrs)</label><input type="number" id="er-age"></div>
       </div>
-      <div class="field-row col3">
+      <div class="field-row col2">
         <div class="field"><label>Gravidity</label><input type="number" id="er-g"></div>
-        <div class="field"><label>Parity</label><input type="number" id="er-p"></div>
-        <div class="field"><label>Prev Losses</label><input type="number" id="er-losses" value="0"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="er-p" placeholder="e.g. 2"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="er-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('er')">+ Add Loss</button>
       </div>
       <div class="field-row col2">
         <div class="field"><label>EGA (weeks)</label><input type="number" id="er-egaw"></div>
@@ -1494,24 +1880,42 @@
 
     <div class="card">
       <div class="card-title">Investigations</div>
-      <div class="card-title" style="border:none;padding:0;margin-bottom:8px;font-size:11px;">Obs Scan</div>
-      <div class="field-row col2">
-        <div class="field"><label>No. of Fetuses</label><input type="number" id="er-scan-fetus" value="1"></div>
-        <div class="field"><label>Presentation</label><select id="er-scan-pres"><option>CEPHALIC</option><option>BREECH</option><option>TRANSVERSE</option></select></div>
+
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="er-scan-toggle" onchange="document.getElementById('er-scan-fields').classList.toggle('hidden', !this.checked)">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Obs Scan done</span>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Placenta Location</label><input type="text" id="er-scan-placenta" placeholder="e.g. Anterior fundal"></div>
-        <div class="field"><label>Fetal Heart</label><select id="er-scan-fh"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option></select></div>
+      <div id="er-scan-fields" class="hidden">
+        <div class="field-row col2">
+          <div class="field"><label>No. of Fetuses</label><input type="number" id="er-scan-fetus" value="1"></div>
+          <div class="field"><label>Presentation</label><select id="er-scan-pres"><option>CEPHALIC</option><option>BREECH</option><option>TRANSVERSE</option></select></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Placenta Location</label><input type="text" id="er-scan-placenta" placeholder="e.g. Anterior fundal"></div>
+          <div class="field"><label>Fetal Heart</label><select id="er-scan-fh"><option value="PRESENT">Present</option><option value="ABSENT">Absent</option></select></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Liquor Volume</label><select id="er-scan-liquor"><option value="ADEQUATE">Adequate</option><option value="REDUCED">Reduced</option><option value="INCREASED">Increased</option><option value="ABSENT">Absent</option></select></div>
+          <div class="field"><label>Scan EGA</label><input type="text" id="er-scan-ega" placeholder="e.g. 38+4"></div>
+        </div>
+        <div class="field-row col2">
+          <div class="field"><label>Scan EDD</label><input type="text" id="er-scan-edd" placeholder="DD/MM/25"></div>
+          <div class="field"><label>EFA (g)</label><input type="number" id="er-scan-efa"></div>
+        </div>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Liquor Volume</label><select id="er-scan-liquor"><option value="ADEQUATE">Adequate</option><option value="REDUCED">Reduced</option><option value="INCREASED">Increased</option><option value="ABSENT">Absent</option></select></div>
-        <div class="field"><label>Scan EGA</label><input type="text" id="er-scan-ega" placeholder="e.g. 38+4"></div>
+
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="er-uprotein-toggle" onchange="document.getElementById('er-uprotein-field').classList.toggle('hidden', !this.checked)">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Urine Protein (dipstick) done</span>
       </div>
-      <div class="field-row col2">
-        <div class="field"><label>Scan EDD</label><input type="text" id="er-scan-edd" placeholder="DD/MM/25"></div>
-        <div class="field"><label>EFA (g)</label><input type="number" id="er-scan-efa"></div>
-      </div>
-      <div class="field"><label>Urine Protein (dipstick)</label>
+      <div class="field hidden" id="er-uprotein-field">
+        <label>Urine Protein Result</label>
         <select id="er-uproteins"><option value="NIL">NIL</option><option value="TRACE">TRACE</option><option value="1+">1+</option><option value="2+">2+</option><option value="3+">3+</option></select>
       </div>
     </div>
@@ -1542,10 +1946,14 @@
         <div class="field"><label>Name</label><input type="text" id="gc-name"></div>
         <div class="field"><label>Age (yrs)</label><input type="number" id="gc-age"></div>
       </div>
-      <div class="field-row col3">
+      <div class="field-row col2">
         <div class="field"><label>Gravidity</label><input type="number" id="gc-g"></div>
-        <div class="field"><label>Parity</label><input type="number" id="gc-p"></div>
-        <div class="field"><label>Prev Losses</label><input type="number" id="gc-losses" value="0"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="gc-p" placeholder="e.g. 2"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="gc-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('gc')">+ Add Loss</button>
       </div>
       <div class="field-row col2">
         <div class="field"><label>LMP</label><input type="text" id="gc-lmp" placeholder="DD/MM/25"></div>
@@ -1671,9 +2079,15 @@
         <div class="field"><label>EGA (days)</label><input type="number" max="6" id="lw-egad"></div>
       </div>
       <div class="field-row col2">
-        <div class="field"><label>Parity (Now P)</label><input type="number" id="lw-parity"></div>
-        <div class="field"><label>Date of Surgery</label><input type="text" id="lw-date" placeholder="DD/MM/25"></div>
+        <div class="field"><label>Gravidity</label><input type="number" id="lw-g"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="lw-p" placeholder="e.g. 2"></div>
       </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="lw-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('lw')">+ Add Loss</button>
+      </div>
+      <div class="field"><label>Date of Surgery</label><input type="text" id="lw-date" placeholder="DD/MM/25"></div>
     </div>
 
     <div class="card">
@@ -1717,6 +2131,13 @@
 
     <div class="card">
       <div class="card-title">Post-Op Management</div>
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="lw-comorbidity-toggle" onchange="toggleLWCustomMgt()">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">Patient has a comorbidity (extends Clexane to 5 days)</span>
+      </div>
       <div class="field"><label>Use Standard Post-C/S Regimen?</label>
         <select id="lw-standard-mgt" onchange="toggleLWCustomMgt()">
           <option value="yes">Yes — use standard</option>
@@ -1726,6 +2147,7 @@
       <div id="lw-custom-mgt-box" class="hidden">
         <div class="field"><label>Custom Post-Op Management</label><textarea id="lw-custom-mgt" rows="6" placeholder="Enter post-op orders..."></textarea></div>
       </div>
+      <div class="reminder-note">Reminder: request post-op HB / FBC for Day 1 review. If PET, repeat PET labs.</div>
     </div>
 
     <div class="card">
@@ -1753,10 +2175,14 @@
         <div class="field"><label>Name</label><input type="text" id="gt-name"></div>
         <div class="field"><label>Age (yrs)</label><input type="number" id="gt-age"></div>
       </div>
-      <div class="field-row col3">
+      <div class="field-row col2">
         <div class="field"><label>Gravidity</label><input type="number" id="gt-g"></div>
-        <div class="field"><label>Parity</label><input type="number" id="gt-p"></div>
-        <div class="field"><label>Prev Losses</label><input type="number" id="gt-losses" value="0"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="gt-p" placeholder="e.g. 2"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="gt-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('gt')">+ Add Loss</button>
       </div>
       <div class="field"><label>Date of Surgery</label><input type="text" id="gt-date" placeholder="DD/MM/25"></div>
     </div>
@@ -1865,6 +2291,114 @@ function copyOutput(textId, btn) {
     showToast('Note copied to clipboard');
     setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2500);
   });
+}
+
+// ══════════════════════════════════════════════════════
+// UNIVERSAL: FORCE UPPERCASE OUTPUT
+// ══════════════════════════════════════════════════════
+// Wrap every generated note in this before displaying.
+function U(text) {
+  return (text || '').toUpperCase();
+}
+
+// ══════════════════════════════════════════════════════
+// UNIVERSAL: EGA AUTO-CALCULATION FROM EDD
+// ══════════════════════════════════════════════════════
+// EDD = LMP + 280 days, so EGA (in days) = 280 - (EDD - today)
+function calcEGAFromEDD(eddStr) {
+  if (!eddStr) return null;
+  // Accept DD/MM/YY or DD/MM/YYYY
+  const parts = eddStr.split('/');
+  if (parts.length !== 3) return null;
+  let [dd, mm, yy] = parts.map(p => parseInt(p, 10));
+  if (isNaN(dd) || isNaN(mm) || isNaN(yy)) return null;
+  if (yy < 100) yy += 2000;
+  const edd = new Date(yy, mm - 1, dd);
+  if (isNaN(edd.getTime())) return null;
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  edd.setHours(0,0,0,0);
+
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const daysToEDD = Math.round((edd - today) / msPerDay);
+  const totalGAdays = 280 - daysToEDD;
+  if (totalGAdays < 0 || totalGAdays > 300) return null; // sanity guard
+
+  const weeks = Math.floor(totalGAdays / 7);
+  const days = totalGAdays % 7;
+  return { weeks, days };
+}
+
+// Attach a live EGA calculator to an EDD input + two display targets (weeks/days inputs, made readonly)
+function bindEGAFromEDD(eddId, egawId, egadId) {
+  const eddEl = document.getElementById(eddId);
+  const egawEl = document.getElementById(egawId);
+  const egadEl = document.getElementById(egadId);
+  if (!eddEl || !egawEl || !egadEl) return;
+
+  egawEl.readOnly = true;
+  egadEl.readOnly = true;
+  egawEl.style.background = '#F0F3F9';
+  egadEl.style.background = '#F0F3F9';
+
+  function update() {
+    const result = calcEGAFromEDD(eddEl.value);
+    if (result) {
+      egawEl.value = result.weeks;
+      egadEl.value = result.days;
+    } else {
+      egawEl.value = '';
+      egadEl.value = '';
+    }
+  }
+  eddEl.addEventListener('input', update);
+  eddEl.addEventListener('blur', update);
+}
+
+// ══════════════════════════════════════════════════════
+// UNIVERSAL: GRAVIDITY / PARITY / LOSSES BUILDER
+// ══════════════════════════════════════════════════════
+const lossEntries = {}; // { prefix: count }
+
+function addLossEntry(prefix) {
+  if (!lossEntries[prefix]) lossEntries[prefix] = 0;
+  lossEntries[prefix]++;
+  const n = lossEntries[prefix];
+  const container = document.getElementById(prefix + '-loss-entries');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.className = 'loss-entry';
+  div.id = prefix + '-loss-' + n;
+  div.innerHTML = `
+    <input type="number" id="${prefix}-loss${n}-count" value="1" min="1">
+    <select id="${prefix}-loss${n}-type">
+      <option value="SA">SA (Spontaneous Abortion)</option>
+      <option value="TOP">TOP (Termination)</option>
+    </select>
+    <button type="button" class="loss-remove" onclick="document.getElementById('${prefix}-loss-${n}').remove()">✕</button>`;
+  container.appendChild(div);
+}
+
+function getLossesString(prefix) {
+  if (!lossEntries[prefix] || lossEntries[prefix] === 0) return '';
+  let parts = [];
+  for (let i = 1; i <= lossEntries[prefix]; i++) {
+    const el = document.getElementById(prefix + '-loss-' + i);
+    if (!el) continue;
+    const count = document.getElementById(prefix + '-loss' + i + '-count')?.value || '1';
+    const type = document.getElementById(prefix + '-loss' + i + '-type')?.value || 'SA';
+    parts.push(`+${count}${type}`);
+  }
+  return parts.join('');
+}
+
+// Builds "G2P1+1SA" style string from gravidity, parity (free text), and losses builder
+function getGPLString(prefix) {
+  const g = document.getElementById(prefix + '-g')?.value || '?';
+  const p = document.getElementById(prefix + '-p')?.value || '?';
+  const losses = getLossesString(prefix);
+  return `G${g}P${p}${losses}`;
 }
 
 // ── TEMPLATE NAVIGATION ──
@@ -2069,7 +2603,7 @@ function generateLabs() {
   }
 
   if (!out) { showToast('Please fill in at least one lab result'); return; }
-  document.getElementById('outtext-labs').textContent = out.trim();
+  document.getElementById('outtext-labs').textContent = U(out.trim());
   document.getElementById('out-labs').classList.add('visible');
   document.getElementById('out-labs').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -2079,6 +2613,9 @@ function generateTransfusion() {
   const date = v('tf-date') || today();
   const startTime = v('tf-starttime');
   const units = v('tf-units') || '1';
+  const product = v('tf-product') || 'CRC';
+  const duration = v('tf-duration') || '2';
+  const unitLabel = units === '1' ? 'UNIT' : 'UNITS';
   const out = `TRANSFUSION NOTES ON ${date}
 
 NAME: ${v('tf-name') || '?'}
@@ -2094,12 +2631,12 @@ CHEST CLINICALLY CLEAR
 TRANSFUSION START TIME: ${startTime || '?'}
 
 BLOOD GROUP: ${v('tf-bg') || '?'}
-PRODUCT TYPE: ${v('tf-product') || 'CRC'}
+PRODUCT TYPE: ${product}
 DIN: ${v('tf-din') || '?'}
 DATE X-MATCHED: ${v('tf-xdate') || date}
 EXPIRY DATE: ${v('tf-expiry') || '?'}
 
-${units} UNIT OF CRC SET TO RUN FOR 2 HRS.
+${units} ${unitLabel} OF ${product} SET TO RUN FOR ${duration} HRS.
 
 IN CASE OF TRANSFUSION REACTION:
 STOP THE TRANSFUSION BUT DO NOT DISCARD THE BLOOD PRODUCTS
@@ -2107,13 +2644,29 @@ RUN IV NORMAL SALINE 500MLS STAT
 ADMINISTER IV HYDROCORTISONE 200MG STAT
 ADMINISTER IM PHENERGAN 25MG STAT
 CALL THE NEAREST DOCTOR.`;
-  document.getElementById('outtext-transfusion').textContent = out;
+  document.getElementById('outtext-transfusion').textContent = U(out);
   document.getElementById('out-transfusion').classList.add('visible');
   document.getElementById('out-transfusion').scrollIntoView({ behavior: 'smooth', block: 'start' });
   saveDoctorName('');
 }
 
 // ─── PP SVD REVIEW ───
+function toggleSVDOutcome() {
+  const isLive = v('svd-outcome') === 'LIVE';
+  document.getElementById('svd-live-fields').classList.toggle('hidden', !isLive);
+  document.getElementById('svd-nonlive-fields').classList.toggle('hidden', isLive);
+}
+
+function buildSVDFindingsLine() {
+  const outcome = v('svd-outcome') || 'LIVE';
+  if (outcome === 'LIVE') {
+    return `${v('svd-baby') || 'LIVE'}, BW- ${v('svd-bw') || '?'} KG, APGARS ${v('svd-apg1') || '?'}/10, ${v('svd-apg2') || '?'}/10, ${v('svd-pres') || 'CEPHALIC'}, EBL= ${v('svd-ebl') || '?'}ML`;
+  }
+  const sex = v('svd-nonlive-sex') || 'UNDETERMINED';
+  const bw = v('svd-nonlive-bw') || '?';
+  return `${outcome}, SEX- ${sex}, BW- ${bw} KG, ${v('svd-pres') || 'CEPHALIC'}, EBL= ${v('svd-ebl') || '?'}ML`;
+}
+
 function generatePPSVD() {
   const doc = v('svd-doc').toUpperCase();
   saveDoctorName(doc);
@@ -2125,11 +2678,11 @@ function generatePPSVD() {
 
 NAME: ${v('svd-name') || '?'}
 AGE: ${v('svd-age') || '?'} YRS
-NOW P${v('svd-parity') || '?'}
+PARITY: ${getGPLString('svd')}
 
 POST SVD DAY ${v('svd-day') || '?'} BEING MANAGED AS A CASE OF ${v('svd-dx') || '?'}
 
-FINDINGS: ${v('svd-baby') || 'LIVE'}, BW- ${v('svd-bw') || '?'} KG, APGARS ${v('svd-apg1') || '?'}/10, ${v('svd-apg2') || '?'}/10, ${v('svd-pres') || 'CEPHALIC'}, EBL= ${v('svd-ebl') || '?'}ML
+FINDINGS: ${buildSVDFindingsLine()}
 
 CURRENTLY ON: ${v('svd-currenton') || '?'}
 
@@ -2142,7 +2695,7 @@ O/E: YOUNG WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('svd-pale') ||
 CVS: P- ${v('svd-pr') || '?'} BPM, BP- ${v('svd-bps') || '?'}/${v('svd-bpd') || '?'} MMHG, S1+, S2+, MO
 RESP: RR- ${v('svd-rr') || '?'} CPM, SPO2- ${v('svd-spo2') || '?'}%, CHEST CLINICALLY CLEAR
 ABD: FULL SOFT, MWR, NON-TENDER, LIVER AND SPLEEN NOT PALPABLE AND KIDNEYS NOT BALLOTABLE, UTERUS ${utSize ? utSize + ' WK SIZE' : ''} AND IS ${utContract || 'WELL CONTRACTED'}, LOCHIA ${v('svd-lochia') || 'NORMAL'}
-CNS: ALERT AND CONSCIOUS, GCS- ${v('svd-gcs') || '15'}/15
+CNS: ALERT AND CONSCIOUS, GCS- ${v('svd-gcs') || '15'}/15${v('svd-exam-extra') ? '\n' + v('svd-exam-extra') : ''}
 
 FLUID INPUT & OUTPUT CHART: ${v('svd-io') || '?'}
 CHECK HB: ${v('svd-hb') || '?'} G/DL
@@ -2150,33 +2703,60 @@ CHECK HB: ${v('svd-hb') || '?'} G/DL
 PLAN + ${doc || '?'}
 ${v('svd-plan') || '?'}`;
 
-  document.getElementById('outtext-ppsvd').textContent = out;
+  document.getElementById('outtext-ppsvd').textContent = U(out);
   document.getElementById('out-ppsvd').classList.add('visible');
   document.getElementById('out-ppsvd').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
 }
 
 // ─── PP C/S REVIEW ───
+function updateCSAutoPlan() {
+  const planEl = document.getElementById('cs-autoplan');
+  if (!planEl) return;
+  const hasComorbidity = document.getElementById('cs-comorbidity-toggle')?.checked;
+  const onMgSO4 = document.getElementById('cs-mgso4-toggle')?.checked;
+  const clexaneDays = hasComorbidity ? 5 : 3;
+  planEl.value = `TO COMPLETE IV MEDICATIONS AND SWITCH TO ORALS\nTO REMOVE CATHETER UNLESS CONTRAINDICATED${onMgSO4 ? '\nTO CONTINUE MGSO4' : ''}\nTO START/CONTINUE SC CLEXANE FOR ${clexaneDays} DAYS\nTO PRESCRIBE ORAL MEDICATIONS: ANALGESIA, ANTIBIOTICS, HAEMATINICS, VITAMIN C`;
+}
+
+function toggleCSOutcome() {
+  const isLive = v('cs-outcome') === 'LIVE';
+  document.getElementById('cs-live-fields').classList.toggle('hidden', !isLive);
+  document.getElementById('cs-nonlive-fields').classList.toggle('hidden', isLive);
+}
+
+function buildCSFindingsLine() {
+  const outcome = v('cs-outcome') || 'LIVE';
+  if (outcome === 'LIVE') {
+    return `${v('cs-baby') || 'LIVE'}, BW- ${v('cs-bw') || '?'} KG, APGARS ${v('cs-apg1') || '?'}/10, ${v('cs-apg2') || '?'}/10, ${v('cs-pres') || 'CEPHALIC'}, NTO, PLACENTA- ${v('cs-placenta') || 'NORMALLY SITED'}, LIQUOR- ${v('cs-liquor') || 'CLEAR AND ADEQUATE'}, EBL= ${v('cs-ebl') || '?'} ML`;
+  }
+  const sex = v('cs-nonlive-sex') || 'UNDETERMINED';
+  const bw = v('cs-nonlive-bw') || '?';
+  return `${outcome}, SEX- ${sex}, BW- ${bw} KG, ${v('cs-pres') || 'CEPHALIC'}, PLACENTA- ${v('cs-placenta') || 'NORMALLY SITED'}, LIQUOR- ${v('cs-liquor') || 'CLEAR AND ADEQUATE'}, EBL= ${v('cs-ebl') || '?'} ML`;
+}
+
 function generatePPCS() {
   const doc = v('cs-doc').toUpperCase();
   saveDoctorName(doc);
   const odq = getODQString('odq-cs', ODQ_STANDARD);
   const uterus = v('cs-uterus');
   const [utSize, utContract] = uterus.includes(',') ? uterus.split(',').map(s => s.trim()) : [uterus, 'WELL CONTRACTED'];
+  const onMgSO4 = document.getElementById('cs-mgso4-toggle')?.checked;
+  const autoPlan = v('cs-autoplan');
 
   const out = `MAT 4 REVIEW — POST PARTUM C/S
 
 NAME: ${v('cs-name') || '?'}
 AGE: ${v('cs-age') || '?'} YRS
-NOW P${v('cs-parity') || '?'}
+PARITY: ${getGPLString('cs')}
 
 POSTOP DAY ${v('cs-day') || '?'} FOLLOWING ${v('cs-type') || 'ELECTIVE'} C/S O/A ${v('cs-indication') || v('cs-dx') || '?'}
 
 MANAGED AS A CASE OF: ${v('cs-dx') || '?'}
 
-FINDINGS: ${v('cs-baby') || 'LIVE'}, BW- ${v('cs-bw') || '?'} KG, APGARS ${v('cs-apg1') || '?'}/10, ${v('cs-apg2') || '?'}/10, ${v('cs-pres') || 'CEPHALIC'}, NTO, PLACENTA- ${v('cs-placenta') || 'NORMALLY SITED'}, LIQUOR- ${v('cs-liquor') || 'CLEAR AND ADEQUATE'}, EBL= ${v('cs-ebl') || '?'} ML
+FINDINGS: ${buildCSFindingsLine()}
 
-CURRENTLY ON: ${v('cs-currenton') || '?'}
+CURRENTLY ON: ${v('cs-currenton') || '?'}${onMgSO4 ? ', MGSO4' : ''}
 
 C/O: ${v('cs-co') || 'NIL COMPLAINTS'}
 
@@ -2187,15 +2767,15 @@ O/E: YOUNG WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('cs-pale') || 
 CVS: P- ${v('cs-pr') || '?'} BPM, BP- ${v('cs-bps') || '?'}/${v('cs-bpd') || '?'} MMHG, S1+, S2+, MO
 RESP: RR- ${v('cs-rr') || '?'} CPM, SPO2- ${v('cs-spo2') || '?'}%, CHEST CLINICALLY CLEAR
 ABD: FULL SOFT, MWR, NON-TENDER, LIVER AND SPLEEN NOT PALPABLE AND KIDNEYS NOT BALLOTABLE, UTERUS ${utSize ? utSize + ' WK SIZE' : ''} AND IS ${utContract || 'WELL CONTRACTED'}, WOUND ${v('cs-wound') || 'DRY AND CLEAN'}, LOCHIA ${v('cs-lochia') || 'NORMAL'}
-CNS: ALERT AND CONSCIOUS, GCS- ${v('cs-gcs') || '15'}/15
+CNS: ALERT AND CONSCIOUS, GCS- ${v('cs-gcs') || '15'}/15${v('cs-exam-extra') ? '\n' + v('cs-exam-extra') : ''}
 
 FLUID INPUT & OUTPUT CHART: ${v('cs-io') || '?'}
 CHECK HB: ${v('cs-hb') || '?'} G/DL
 
 PLAN + ${doc || '?'}
-${v('cs-plan') || '?'}`;
+${autoPlan ? autoPlan + '\n' : ''}${v('cs-plan') || '?'}`;
 
-  document.getElementById('outtext-ppcs').textContent = out;
+  document.getElementById('outtext-ppcs').textContent = U(out);
   document.getElementById('out-ppcs').classList.add('visible');
   document.getElementById('out-ppcs').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2235,7 +2815,7 @@ ${v('ap-inv') ? '\nINVESTIGATIONS:\n' + v('ap-inv') : ''}
 PLAN + ${doc || '?'}
 ${v('ap-plan') || '?'}`;
 
-  document.getElementById('outtext-antepartum').textContent = out.trim();
+  document.getElementById('outtext-antepartum').textContent = U(out.trim());
   document.getElementById('out-antepartum').classList.add('visible');
   document.getElementById('out-antepartum').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2254,7 +2834,7 @@ function generateRounds() {
 
 NAME: ${v('rnd-name') || '?'}
 AGE: ${v('rnd-age') || '?'} YRS
-NOW P${v('rnd-parity') || '?'}
+PARITY: ${getGPLString('rnd')}
 ${type === 'ANTEPARTUM' ? '' : `POST ${type} DAY ${v('rnd-day') || '?'}`}
 
 MANAGED AS A CASE OF: ${v('rnd-dx') || '?'}
@@ -2269,7 +2849,7 @@ ODQ: ${odq}
 O/E:
 CVS: P- ${v('rnd-pr') || '?'} BPM, BP- ${v('rnd-bps') || '?'}/${v('rnd-bpd') || '?'} MMHG, S1+, S2+, MO
 RESP: RR- ${v('rnd-rr') || '?'} CPM, SPO2- ${v('rnd-spo2') || '?'}%, CHEST CLINICALLY CLEAR
-CNS: ALERT AND CONSCIOUS, GCS- ${v('rnd-gcs') || '15'}/15
+CNS: ALERT AND CONSCIOUS, GCS- ${v('rnd-gcs') || '15'}/15${v('rnd-exam-extra') ? '\n' + v('rnd-exam-extra') : ''}
 
 HB: ${v('rnd-hb') || '?'} G/DL
 FLUID I/O: ${v('rnd-io') || '?'}`;
@@ -2277,7 +2857,7 @@ FLUID I/O: ${v('rnd-io') || '?'}`;
     out = `OBS ROUNDS SUMMARY — ${type}
 
 NAME: ${v('rnd-name') || '?'}
-NOW P${v('rnd-parity') || '?'} | ${type === 'ANTEPARTUM' ? '' : 'DAY ' + (v('rnd-day') || '?') + ' | '}${v('rnd-dx') || '?'}
+${getGPLString('rnd')} | ${type === 'ANTEPARTUM' ? '' : 'DAY ' + (v('rnd-day') || '?') + ' | '}${v('rnd-dx') || '?'}
 
 CVS: P- ${v('rnd-pr') || '?'} BPM, BP- ${v('rnd-bps') || '?'}/${v('rnd-bpd') || '?'} MMHG
 RESP: RR- ${v('rnd-rr') || '?'} CPM, SPO2- ${v('rnd-spo2') || '?'}%
@@ -2286,7 +2866,7 @@ HB: ${v('rnd-hb') || '?'} G/DL | FLUID I/O: ${v('rnd-io') || '?'}`;
 
   out += `\n\nOBSWR + ${doc || '?'}\n${v('rnd-plan') || '?'}`;
 
-  document.getElementById('outtext-rounds').textContent = out;
+  document.getElementById('outtext-rounds').textContent = U(out);
   document.getElementById('out-rounds').classList.add('visible');
   document.getElementById('out-rounds').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2301,7 +2881,7 @@ function generateDischarge() {
 
 NAME: ${v('dc-name') || '?'}
 AGE: ${v('dc-age') || '?'} YRS
-PARITY: NOW P${v('dc-parity') || '?'}
+PARITY: ${getGPLString('dc')}
 
 DOA: ${v('dc-doa') || '?'}
 DOD: ${v('dc-dod') || today()}
@@ -2321,27 +2901,121 @@ ${v('dc-plan') || '?'}
 
 AUTHORISED BY: ${doc || '?'}`;
 
-  document.getElementById('outtext-discharge').textContent = out;
+  document.getElementById('outtext-discharge').textContent = U(out);
   document.getElementById('out-discharge').classList.add('visible');
   document.getElementById('out-discharge').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
 }
 
 // ─── RECEPTION ───
+// ── RECEPTION: DELIVERY TYPE TOGGLES ──
+let recDeliveryType = 'cs';
+
+function setRecDeliveryType(type) {
+  recDeliveryType = type;
+  document.getElementById('rec-dtype-cs').classList.toggle('active', type === 'cs');
+  document.getElementById('rec-dtype-induction').classList.toggle('active', type === 'induction');
+  document.getElementById('rec-cs-options').classList.toggle('hidden', type !== 'cs');
+  document.getElementById('rec-induction-options').classList.toggle('hidden', type !== 'induction');
+  document.getElementById('rec-inv-induction').classList.toggle('hidden', type !== 'induction');
+  document.getElementById('rec-inv-cs').classList.toggle('hidden', type !== 'cs');
+  document.getElementById('rec-anaesthesia-card').classList.toggle('hidden', type !== 'cs');
+  updateRecAutoPlan();
+}
+
+function updateRecCatVisibility() {
+  const isEmergency = v('rec-cs-urgency') === 'EMERGENCY';
+  document.getElementById('rec-cs-cat-field').classList.toggle('hidden', !isEmergency);
+}
+
+function toggleRecTwin() {
+  const isTwin = document.getElementById('rec-twin-toggle').checked;
+  document.getElementById('rec-twin-fields').classList.toggle('hidden', !isTwin);
+}
+
+// Auto-fill the Reception plan textarea based on delivery type (still editable after)
+function updateRecAutoPlan() {
+  const planEl = document.getElementById('rec-plan');
+  if (!planEl) return;
+  if (recDeliveryType === 'cs') {
+    planEl.value = `TO DO GROUPING AND CROSS-MATCHING (GXM)\nTO HAVE LINE IN SITU\nTO SIGN CONSENT FORM\nTO OBTAIN CS MEDICATIONS`;
+  } else {
+    const method = v('rec-induction-method') || 'CATHETER';
+    planEl.value = `TO DO GROUPING AND CROSS-MATCHING (GXM)\nTO HAVE LINE IN SITU\nTO OBTAIN SVD MEDICATIONS\nTO SIGN CONSENT FORM\nTO OBTAIN ${method} FOR INDUCTION`;
+  }
+}
+
+function buildRecScanBlock() {
+  const isTwin = document.getElementById('rec-twin-toggle')?.checked;
+  let block = `OBS SCAN FINDINGS
+EFW: ${v('rec-scan-efw') || '?'} G${isTwin ? ' (TWIN A)' : ''}`;
+  if (isTwin) {
+    block += `\nTWIN B EFW: ${v('rec-scan-efw-twinb') || '?'} G`;
+    block += `\nTWIN GESTATION TYPE: ${v('rec-twin-type') || 'DCDA'}`;
+  }
+  block += `\nLIE: ${v('rec-scan-lie') || 'LONGITUDINAL'}
+PRESENTATION: ${v('rec-scan-pres') || 'CEPHALIC'}
+PLACENTA LOCATION: ${v('rec-scan-placenta') || '?'}`;
+  return block;
+}
+
+function buildRecFPBlock() {
+  const opts = [];
+  if (document.getElementById('rec-fp-btl')?.checked) opts.push('BTL (AS PART OF C/S)');
+  if (document.getElementById('rec-fp-ibtl')?.checked) opts.push('INTERVAL BTL');
+  if (document.getElementById('rec-fp-injectable')?.checked) opts.push('INJECTABLE');
+  if (document.getElementById('rec-fp-implant')?.checked) opts.push('IMPLANT');
+  const other = v('rec-fp-other');
+  if (other) opts.push(other);
+  return opts.length ? opts.join(', ') : 'NOT DISCUSSED / DECLINED';
+}
+
+// Build investigations block, only including tests that were toggled ON
+function buildRecInvestigationsBlock() {
+  const lines = [];
+  if (recDeliveryType === 'induction' && document.getElementById('rec-nst-toggle')?.checked) {
+    lines.push(`NST: ${v('rec-nst') || 'NORMAL'}`);
+  }
+  if (document.getElementById('rec-fbc-toggle')?.checked) {
+    lines.push(`HB (FBC): ${v('rec-fbc-hb') || '?'} G/DL`);
+  }
+  if (recDeliveryType === 'cs' && document.getElementById('rec-buecr-toggle')?.checked) {
+    lines.push(`BUE/CR: ${v('rec-buecr') || '?'}`);
+  }
+  return lines;
+}
+
 function generateReception() {
   const doc = v('rec-doc').toUpperCase();
   saveDoctorName(doc);
   const odq = getODQString('odq-rec', ODQ_REC);
 
+  let deliveryLine = '';
+  if (recDeliveryType === 'cs') {
+    const urgency = v('rec-cs-urgency') || 'ELECTIVE';
+    const cat = urgency === 'EMERGENCY' ? ` (${v('rec-cs-cat') || 'CAT 1'})` : '';
+    deliveryLine = `REPORTING TODAY FOR ${urgency} C/S${cat} O/A ${v('rec-indication') || '?'}`;
+  } else {
+    const method = v('rec-induction-method') || 'CATHETER';
+    deliveryLine = `REPORTING TODAY FOR INDUCTION OF LABOUR (${method}) O/A ${v('rec-indication') || '?'}`;
+  }
+
+  const invLines = buildRecInvestigationsBlock();
+  const anaesthesiaLine = recDeliveryType === 'cs'
+    ? `ANAESTHESIA: ${v('rec-anaesthesia-cleared') || 'CLEARED FOR ANAESTHESIA'}`
+    : '';
+  if (anaesthesiaLine) invLines.push(anaesthesiaLine);
+  const invBlock = invLines.length ? `INVESTIGATIONS\n${invLines.join('\n')}\n\n` : '';
+
   const out = `MAT 4 RECEPTION NOTES
 
 NAME: ${v('rec-name') || '?'}
 AGE: ${v('rec-age') || '?'} YEARS
-PARITY: G${v('rec-g') || '?'} P${v('rec-p') || '?'} + ${v('rec-losses') || '0'}
+PARITY: ${getGPLString('rec')}
 EDD: ${v('rec-edd') || '?'}
 EGA: ${v('rec-egaw') || '?'} W + ${v('rec-egad') || '0'} D
 
-REPORTING TODAY FOR ELECTIVE C/S O/A ${v('rec-indication') || '?'}
+${deliveryLine}
 
 HPC: CLIENT IS A REGULAR ANC ATTENDANT HERE AT KBTH
 HAS NO KNOWN CHRONIC ILLNESSES
@@ -2367,12 +3041,16 @@ YOUNG WOMAN, LOOKS WELL, NOT PALE, NOT JAUNDICED, AFEBRILE (T- ${v('rec-temp') |
 CVS: BP- ${v('rec-bps') || '?'}/${v('rec-bpd') || '?'} MMHG, PR- ${v('rec-pr') || '?'}
 RESP: RR- ${v('rec-rr') || '?'}, CHEST CLINICALLY CLEAR
 ABDOMEN: GRAVID, MWR, NON-TENDER, SFH- ${v('rec-sfh') || '?'} CM, ${v('rec-lie') || 'LONGITUDINAL'} LIE, ${v('rec-pres') || 'CEPHALIC'} PRESENTATION, FHR: ${v('rec-fhr') || '?'} BPM
-CNS: ALERT AND CONSCIOUS, ORIENTED IN TPP.
+CNS: ALERT AND CONSCIOUS, ORIENTED IN TPP.${v('rec-exam-extra') ? '\n' + v('rec-exam-extra') : ''}
+
+${buildRecScanBlock()}
+
+${invBlock}FAMILY PLANNING (FP) DISCUSSED: ${buildRecFPBlock()}
 
 PLAN + ${doc || '?'}
 ${v('rec-plan') || '?'}`;
 
-  document.getElementById('outtext-reception').textContent = out;
+  document.getElementById('outtext-reception').textContent = U(out);
   document.getElementById('out-reception').classList.add('visible');
   document.getElementById('out-reception').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2454,7 +3132,9 @@ function toggleGTCustomMgt() {
 }
 
 // ── STANDARD POST-OP REGIMENS ──
-const LW_STANDARD_MGT = `1. MONITOR VITALS HOURLY UNTIL STABLE THEN 4 HOURLY
+function buildLWStandardMgt(comorbidity) {
+  const clexaneDays = comorbidity ? 5 : 3;
+  return `1. MONITOR VITALS HOURLY UNTIL STABLE THEN 4 HOURLY
 2. MONITOR URINE OUTPUT EVERY 1HR
 3. STRICT INPUT AND OUTPUT MONITORING
 4. IV FLUIDS 3L (1L N/S + 1L R/L + 1L DNS) FOR 24HRS
@@ -2463,10 +3143,11 @@ const LW_STANDARD_MGT = `1. MONITOR VITALS HOURLY UNTIL STABLE THEN 4 HOURLY
 7. IV PARACETAMOL 1G 6HRY FOR 24HRS
 8. IM PETHIDINE 100MG 6HRY FOR 24HRS
 9. SUPPOSITORY DICLOFENAC 100MG BD X 7/7
-10. SC CLEXANE 40MG DAILY FOR 3 DAYS AFTER 8HRS
+10. SC CLEXANE 40MG DAILY FOR ${clexaneDays} DAYS AFTER 8HRS
 11. TOPICAL 1% TETRACYCLINE EYE OINTMENT BDS X 24HRS
 12. 7.1% CHLORHEXIDINE DROPS OD X 24HRS
 13. TRANSFER TO WARD WHEN STABLE`;
+}
 
 const GT_STANDARD_MGT = `MONITOR VITALS QUARTER HRLY UNTIL STABLE
 IV FLUIDS 3L AS 1L N/S, 1L R/L AND 1L 10% DEXTROSE
@@ -2492,6 +3173,8 @@ BOOKING BP: ${v(prefix+'-bkbp') || '?'} MMHG`;
 }
 
 function buildScanBlock(prefix) {
+  const scanDone = document.getElementById(prefix + '-scan-toggle')?.checked;
+  if (!scanDone) return '';
   return `OBS SCAN FINDINGS
 NUMBER OF FETUSES: ${v(prefix+'-scan-fetus') || '1'}
 PLACENTA LOCATION: ${v(prefix+'-scan-placenta') || '?'}
@@ -2502,6 +3185,12 @@ EGA: ${v(prefix+'-scan-ega') || '?'}
 EDD: ${v(prefix+'-scan-edd') || '?'}
 EFA: ${v(prefix+'-scan-efa') || '?'} G
 COMMENTS: SINGLETON`;
+}
+
+function buildUrineProteinLine(prefix) {
+  const done = document.getElementById(prefix + '-uprotein-toggle')?.checked;
+  if (!done) return '';
+  return `URINE PROTEINS: ${v(prefix+'-uproteins') || 'NIL'}`;
 }
 
 function buildObsExam(prefix) {
@@ -2528,7 +3217,7 @@ function generateANC() {
   const out = `ANC
 
 NAME: ${v('anc-name') || '?'}
-AGE: ${v('anc-age') || '?'}   PARITY: G${v('anc-g') || '?'} P${v('anc-p') || '?'} + ${v('anc-losses') || '0'}
+AGE: ${v('anc-age') || '?'}   PARITY: ${getGPLString('anc')}
 EDD: ${v('anc-edd') || '?'}
 EGA: ${v('anc-egaw') || '?'} W ${v('anc-egad') || '0'} D
 
@@ -2550,7 +3239,7 @@ DRUG / HERBAL / ALLERGY HISTORY: ${v('anc-drug') || 'NO KNOWN DRUG ALLERGIES'}
 SOCIAL HISTORY
 HAS A PARTNER, LIVES AT ${v('anc-lives') || '?'}, LEL- ${v('anc-edu') || '?'}, WORKS AS ${v('anc-occ') || '?'}, ALCOHOL${v('anc-alc') || '-'}, SMOKING${v('anc-smk') || '-'}, NHIS${v('anc-nhis') || '+'}, ${v('anc-transfuse') || 'ACCEPTS BLOOD TRANSFUSION'}
 
-OBSTETRIC HISTORY — G${v('anc-g') || '?'} P${v('anc-p') || '?'} + ${v('anc-losses') || '0'}
+OBSTETRIC HISTORY — ${getGPLString('anc')}
 ${getObsHistoryString('anc')}
 INDEX PREGNANCY
 ${buildBookingBlock('anc')}
@@ -2562,15 +3251,10 @@ YOUNG WOMAN NOT IN OBVIOUS RESP DISTRESS, ${v('anc-pale') || 'NOT PALE'}, ${v('a
 ${buildObsExam('anc')}${veStr}
 ________________________________________
 
-INVESTIGATIONS
-${buildScanBlock('anc')}
-
-URINE PROTEINS: ${v('anc-uproteins') || 'NIL'}
-
-PLAN + ${doc || '?'}
+${[buildScanBlock('anc'), buildUrineProteinLine('anc')].filter(Boolean).length ? 'INVESTIGATIONS\n' + [buildScanBlock('anc'), buildUrineProteinLine('anc')].filter(Boolean).join('\n\n') + '\n\n' : ''}PLAN + ${doc || '?'}
 ${v('anc-plan') || '?'}${nextVisit ? '\n\nNEXT VISIT: ' + nextVisit : ''}`;
 
-  document.getElementById('outtext-anc').textContent = out;
+  document.getElementById('outtext-anc').textContent = U(out);
   document.getElementById('out-anc').classList.add('visible');
   document.getElementById('out-anc').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2592,7 +3276,7 @@ function generateOBSER() {
   const out = `OBS ER
 
 NAME: ${v('er-name') || '?'}
-AGE: ${v('er-age') || '?'}   PARITY: G${v('er-g') || '?'} P${v('er-p') || '?'} + ${v('er-losses') || '0'}
+AGE: ${v('er-age') || '?'}   PARITY: ${getGPLString('er')}
 EDD: ${v('er-edd') || '?'}
 EGA: ${v('er-egaw') || '?'} W ${v('er-egad') || '0'} D
 
@@ -2614,7 +3298,7 @@ DRUG / HERBAL / ALLERGY HISTORY: ${v('er-drug') || 'NO KNOWN DRUG ALLERGIES'}
 SOCIAL HISTORY
 LIVES AT ${v('er-lives') || '?'}, WORKS AS ${v('er-occ') || '?'}, NHIS${v('er-nhis') || '+'}, ${v('er-transfuse') || 'ACCEPTS BLOOD TRANSFUSION'}
 
-OBSTETRIC HISTORY — G${v('er-g') || '?'} P${v('er-p') || '?'} + ${v('er-losses') || '0'}
+OBSTETRIC HISTORY — ${getGPLString('er')}
 ${getObsHistoryString('er')}
 INDEX PREGNANCY
 ${buildBookingBlock('er')}
@@ -2626,15 +3310,10 @@ YOUNG WOMAN NOT IN OBVIOUS RESP DISTRESS, ${v('er-pale') || 'NOT PALE'}, ${v('er
 ${buildObsExam('er')}${veStr}
 ________________________________________
 
-INVESTIGATIONS
-${buildScanBlock('er')}
-
-URINE PROTEINS: ${v('er-uproteins') || 'NIL'}
-
-PLAN + ${doc || '?'}
+${[buildScanBlock('er'), buildUrineProteinLine('er')].filter(Boolean).length ? 'INVESTIGATIONS\n' + [buildScanBlock('er'), buildUrineProteinLine('er')].filter(Boolean).join('\n\n') + '\n\n' : ''}PLAN + ${doc || '?'}
 ${v('er-plan') || '?'}`;
 
-  document.getElementById('outtext-obser').textContent = out;
+  document.getElementById('outtext-obser').textContent = U(out);
   document.getElementById('out-obser').classList.add('visible');
   document.getElementById('out-obser').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2654,7 +3333,7 @@ function generateGynaeClinic() {
 
 NAME: ${v('gc-name') || '?'}
 AGE: ${v('gc-age') || '?'}
-GRAVIDITY & PARITY: G${v('gc-g') || '?'} P${v('gc-p') || '?'} + ${v('gc-losses') || '0'}
+GRAVIDITY & PARITY: ${getGPLString('gc')}
 LMP: ${v('gc-lmp') || '?'}
 STREET ADDRESS: ${v('gc-address') || '?'}
 
@@ -2698,7 +3377,7 @@ CNS: ALERT AND CONSCIOUS, ORIENTED IN TPP
 PLAN + ${doc || '?'}
 ${v('gc-plan') || '?'}`;
 
-  document.getElementById('outtext-gynaeclinic').textContent = out;
+  document.getElementById('outtext-gynaeclinic').textContent = U(out);
   document.getElementById('out-gynaeclinic').classList.add('visible');
   document.getElementById('out-gynaeclinic').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2711,14 +3390,15 @@ function generateLWCS() {
   saveDoctorName(surgeon || doc);
   const date = v('lw-date') || today();
   const useStandard = document.getElementById('lw-standard-mgt').value === 'yes';
-  const mgt = useStandard ? LW_STANDARD_MGT : (v('lw-custom-mgt') || '?');
+  const hasComorbidity = document.getElementById('lw-comorbidity-toggle')?.checked;
+  const mgt = useStandard ? buildLWStandardMgt(hasComorbidity) : (v('lw-custom-mgt') || '?');
 
   const out = `LABOUR WARD — PROCEDURE NOTES (${date})
 
 NAME: ${v('lw-name') || '?'}
 AGE: ${v('lw-age') || '?'} YEARS
 EGA: ${v('lw-egaw') || '?'} W ${v('lw-egad') || '0'} D
-NOW P${v('lw-parity') || '?'}
+PARITY: ${getGPLString('lw')}
 
 SURGERY: ${v('lw-cstype') || 'EMERGENCY'} CAESAREAN SECTION
 INDICATION: ${v('lw-indication') || '?'}
@@ -2741,7 +3421,7 @@ ${mgt}
 
 PLAN + ${doc || surgeon || '?'}`;
 
-  document.getElementById('outtext-lwcs').textContent = out;
+  document.getElementById('outtext-lwcs').textContent = U(out);
   document.getElementById('out-lwcs').classList.add('visible');
   document.getElementById('out-lwcs').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2760,7 +3440,7 @@ function generateGynaeTheatre() {
 
 NAME: ${v('gt-name') || '?'}
 AGE: ${v('gt-age') || '?'} YRS
-PARITY: G${v('gt-g') || '?'} P${v('gt-p') || '?'} + ${v('gt-losses') || '0'}
+PARITY: ${getGPLString('gt')}
 
 TYPE OF SURGERY: ${v('gt-surgery') || '?'}
 INDICATION: ${v('gt-indication') || '?'}
@@ -2782,7 +3462,7 @@ ${mgt}
 
 PLAN + ${doc || surgeon || '?'}`;
 
-  document.getElementById('outtext-gynaetheatre').textContent = out;
+  document.getElementById('outtext-gynaetheatre').textContent = U(out);
   document.getElementById('out-gynaetheatre').classList.add('visible');
   document.getElementById('out-gynaetheatre').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderAllDocDropdowns();
@@ -2816,6 +3496,22 @@ document.addEventListener('DOMContentLoaded', () => {
   buildODQ('odq-er', ODQ_OBSTETRIC);
   buildODQ('odq-er-se', ODQ_SE);
   buildODQ('odq-gc-se', ODQ_SE);
+
+  // Bind EGA auto-calculation from EDD
+  bindEGAFromEDD('anc-edd', 'anc-egaw', 'anc-egad');
+  bindEGAFromEDD('er-edd', 'er-egaw', 'er-egad');
+  bindEGAFromEDD('ap-edd', 'ap-egaw', 'ap-egad');
+  bindEGAFromEDD('rec-edd', 'rec-egaw', 'rec-egad');
+
+  // Reception: induction method change refreshes auto-plan
+  const recInductionMethodEl = document.getElementById('rec-induction-method');
+  if (recInductionMethodEl) recInductionMethodEl.addEventListener('change', updateRecAutoPlan);
+
+  // Reception: initial auto-fill of plan based on default delivery type (C/S)
+  updateRecAutoPlan();
+
+  // PP C/S: initial auto-fill of post-op day 1 plan
+  updateCSAutoPlan();
 
   // Pre-fill discharge meds
   updateDischargeMeds();
