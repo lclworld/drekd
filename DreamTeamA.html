@@ -359,9 +359,16 @@ const RESIDENTS={
     {from:'2026-06-08',to:'2026-06-14',name:'Dr Bright',num:''},
     {from:'2026-06-15',to:'2026-06-21',name:'Dr Mervyn Mensah',num:'+233 50 334 1141'},
     {from:'2026-06-22',to:'2026-06-30',name:'Dr Arab',num:'+233 24 403 7389'},
+    {from:'2026-07-01',to:'2026-07-05',name:'Dr Allotey',num:''},
+    {from:'2026-07-06',to:'2026-07-12',name:'Dr Ansah Takyi',num:''},
+    {from:'2026-07-13',to:'2026-07-19',name:'Dr Patamia',num:'0532963680'},
+    {from:'2026-07-20',to:'2026-07-26',name:'Dr Mensah',num:''},
+    {from:'2026-07-27',to:'2026-07-27',name:'Dr Allotey',num:''},
   ],
   gynae:[
     {from:'2026-06-01',to:'2026-06-30',name:'Dr Patamia',num:'0532963680'},
+    {from:'2026-07-01',to:'2026-07-15',name:'Dr Okpoti-Paulo',num:'+233 27 614 9999'},
+    {from:'2026-07-16',to:'2026-07-31',name:'Dr Fidelis',num:'+233 24 965 0211'},
   ],
 };
 function getResident(type,d){
@@ -369,6 +376,13 @@ function getResident(type,d){
   for(const r of (RESIDENTS[type]||[])){if(ds>=r.from&&ds<=r.to)return r;}
   return null;
 }
+
+// ── DUTY WEEKENDS ────────────────────────────────────────────────────────────────
+const DUTY_SUNDAYS=[
+  '2026-06-06','2026-06-28','2026-07-12','2026-08-02','2026-08-16',
+  '2026-09-06','2026-09-20','2026-10-11','2026-10-25','2026-11-15','2026-11-29'
+];
+function isOnDuty(d){return DUTY_SUNDAYS.includes(dateStr(d));}
 
 const TUTORIALS=[
   {date:'2026-06-09',topic:'Pre-and-post operative care of the obstetrics and gynaecology patient',presenter:'Efua',presenterFull:'Dr Efua Kyerewaa Dwamena',supervisor:'Dr Fidelis'},
@@ -685,7 +699,8 @@ function lookupSchedule(){
   const dept=sm.dept;
 
   badge.className='result-badge '+sm.badge;
-  badge.innerHTML=`${sm.icon} ${sm.cover} &nbsp;|&nbsp; ${dn} ${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  const dutyTag=isOnDuty(d)?' &nbsp;🔴 <span style="font-size:11px;font-weight:700;color:#e74c3c">ON DUTY</span>':'';
+  badge.innerHTML=`${sm.icon} ${sm.cover} &nbsp;|&nbsp; ${dn} ${d.getDate()} ${MONTHS[d.getMonth()]}${dutyTag}`;
 
   let html='';
 
