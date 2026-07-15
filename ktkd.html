@@ -345,17 +345,25 @@ const dutyWeekends = new Set([
 // Jun 14–18: off
 // Jun 19:    10-on/5-off cycle begins
 function getKtStatus(ds) {
-  const d   = new Date(ds);
+  const d     = new Date(ds);
   const jun9  = new Date('2026-06-09');
   const jun13 = new Date('2026-06-13');
   const jun14 = new Date('2026-06-14');
   const jun18 = new Date('2026-06-18');
   const jun19 = new Date('2026-06-19');
   if (d < jun9)   return null;
-  if (d <= jun13) return 'work';
-  if (d <= jun18) return 'off';
+  if (d <= jun13) { const day = Math.floor((d - jun9) / 86400000) + 1; return { status:'work', label:'Day '+day }; }
+  if (d <= jun18) { const day = Math.floor((d - jun14) / 86400000) + 1; return { status:'off',  label:'Off '+day }; }
   const days = Math.floor((d - jun19) / 86400000);
-  return (days % 15) < 10 ? 'work' : 'off';
+  const pos  = days % 15;
+  if (pos < 10) return { status:'work', label:'Day '+(pos+1) };
+  return { status:'off', label:'Off '+(pos-9) };
+}
+
+// Helper to get just status string
+function ktStatus(ds) {
+  const r = getKtStatus(ds);
+  return r ? r.status : null;
 }
 
 // ─── STATION TYPES ───────────────────────────────────────────────────────────
@@ -414,9 +422,10 @@ function computeWeekLighterOverlap(dateStr) {
     const dd=new Date(ws); dd.setDate(dd.getDate()+i);
     const dstr=dd.toISOString().slice(0,10);
     const st=efuaMap[dstr];
-    const kt=getKtStatus(dstr);
+    const ktR=getKtStatus(dstr);
+    const ktS=ktR?ktR.status:null;
     if (LIGHTER.has(st)) lighterDays++;
-    if (kt==='off' && LIGHTER.has(st)) ktOffInLighter++;
+    if (ktS==='off' && LIGHTER.has(st)) ktOffInLighter++;
   }
   const isLighterWeek = lighterDays >= 3;
   let result = null;
@@ -430,7 +439,9 @@ function computeWeekLighterOverlap(dateStr) {
 
 function getDayFlags(dateStr) {
   const st  = efuaMap[dateStr];
-  const kt  = getKtStatus(dateStr);
+  const ktR = getKtStatus(dateStr);
+  const kt  = ktR ? ktR.status : null;
+  const ktLabel = ktR ? ktR.label : null;
   const fri = isFri(dateStr);
   const sat = isSat(dateStr);
   const sun = isSun(dateStr);
@@ -441,20 +452,17 @@ function getDayFlags(dateStr) {
   let afterwork = false;
 
   if (kt === 'off' && st) {
-    // Love window rules
     if (st === 'LEAVE') {
       love = 'love';
     } else if (LIGHTER.has(st)) {
       love = computeWeekLighterOverlap(dateStr);
     }
-
-    // After work flag: Gynae (flexible) Mon–Thu, KT off, not a duty day
     if (FLEXIBLE.has(st) && isMonToThu(dateStr) && !duty && !dutyMon) {
       afterwork = true;
     }
   }
 
-  return { st, kt, love, afterwork, fri, sat, sun, duty, dutyMon };
+  return { st, kt, ktLabel, love, afterwork, fri, sat, sun, duty, dutyMon };
 }
 
 // ─── BUILD ───────────────────────────────────────────────────────────────────
@@ -559,8 +567,8 @@ function buildCell(dateStr, d) {
   }
 
   // KT tag
-  if (f.kt==='work') html+=`<span class="tag t-kt-work">KT: Working</span>`;
-  else if (f.kt==='off') html+=`<span class="tag t-kt-off">KT: Off ✓</span>`;
+  if (f.kt==='work') html+=`<span class="tag t-kt-work">${f.ktLabel} · Working</span>`;
+  else if (f.kt==='off') html+=`<span class="tag t-kt-off">${f.ktLabel} · Off ✓</span>`;
 
   // Flags
   if (f.love==='love') html+=`<span class="tag t-love">♡ Together</span>`;
@@ -597,8 +605,8 @@ function buildListRow(dateStr, d) {
   else if (st&&FLEXIBLE.has(st)) tags+=`<span class="tag t-flexible">Efua: ${stLabel(st)} · ~5pm Mon–Thu</span>`;
   else if (st&&LIGHTER.has(st)) tags+=`<span class="tag t-lighter">Efua: ${stLabel(st)} · closes 4:30pm</span>`;
 
-  if (kt==='work') tags+=`<span class="tag t-kt-work">KT: 6am–7pm</span>`;
-  else if (kt==='off') tags+=`<span class="tag t-kt-off">KT: Off ✓</span>`;
+  if (kt==='work') tags+=`<span class="tag t-kt-work">KT ${f.ktLabel} · 6am–7pm</span>`;
+  else if (kt==='off') tags+=`<span class="tag t-kt-off">KT ${f.ktLabel} · Off ✓</span>`;
 
   if (f.love==='love') tags+=`<span class="tag t-love">♡ Love Window</span>`;
   else if (f.love==='possible') tags+=`<span class="tag t-possible">♡ Possible — confirm</span>`;
