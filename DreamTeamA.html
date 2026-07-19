@@ -229,43 +229,43 @@ function getPersonOnLeave(d){
 
 // Schedule: mat1=MAT1, mat2=MAT2, er=OBS ER, g1=Gynae1, g2=Gynae2, lw=LW1
 const SCHED=[
-  {s:'2026-06-01',e:'2026-06-07', m1:'',       m2:'',        er:'',                g1:'',        g2:'',        lw:'',        mf:''},
-  {s:'2026-06-08',e:'2026-06-14', m1:'Bertha',  m2:'Messiah', er:'Efua',            g1:'Samira',  g2:'Winston', lw:'Daniel',  mf:''},
-  {s:'2026-06-15',e:'2026-06-21', m1:'Messiah', m2:'Efua',    er:'Samira',          g1:'Winston', g2:'Daniel',  lw:'Bertha',  mf:''},
-  {s:'2026-06-22',e:'2026-06-24', m1:'Efua',    m2:'Samira',  er:'Winston',         g1:'Daniel',  g2:'Bertha',  lw:'Messiah', mf:''},
-  {s:'2026-06-25',e:'2026-06-28', m1:'Efua',    m2:'Samira',  er:'Fatima/Winston',  g1:'Daniel',  g2:'Bertha',  lw:'Messiah', mf:''},
-  {s:'2026-06-29',e:'2026-07-05', m1:'Samira',  m2:'Fatima',  er:'Daniel',          g1:'Bertha',  g2:'Messiah', lw:'Efua',    mf:''},
-  {s:'2026-07-06',e:'2026-07-12', m1:'Fatima',  m2:'Daniel',  er:'Bertha',          g1:'Messiah', g2:'Efua',    lw:'Samira',  mf:'Portia'},
-  {s:'2026-07-13',e:'2026-07-19', m1:'Daniel',  m2:'Bertha',  er:'Messiah',         g1:'Efua',    g2:'Samira',  lw:'Portia',  mf:'Fatima'},
-  {s:'2026-07-20',e:'2026-07-22', m1:'Bertha',  m2:'Messiah', er:'Efua',            g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Daniel'},
-  {s:'2026-07-23',e:'2026-07-23', m1:'Bertha',  m2:'Messiah', er:'Efua',            g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Daniel/Winston'},
-  {s:'2026-07-24',e:'2026-07-26', m1:'Bertha',  m2:'Messiah', er:'Efua',            g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Winston'},
-  {s:'2026-07-27',e:'2026-08-02', m1:'Messiah', m2:'Efua',    er:'Samira',          g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Bertha'},
-  {s:'2026-08-03',e:'2026-08-09', m1:'Efua',    m2:'Samira',  er:'Portia',          g1:'Fatima',  g2:'Winston', lw:'Bertha',  mf:'Messiah'},
-  {s:'2026-08-10',e:'2026-08-16', m1:'Samira',  m2:'Portia',  er:'Fatima',          g1:'Winston', g2:'Bertha',  lw:'Messiah', mf:'Efua'},
-  {s:'2026-08-17',e:'2026-08-18', m1:'Portia',  m2:'Fatima',  er:'Winston',         g1:'Bertha',  g2:'Messiah', lw:'Efua',    mf:'Samira'},
-  {s:'2026-08-19',e:'2026-08-19', m1:'Portia',  m2:'Fatima',  er:'Winston',         g1:'Bertha',  g2:'Messiah', lw:'Efua/Daniel',mf:'Samira'},
-  {s:'2026-08-20',e:'2026-08-23', m1:'Portia',  m2:'Fatima',  er:'Winston',         g1:'Bertha',  g2:'Messiah', lw:'Daniel',  mf:'Samira'},
-  {s:'2026-08-24',e:'2026-08-31', m1:'Fatima',  m2:'Winston', er:'Bertha',          g1:'Messiah', g2:'Daniel',  lw:'Samira',  mf:''},
-  {s:'2026-09-01',e:'2026-09-06', m1:'Winston', m2:'Bertha',  er:'Messiah',         g1:'Daniel',  g2:'Samira',  lw:'Portia',  mf:'Fatima'},
-  {s:'2026-09-07',e:'2026-09-13', m1:'Bertha',  m2:'Messiah', er:'Daniel',          g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Winston'},
-  {s:'2026-09-14',e:'2026-09-14', m1:'Messiah', m2:'Daniel',  er:'Samira',          g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Bertha'},
-  {s:'2026-09-15',e:'2026-09-15', m1:'Messiah', m2:'Daniel',  er:'Samira',          g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Bertha/Efua'},
-  {s:'2026-09-16',e:'2026-09-20', m1:'Messiah', m2:'Daniel',  er:'Samira',          g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Efua'},
-  {s:'2026-09-21',e:'2026-09-27', m1:'Daniel',  m2:'Samira',  er:'Portia',          g1:'Fatima',  g2:'Winston', lw:'Efua',    mf:'Messiah'},
-  {s:'2026-09-28',e:'2026-10-04', m1:'Samira',  m2:'Portia',  er:'Fatima',          g1:'Winston', g2:'Efua',    lw:'Messiah', mf:'Daniel'},
-  {s:'2026-10-05',e:'2026-10-09', m1:'Portia',  m2:'Fatima',  er:'Winston',         g1:'Efua',    g2:'Messiah', lw:'Daniel',  mf:'Samira'},
-  {s:'2026-10-10',e:'2026-10-11', m1:'Portia',  m2:'Fatima',  er:'Winston',         g1:'Efua',    g2:'Messiah/Bertha',lw:'Daniel',mf:'Samira'},
-  {s:'2026-10-12',e:'2026-10-18', m1:'Fatima',  m2:'Winston', er:'Efua',            g1:'Bertha',  g2:'Daniel',  lw:'Samira',  mf:'Portia'},
-  {s:'2026-10-19',e:'2026-10-25', m1:'Winston', m2:'Efua',    er:'Bertha',          g1:'Daniel',  g2:'Samira',  lw:'Portia',  mf:'Fatima'},
-  {s:'2026-10-26',e:'2026-11-01', m1:'Efua',    m2:'Bertha',  er:'Daniel',          g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Winston'},
-  {s:'2026-11-02',e:'2026-11-04', m1:'Bertha',  m2:'Daniel',  er:'Samira',          g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Efua'},
-  {s:'2026-11-05',e:'2026-11-05', m1:'Bertha',  m2:'Daniel',  er:'Samira/Messiah',  g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Efua'},
-  {s:'2026-11-06',e:'2026-11-08', m1:'Bertha',  m2:'Daniel',  er:'Messiah',         g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Efua'},
-  {s:'2026-11-09',e:'2026-11-15', m1:'Daniel',  m2:'Messiah', er:'Portia',          g1:'Fatima',  g2:'Winston', lw:'Efua',    mf:'Bertha'},
-  {s:'2026-11-16',e:'2026-11-22', m1:'Messiah', m2:'Portia',  er:'Fatima',          g1:'Winston', g2:'Efua',    lw:'Bertha',  mf:'Daniel'},
-  {s:'2026-11-23',e:'2026-11-29', m1:'Portia',  m2:'Fatima',  er:'Winston',         g1:'Efua',    g2:'Bertha',  lw:'Daniel',  mf:'Messiah'},
-  {s:'2026-11-30',e:'2026-12-01', m1:'Fatima',  m2:'Winston', er:'Efua',            g1:'Bertha',  g2:'Daniel',  lw:'Messiah', mf:'Portia'},
+  {s:'2026-06-01',e:'2026-06-07', m1:'',       m2:'',        er:'',               g1:'',        g2:'',        lw:'',        mf:''},
+  {s:'2026-06-08',e:'2026-06-14', m1:'Bertha',  m2:'Messiah', er:'Efua',           g1:'Samira',  g2:'Winston', lw:'Daniel',  mf:''},
+  {s:'2026-06-15',e:'2026-06-21', m1:'Messiah', m2:'Efua',    er:'Samira',         g1:'Winston', g2:'Daniel',  lw:'Bertha',  mf:''},
+  {s:'2026-06-22',e:'2026-06-24', m1:'Efua',    m2:'Samira',  er:'Winston',        g1:'Daniel',  g2:'Bertha',  lw:'Messiah', mf:''},
+  {s:'2026-06-25',e:'2026-06-28', m1:'Efua',    m2:'Samira',  er:'Fatima/Winston', g1:'Daniel',  g2:'Bertha',  lw:'Messiah', mf:''},
+  {s:'2026-06-29',e:'2026-07-05', m1:'Samira',  m2:'Fatima',  er:'Daniel',         g1:'Bertha',  g2:'Messiah', lw:'Efua',    mf:''},
+  {s:'2026-07-06',e:'2026-07-12', m1:'Fatima',  m2:'Daniel',  er:'Bertha',         g1:'Messiah', g2:'Efua',    lw:'Samira',  mf:'Portia'},
+  {s:'2026-07-13',e:'2026-07-19', m1:'Daniel',  m2:'Bertha',  er:'Messiah',        g1:'Efua',    g2:'Samira',  lw:'Portia',  mf:'Fatima'},
+  {s:'2026-07-20',e:'2026-07-22', m1:'Bertha',  m2:'Messiah', er:'Efua',           g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Daniel'},
+  {s:'2026-07-23',e:'2026-07-23', m1:'Bertha',  m2:'Messiah', er:'Efua',           g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Daniel/Winston'},
+  {s:'2026-07-24',e:'2026-07-26', m1:'Bertha',  m2:'Messiah', er:'Efua',           g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Winston'},
+  {s:'2026-07-27',e:'2026-08-02', m1:'Messiah', m2:'Efua',    er:'Samira',         g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Bertha'},
+  {s:'2026-08-03',e:'2026-08-09', m1:'Efua',    m2:'Samira',  er:'Portia',         g1:'Fatima',  g2:'Winston', lw:'Bertha',  mf:'Messiah'},
+  {s:'2026-08-10',e:'2026-08-16', m1:'Samira',  m2:'Portia',  er:'Fatima',         g1:'Winston', g2:'Bertha',  lw:'Messiah (FP)', mf:'Efua'},
+  {s:'2026-08-17',e:'2026-08-18', m1:'Portia',  m2:'Fatima',  er:'Winston',        g1:'Bertha',  g2:'Messiah', lw:'Efua',    mf:'Samira (FP)'},
+  {s:'2026-08-19',e:'2026-08-19', m1:'Portia',  m2:'Fatima',  er:'Winston',        g1:'Bertha',  g2:'Messiah', lw:'Efua/Daniel', mf:'Samira (FP)'},
+  {s:'2026-08-20',e:'2026-08-23', m1:'Portia',  m2:'Fatima',  er:'Winston',        g1:'Bertha',  g2:'Messiah', lw:'Daniel',  mf:'Samira (FP)'},
+  {s:'2026-08-24',e:'2026-08-31', m1:'Fatima',  m2:'Winston', er:'Bertha',         g1:'Messiah', g2:'Daniel',  lw:'Samira',  mf:'NO ONE'},
+  {s:'2026-09-01',e:'2026-09-06', m1:'Winston', m2:'Bertha',  er:'Messiah',        g1:'Daniel',  g2:'Samira',  lw:'Portia',  mf:'Fatima'},
+  {s:'2026-09-07',e:'2026-09-13', m1:'Bertha',  m2:'Messiah', er:'Daniel',         g1:'Samira',  g2:'Portia',  lw:'Fatima',  mf:'Winston'},
+  {s:'2026-09-14',e:'2026-09-14', m1:'Messiah', m2:'Daniel',  er:'Samira',         g1:'Portia',  g2:'Fatima',  lw:'Winston (FP)', mf:'Bertha'},
+  {s:'2026-09-15',e:'2026-09-15', m1:'Messiah', m2:'Daniel',  er:'Samira',         g1:'Portia',  g2:'Fatima',  lw:'Winston (FP)', mf:'Bertha/Efua'},
+  {s:'2026-09-16',e:'2026-09-20', m1:'Messiah', m2:'Daniel',  er:'Samira',         g1:'Portia',  g2:'Fatima',  lw:'Winston (FP)', mf:'Efua'},
+  {s:'2026-09-21',e:'2026-09-27', m1:'Daniel',  m2:'Samira',  er:'Portia',         g1:'Fatima',  g2:'Winston', lw:'Efua',    mf:'Messiah'},
+  {s:'2026-09-28',e:'2026-10-04', m1:'Samira',  m2:'Portia',  er:'Fatima',         g1:'Winston', g2:'Efua',    lw:'Messiah', mf:'Daniel'},
+  {s:'2026-10-05',e:'2026-10-09', m1:'Portia',  m2:'Fatima',  er:'Winston',        g1:'Efua',    g2:'Messiah', lw:'Daniel',  mf:'Samira'},
+  {s:'2026-10-10',e:'2026-10-11', m1:'Portia',  m2:'Fatima',  er:'Winston',        g1:'Efua',    g2:'Messiah/Bertha', lw:'Daniel', mf:'Samira'},
+  {s:'2026-10-12',e:'2026-10-18', m1:'Fatima',  m2:'Winston', er:'Efua',           g1:'Bertha',  g2:'Daniel',  lw:'Samira',  mf:'Portia'},
+  {s:'2026-10-19',e:'2026-10-25', m1:'Winston', m2:'Efua',    er:'Bertha',         g1:'Daniel',  g2:'Samira',  lw:'Portia (FP)', mf:'Fatima'},
+  {s:'2026-10-26',e:'2026-11-01', m1:'Efua',    m2:'Bertha',  er:'Daniel',         g1:'Samira',  g2:'Portia',  lw:'Fatima (FP)', mf:'Winston'},
+  {s:'2026-11-02',e:'2026-11-04', m1:'Bertha',  m2:'Daniel',  er:'Samira',         g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Efua (FP)'},
+  {s:'2026-11-05',e:'2026-11-05', m1:'Bertha',  m2:'Daniel',  er:'Samira/Messiah', g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Efua (FP)'},
+  {s:'2026-11-06',e:'2026-11-08', m1:'Bertha',  m2:'Daniel',  er:'Messiah',        g1:'Portia',  g2:'Fatima',  lw:'Winston', mf:'Efua (FP)'},
+  {s:'2026-11-09',e:'2026-11-15', m1:'Daniel',  m2:'Messiah', er:'Portia',         g1:'Fatima',  g2:'Winston', lw:'Efua',    mf:'Bertha (FP)'},
+  {s:'2026-11-16',e:'2026-11-22', m1:'Messiah', m2:'Portia',  er:'Fatima',         g1:'Winston', g2:'Efua',    lw:'Bertha',  mf:'Daniel'},
+  {s:'2026-11-23',e:'2026-11-29', m1:'Portia',  m2:'Fatima',  er:'Winston',        g1:'Efua',    g2:'Bertha',  lw:'Daniel (FP)', mf:'Messiah'},
+  {s:'2026-11-30',e:'2026-12-01', m1:'Fatima',  m2:'Winston', er:'Efua',           g1:'Bertha',  g2:'Daniel',  lw:'Messiah', mf:'Portia'},
 ];
 
 function getWeekRow(d){
@@ -338,13 +338,14 @@ const FP_SCHEDULE={
 
 // From image: FP tags appear in LW1 column for these weeks
 const FP_MAP={
-  'Bertha': ['2026-07-27','2026-08-02'],
-  'Messiah':['2026-08-03','2026-08-09'],
-  'Efua':   ['2026-08-10','2026-08-16'],
-  'Samira': ['2026-08-17','2026-08-18'],
-  'Fatima': ['2026-08-10','2026-08-16'],
-  'Winston':['2026-08-31','2026-09-06'],
-  'Daniel': ['2026-09-21','2026-09-27'],
+  'Messiah':['2026-08-10','2026-08-16'],
+  'Samira': ['2026-08-17','2026-08-23'],
+  'Winston':['2026-09-14','2026-09-20'],
+  'Portia': ['2026-10-19','2026-10-25'],
+  'Fatima': ['2026-10-26','2026-11-01'],
+  'Efua':   ['2026-11-02','2026-11-08'],
+  'Bertha': ['2026-11-09','2026-11-15'],
+  'Daniel': ['2026-11-23','2026-11-29'],
 };
 
 function isFPWeek(name,d){
@@ -758,6 +759,14 @@ function lookupSchedule(){
 
   html+=buildTutorialHtml(name,ds,dow);
 
+  // FP banner — show first so it cannot be missed
+  const fpMThu=isFPMThu(name,d);
+  const fpFri=isFPFri(name,d);
+  if(fpMThu||fpFri){
+    const fp=FP_MAP[name];
+    html+=`<div class="fp-banner"><strong>🏥 FAMILY PLANNING WEEK</strong>Your FP rotation: ${toD(fp[0]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${toD(fp[1]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}<br>Monday–Thursday: attend Family Planning unit 8am–5pm. Friday: join team for full duty.</div>`;
+  }
+
   const resType=dept==='Gynae'?'gynae':'obs';
   const res=getResident(resType,d);
   if(res){
@@ -775,30 +784,17 @@ function lookupSchedule(){
     html+=`</div>`;
   }
 
-  const fpMThu=dept==='LW'&&isFPMThu(name,d);
-  const fpFri=dept==='LW'&&isFPFri(name,d);
-
-  if(fpMThu||fpFri){
-    const fp=FP_MAP[name];
-    html+=`<div class="fp-banner"><strong>🏥 FAMILY PLANNING WEEK</strong>Your FP rotation: ${toD(fp[0]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${toD(fp[1]).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>`;
-    const fpd=fpMThu
-      ?[{t:'8:00am–5:00pm',d:'Family Planning unit — attend and assist with Family Planning clinic'}]
-      :[{t:'8:00am',d:'Join the team for the full 24-hour Friday duty — Family Planning rotation ends today'}];
-    html+=`<div class="duties-section"><div class="duties-label">${fpMThu?'Family Planning':'Friday Duty'} — ${dn}</div>`;
-    fpd.forEach(item=>{html+=`<div class="duty-item"><div class="bullet"></div><div><span class="duty-time">${item.t}</span> ${item.d}</div></div>`;});
+  // Station duties — always show
+  const sd=DUTIES[dept]&&DUTIES[dept][dow];
+  if(sd&&sd.length){
+    html+=`<div class="duties-section"><div class="duties-label">${sm.label} — ${dn} Duties</div>`;
+    sd.forEach(item=>{
+      const cls=item.w?'duty-item warn-item':'duty-item';
+      let taskHtml=item.d;
+      if(item.l){taskHtml+=` <button class="open-btn" onclick="openMeds('${item.l}')">Open →</button>`;}
+      html+=`<div class="${cls}"><div class="bullet"></div><div><span class="duty-time">${item.t}</span> ${taskHtml}</div></div>`;
+    });
     html+=`</div>`;
-  } else {
-    const sd=DUTIES[dept]&&DUTIES[dept][dow];
-    if(sd&&sd.length){
-      html+=`<div class="duties-section"><div class="duties-label">${sm.label} — ${dn} Duties</div>`;
-      sd.forEach(item=>{
-        const cls=item.w?'duty-item warn-item':'duty-item';
-        let taskHtml=item.d;
-        if(item.l){taskHtml+=` <button class="open-btn" onclick="openMeds('${item.l}')">Open →</button>`;}
-        html+=`<div class="${cls}"><div class="bullet"></div><div><span class="duty-time">${item.t}</span> ${taskHtml}</div></div>`;
-      });
-      html+=`</div>`;
-    }
   }
 
   content.innerHTML=html;
