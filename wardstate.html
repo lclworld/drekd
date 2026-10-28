@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Ward State — Mat 4</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Ward State" />
+<meta name="theme-color" content="#0D1B3E" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+/* Layout: a ward board. Sticky header with tabs; patient cards in a responsive grid like bed slots; jobs list as a printed handover sheet. */
+:root {
+  --bg: #F7F9FC;
+  --surface: #FFFFFF;
+  --ink: #0D1B3E;
+  --muted: #6B7FA3;
+  --line: #D0DAE8;
+  --accent: #2A4480;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #EBF3FB;
+  --navy: #0D1B3E;
+  --navy-ink: #FFFFFF;
+  --navy-muted: #8BA3CC;
+  --urgent: #b4232c;
+  --urgent-soft: #fbe6e7;
+  --follow: #8a5a00;
+  --follow-soft: #fbf0d9;
+  --done: #2f7a46;
+  --example: #6a4fb3;
+  --font-display: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1430; --surface: #111F45; --ink: #E6ECF7; --muted: #8BA3CC; --line: #22355F;
+    --accent: #4A90D9; --accent-ink: #061026; --accent-soft: #1A2F5E; --navy: #071029; --navy-ink: #FFFFFF; --navy-muted: #8BA3CC;
+    --urgent: #f07178; --urgent-soft: #3a1c1f; --follow: #e7b45a; --follow-soft: #352914;
+    --done: #6fcf8c; --example: #b39cf2; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1430; --surface: #111F45; --ink: #E6ECF7; --muted: #8BA3CC; --line: #22355F;
+  --accent: #4A90D9; --accent-ink: #061026; --accent-soft: #1A2F5E; --navy: #071029; --navy-ink: #FFFFFF; --navy-muted: #8BA3CC;
+  --urgent: #f07178; --urgent-soft: #3a1c1f; --follow: #e7b45a; --follow-soft: #352914;
+  --done: #6fcf8c; --example: #b39cf2; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--navy); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--navy); color: var(--navy-ink); }
+header .today { color: var(--navy-muted); }
+.back { color: var(--navy-muted); text-decoration: none; font-size: 0.8rem; font-weight: 600; }
+.back:hover { color: var(--navy-ink); }
+header nav { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+header nav button { color: var(--navy-muted); }
+header nav button[aria-selected="true"] { background: #FFFFFF; color: #0D1B3E; }
+.head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding-block: 12px; }
+.brand { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+h1 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+.today { font-family: var(--font-data); font-size: 0.8rem; color: var(--muted); }
+nav { display: flex; gap: 4px; background: var(--bg); padding: 4px; border-radius: 999px; border: 1px solid var(--line); }
+nav button { border: 0; background: transparent; color: var(--muted); font: 600 0.9rem var(--font-body); padding: 7px 14px; border-radius: 999px; cursor: pointer; display: flex; gap: 6px; align-items: center; }
+nav button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+nav .count { font-family: var(--font-data); font-size: 0.75rem; opacity: 0.85; }
+main { padding-block: 20px 60px; }
+.banner { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 10px 14px; border-radius: var(--radius); border: 1px dashed var(--example); color: var(--example); margin-bottom: 16px; font-size: 0.9rem; }
+.banner.warn { border-color: var(--follow); color: var(--follow); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.toolbar h2, .section-title { font-family: var(--font-display); font-size: 1.25rem; margin: 0; text-wrap: balance; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; }
+.stat { font-family: var(--font-data); font-size: 0.78rem; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-variant-numeric: tabular-nums; }
+.stat b { color: var(--ink); }
+.stat.u b { color: var(--urgent); }
+button.btn { font: 600 0.88rem var(--font-body); border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+button.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+button.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); padding: 6px 8px; }
+button.btn.danger { color: var(--urgent); }
+button.btn:disabled { opacity: 0.55; cursor: progress; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; align-items: start; }
+@media (max-width: 420px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.card.example { border-style: dashed; border-color: var(--example); }
+.card-top { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
+.who { min-width: 0; }
+.bed { font-family: var(--font-data); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin: 2px 0 0; overflow-wrap: anywhere; }
+.meta { font-family: var(--font-data); font-size: 0.82rem; color: var(--muted); }
+.day { flex: none; font-family: var(--font-data); font-weight: 600; font-size: 0.85rem; background: var(--accent-soft); color: var(--accent); padding: 5px 9px; border-radius: 6px; text-align: center; line-height: 1.2; }
+.day small { display: block; font-weight: 500; font-size: 0.65rem; opacity: 0.8; }
+.dx { font-weight: 600; overflow-wrap: anywhere; }
+.plan { color: var(--muted); font-size: 0.88rem; overflow-wrap: anywhere; }
+.label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+ul.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+ul.items li { display: flex; align-items: flex-start; gap: 8px; padding: 5px 6px; border-radius: 6px; }
+ul.items li:hover { background: var(--bg); }
+ul.items li input[type=checkbox] { margin-top: 3px; width: 17px; height: 17px; accent-color: var(--accent); flex: none; }
+ul.items li .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+ul.items li.done .txt { text-decoration: line-through; color: var(--muted); }
+.tag { font-family: var(--font-data); font-size: 0.66rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; flex: none; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+.tag.todo { background: var(--accent-soft); color: var(--accent); }
+.tag.followup { background: var(--follow-soft); color: var(--follow); }
+.tag.urgent { background: var(--urgent-soft); color: var(--urgent); }
+.del { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 1rem; line-height: 1; padding: 2px 4px; opacity: 0.6; }
+.del:hover { opacity: 1; color: var(--urgent); }
+.add-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.add-row input[type=text] { flex: 1 1 160px; min-width: 0; }
+input[type=text], input[type=number], input[type=date], textarea, select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+textarea { width: 100%; resize: vertical; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; border-top: 1px solid var(--line); padding-top: 8px; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.form-grid label { display: flex; flex-direction: column; gap: 3px; font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+.form-grid label.full { grid-column: 1 / -1; }
+.form-grid input, .form-grid select, .form-grid textarea { width: 100%; }
+
+.compose { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .compose { grid-template-columns: 1fr; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.hint { color: var(--muted); font-size: 0.85rem; }
+#review-text { min-height: 300px; font-family: var(--font-data); font-size: 0.85rem; line-height: 1.55; }
+.status { font-size: 0.88rem; color: var(--muted); }
+.status.err { color: var(--urgent); }
+.preview-card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.pill { font-family: var(--font-data); font-size: 0.68rem; font-weight: 600; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; }
+.pill.new { background: var(--accent-soft); color: var(--accent); }
+.pill.upd { background: var(--follow-soft); color: var(--follow); }
+.history li { padding: 8px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+.history ul { list-style: none; margin: 0; padding: 0; }
+.history .d { font-family: var(--font-data); font-size: 0.78rem; color: var(--accent); }
+.history .s { font-size: 0.85rem; color: var(--muted); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+.sheet { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.sheet-group { padding: 12px 16px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 6px 18px; }
+.sheet-group:last-child { border-bottom: 0; }
+@media (max-width: 640px) { .sheet-group { grid-template-columns: 1fr; } }
+.sheet-who .name { font-size: 1rem; }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters button { font: 600 0.8rem var(--font-body); border: 1px solid var(--line); background: var(--surface); color: var(--muted); padding: 5px 11px; border-radius: 999px; cursor: pointer; }
+.filters button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.handover { white-space: pre-wrap; font-size: 0.92rem; line-height: 1.55; overflow-wrap: anywhere; }
+.empty { text-align: center; padding: 40px 16px; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); }
+.empty strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 4px; }
+.key-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); }
+.key-row input { flex: 1 1 200px; min-width: 0; font-family: var(--font-data); font-size: 0.8rem; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 0.9rem; z-index: 20; max-width: calc(100% - 32px); }
+@media (prefers-reduced-motion: no-preference) { .card, .preview-card { transition: border-color .15s; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head">
+    <div class="brand"><a class="back" href="./" aria-label="Back to Mat 4 tools">‹ Mat 4</a><h1>Ward State</h1><span class="today" id="today"></span></div>
+    <nav role="tablist" aria-label="Views">
+      <button role="tab" id="tab-ward" aria-selected="true" data-view="ward">Ward <span class="count" id="c-ward"></span></button>
+      <button role="tab" id="tab-review" aria-selected="false" data-view="review">Post review</button>
+      <button role="tab" id="tab-jobs" aria-selected="false" data-view="jobs">Jobs <span class="count" id="c-jobs"></span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="notice"></div>
+
+  <section id="view-ward">
+    <div class="toolbar">
+      <div class="stats" id="stats"></div>
+      <div class="row">
+        <button class="btn ghost" id="export">Back up</button>
+        <button class="btn ghost" id="import-btn">Restore</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+        <button class="btn" id="add-patient">+ Add patient</button>
+        <button class="btn primary" data-goto="review">Post today's review</button>
+      </div>
+    </div>
+    <div id="ward"></div>
+    <div id="discharged"></div>
+  </section>
+
+  <section id="view-review" hidden>
+    <div class="compose">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between">
+          <h2 class="section-title">Post a review</h2>
+          <label class="row hint" for="review-date">Review date <input type="date" id="review-date"></label>
+        </div>
+        <p class="hint" style="margin:0">Paste your ward round notes for one or many patients. Ward State picks out each patient's details, the condition they're being managed for, and every to-do and follow-up. You check the result before anything is saved.</p>
+        <div class="key-row" id="key-row">
+          <label for="api-key" class="hint" style="font-weight:600">Claude API key</label>
+          <input type="password" id="api-key" placeholder="sk-ant-…" autocomplete="off">
+          <button class="btn" id="save-key">Save</button>
+          <span class="hint" id="key-status" style="flex-basis:100%;font-size:0.78rem">Needed to read reviews. It stays on this phone only. Get one at console.anthropic.com.</span>
+        </div>
+        <textarea id="review-text" placeholder="Bed 3 – Mrs A.O, 32y G3P2+0, POD 2 post emergency CS for obstructed labour. Stable, afebrile. Hb 8.9.&#10;Plan: repeat FBC tomorrow, start oral iron, remove catheter, encourage ambulation. Follow up wound swab result.&#10;&#10;Bed 7 – ..."></textarea>
+        <div class="row">
+          <button class="btn primary" id="extract">Find patients &amp; to-dos</button>
+          <button class="btn ghost" id="stop" hidden>Stop</button>
+          <button class="btn ghost" id="load-sample">Use sample notes</button>
+          <span class="status" id="extract-status"></span>
+        </div>
+      </div>
+      <div class="panel">
+        <h2 class="section-title" id="preview-title">What Ward State found</h2>
+        <div id="preview"><p class="hint" style="margin:0">After you post a review, the patients and to-dos it found show up here. You can drop anything wrong before adding it to the ward.</p></div>
+        <div class="history" id="history"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-jobs" hidden>
+    <div class="toolbar">
+      <h2>Jobs for the ward</h2>
+      <div class="row">
+        <div class="filters" id="filters"></div>
+        <button class="btn" id="copy-list">Copy list</button>
+        <button class="btn primary" id="summarize">Write handover summary</button>
+      </div>
+    </div>
+    <div id="handover-wrap" hidden class="panel" style="margin-bottom:16px">
+      <div class="row" style="justify-content:space-between"><span class="label">Handover summary</span><button class="btn ghost" id="copy-handover">Copy</button></div>
+      <div class="handover" id="handover"></div>
+    </div>
+    <div id="jobs"></div>
+  </section>
+</main>
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script>
+(() => {
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === "class") el.className = v;
+      else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+      else if (k === "checked" || k === "value" || k === "disabled" || k === "hidden") el[k] = v;
+      else el.setAttribute(k, v === true ? "" : v);
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid instanceof Node ? kid : String(kid));
+    return el;
+  }
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  const pad = (n) => String(n).padStart(2, "0");
+  const isoDay = (d = new Date()) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const TODAY = isoDay();
+  const daysBetween = (a, b) => Math.round((new Date(b + "T12:00") - new Date(a + "T12:00")) / 86400000);
+  const fmtDate = (s) => { try { return new Date(s + "T12:00").toLocaleDateString(undefined, { weekday: "short", day: "numeric", month: "short" }); } catch { return s; } };
+  const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  let toastTimer;
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => (t.hidden = true), 2600); }
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); toast("Copied"); }
+    catch { toast("Copy blocked here. Select the text and copy it by hand."); }
+  }
+  $("today").textContent = fmtDate(TODAY);
+  $("review-date").value = TODAY;
+
+  // ---------- day counter (POD / admission day roll forward each day) ----------
+  function dayInfo(p) {
+    const kind = p.dayKind;
+    if ((kind === "POD" || kind === "Admission") && Number.isFinite(p.dayNum)) {
+      const n = p.dayNum + (p.asOf ? Math.max(0, daysBetween(p.asOf, TODAY)) : 0);
+      return kind === "POD" ? { main: "POD " + n, sub: "post-op" } : { main: "Day " + n, sub: "of admission" };
+    }
+    if (p.dayLabel) return { main: p.dayLabel, sub: "" };
+    return null;
+  }
+  const metaLine = (p) => [p.age ? p.age + "y" : null, p.parity || null].filter(Boolean).join(" · ");
+
+  // ---------- examples shown only while the ward is empty ----------
+  const EXAMPLES = [
+    { id: "ex1", example: true, bed: "Bed 3", name: "Mrs A.O.", age: 32, parity: "G3P2+0", dayKind: "POD", dayNum: 2, asOf: TODAY,
+      diagnosis: "Emergency CS for obstructed labour", plan: "Stable, afebrile. Hb 8.9 g/dL. Catheter in situ.",
+      todos: [
+        { id: "a", text: "Remove urinary catheter", type: "todo", urgent: false, done: true },
+        { id: "b", text: "Start oral ferrous sulphate", type: "todo", urgent: false, done: false },
+        { id: "c", text: "Repeat FBC tomorrow", type: "followup", urgent: false, done: false },
+        { id: "d", text: "Chase wound swab M/C/S", type: "followup", urgent: false, done: false } ] },
+    { id: "ex2", example: true, bed: "Bed 7", name: "Ms B.K.", age: 24, parity: "G1P0", dayKind: "Other", dayLabel: "34+5 wks",
+      diagnosis: "Severe pre-eclampsia", plan: "BP 162/108 this morning, 3+ proteinuria. On MgSO4.",
+      todos: [
+        { id: "a", text: "Recheck BP 15-minutely, inform reg if ≥160/110", type: "todo", urgent: true, done: false },
+        { id: "b", text: "Second dose of dexamethasone at 18:00", type: "todo", urgent: true, done: false },
+        { id: "c", text: "Send LFTs, U&E, platelets", type: "todo", urgent: false, done: false },
+        { id: "d", text: "CTG review after MgSO4 loading", type: "followup", urgent: false, done: false } ] },
+    { id: "ex3", example: true, bed: "Bed 12", name: "Mrs C.N.", age: 45, parity: "P4+1", dayKind: "Admission", dayNum: 4, asOf: TODAY,
+      diagnosis: "Symptomatic uterine fibroids, for myomectomy", plan: "Transfused 2 units. Post-transfusion Hb pending.",
+      todos: [
+        { id: "a", text: "Check post-transfusion Hb", type: "followup", urgent: false, done: false },
+        { id: "b", text: "Book theatre slot and consent", type: "todo", urgent: false, done: false } ] },
+  ];
+  const SAMPLE_NOTES = `Ward round – Gynae/Obs ward
+
+Bed 2: Mrs F.A., 29yrs, G2P1+0, day 1 post elective CS for previous CS x1 + breech. Comfortable, mobilising. Vitals stable. Plan: remove catheter today, encourage breastfeeding, check FBC tomorrow morning. Review wound on day 3.
+
+Bed 5: Miss T.E., 19yrs, primigravida at 30+2 weeks, admitted 2 days ago with threatened preterm labour. Contractions settled. Completed steroids. Plan: daily CTG, send HVS M/C/S result follow up, urgent USS for cervical length today.
+
+Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. Hb 7.2. Plan: transfuse 2 units urgently, D&C + endometrial biopsy on Thursday's list, get consent, follow up histology.`;
+
+  // ---------- state ----------
+  const S = { patients: [], reviews: [], db: null, me: null, sample: null, ready: false, offline: false,
+              view: "ward", editing: null, preview: null, filter: "all", showDischarged: false };
+
+  const active = () => S.patients.filter((p) => p.status !== "discharged");
+  const shown = () => (S.ready && S.patients.length === 0 ? EXAMPLES : active());
+  const isExample = () => S.ready && S.patients.length === 0;
+
+  // ---------- persistence ----------
+  // Everything is kept on this device (localStorage). "Back up" downloads a copy.
+  const STORE_KEY = "mat4_wardstate";
+  const KEY_KEY = "mat4_claude_key";
+  function persist() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify({ patients: S.patients, reviews: S.reviews.slice(0, 60) })); }
+    catch { S.offline = true; toast("Couldn't save on this device. Storage may be full or blocked."); }
+  }
+  function loadStore() {
+    try { const d = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); if (d) { S.patients = d.patients || []; S.reviews = d.reviews || []; } }
+    catch { S.offline = true; }
+  }
+  async function savePatient(p) {
+    const { id, example, ...body } = p;
+    body.updatedAt = Date.now();
+    const i = S.patients.findIndex((x) => x.id === id);
+    if (i >= 0) S.patients[i] = { id, ...body }; else S.patients.push({ id, ...body });
+    persist(); render();
+  }
+  async function deletePatient(id) {
+    S.patients = S.patients.filter((p) => p.id !== id); persist(); render();
+  }
+  async function saveReview(r) {
+    S.reviews.unshift({ ...r, createdAt: Date.now() }); persist();
+  }
+  const getP = (id) => S.patients.find((p) => p.id === id);
+  function mutate(id, fn) {
+    const p = getP(id); if (!p) return;
+    const copy = JSON.parse(JSON.stringify(p)); fn(copy); savePatient(copy);
+  }
+
+  // ---------- render: shared bits ----------
+  function itemRow(p, t, opts = {}) {
+    const readOnly = p.example;
+    return h("li", { class: t.done ? "done" : "" },
+      h("input", { type: "checkbox", checked: !!t.done, disabled: readOnly, "aria-label": "Mark done: " + t.text,
+        onchange: (e) => mutate(p.id, (c) => { const x = c.todos.find((y) => y.id === t.id); if (x) { x.done = e.target.checked; x.doneAt = x.done ? TODAY : null; } }) }),
+      h("span", { class: "tag " + (t.urgent ? "urgent" : t.type) }, t.urgent ? "Urgent" : t.type === "followup" ? "F/U" : "To-do"),
+      h("span", { class: "txt" }, t.text),
+      readOnly || opts.noDelete ? null : h("button", { class: "del", title: "Remove item", "aria-label": "Remove " + t.text,
+        onclick: () => mutate(p.id, (c) => { c.todos = c.todos.filter((y) => y.id !== t.id); }) }, "×"));
+  }
+
+  function patientCard(p) {
+    if (S.editing === p.id) return editCard(p);
+    const d = dayInfo(p);
+    const todos = p.todos || [];
+    const open = todos.filter((t) => !t.done), done = todos.filter((t) => t.done);
+    const sorted = [...open.sort((a, b) => (b.urgent - a.urgent) || (a.type === "todo" ? -1 : 1)), ...done];
+    const addInput = h("input", { type: "text", id: "add-" + p.id, placeholder: "Add a to-do…", "aria-label": "New item for " + (p.name || "patient") });
+    const typeSel = h("select", { id: "add-type-" + p.id, "aria-label": "Item type" }, h("option", { value: "todo" }, "To-do"), h("option", { value: "followup" }, "Follow-up"), h("option", { value: "urgent" }, "Urgent"));
+    const add = () => {
+      const text = addInput.value.trim(); if (!text) return;
+      const v = typeSel.value;
+      mutate(p.id, (c) => { c.todos = c.todos || []; c.todos.push({ id: uid(), text, type: v === "followup" ? "followup" : "todo", urgent: v === "urgent", done: false, addedOn: TODAY }); });
+      addInput.value = "";
+    };
+    addInput.addEventListener("keydown", (e) => { if (e.key === "Enter") add(); });
+    return h("article", { class: "card" + (p.example ? " example" : "") },
+      h("div", { class: "card-top" },
+        h("div", { class: "who" },
+          h("div", { class: "bed" }, [p.bed, p.hospNo].filter(Boolean).join(" · ") || "No bed set"),
+          h("h3", { class: "name" }, p.name || "Unnamed patient"),
+          metaLine(p) ? h("div", { class: "meta" }, metaLine(p)) : null),
+        d ? h("div", { class: "day" }, d.main, d.sub ? h("small", {}, d.sub) : null) : null),
+      p.diagnosis ? h("div", {}, h("div", { class: "label" }, "Managing for"), h("div", { class: "dx" }, p.diagnosis)) : null,
+      p.plan ? h("div", { class: "plan" }, p.lastReview ? h("span", { class: "label" }, "Review " + fmtDate(p.lastReview) + " · ") : null, p.plan) : null,
+      h("div", {}, h("div", { class: "label" }, `To-dos · ${open.length} open`),
+        sorted.length ? h("ul", { class: "items" }, sorted.map((t) => itemRow(p, t))) : h("p", { class: "hint", style: "margin:4px 0 0" }, "Nothing outstanding.")),
+      p.example ? null : h("div", { class: "add-row" }, addInput, typeSel, h("button", { class: "btn", onclick: add }, "Add")),
+      p.example ? null : h("div", { class: "card-actions" },
+        done.length ? h("button", { class: "btn ghost", onclick: () => mutate(p.id, (c) => { c.todos = c.todos.filter((t) => !t.done); }) }, "Clear done") : null,
+        h("button", { class: "btn ghost", onclick: () => { S.editing = p.id; render(); } }, "Edit details"),
+        h("button", { class: "btn ghost", onclick: () => mutate(p.id, (c) => { c.status = "discharged"; c.dischargedOn = TODAY; }) }, "Discharge")));
+  }
+
+  function editCard(p) {
+    const f = (id, label, value, type = "text", full) =>
+      h("label", { class: full ? "full" : "", for: id }, label, h("input", { id, type, value: value ?? "" }));
+    const kindSel = h("select", { id: "e-kind" },
+      ["POD", "Admission", "Other"].map((k) => h("option", { value: k, selected: (p.dayKind || "Other") === k ? true : null }, k === "POD" ? "Post-op day" : k === "Admission" ? "Day of admission" : "Other label")));
+    const curDay = (p.dayKind === "POD" || p.dayKind === "Admission") ? (dayInfo(p)?.main.replace(/\D+/g, "") || "") : "";
+    const form = h("div", { class: "form-grid" },
+      f("e-name", "Name", p.name, "text", true),
+      f("e-age", "Age", p.age, "number"), f("e-parity", "Parity", p.parity),
+      f("e-bed", "Bed", p.bed), f("e-hosp", "Hospital no.", p.hospNo),
+      h("label", { for: "e-kind" }, "Day type", kindSel),
+      f("e-daynum", "Day number (today)", curDay, "number"),
+      f("e-daylabel", "Label (e.g. 34+5 wks)", p.dayLabel, "text", true),
+      h("label", { class: "full", for: "e-dx" }, "Managing for", h("textarea", { id: "e-dx", rows: 2, value: p.diagnosis || "" })),
+      h("label", { class: "full", for: "e-plan" }, "Latest review note", h("textarea", { id: "e-plan", rows: 3, value: p.plan || "" })));
+    const save = () => {
+      const g = (id) => $(id).value.trim();
+      mutate(p.id, (c) => {
+        c.name = g("e-name"); c.age = g("e-age") ? Number(g("e-age")) : null; c.parity = g("e-parity"); c.bed = g("e-bed"); c.hospNo = g("e-hosp");
+        c.dayKind = g("e-kind"); c.dayNum = g("e-daynum") ? Number(g("e-daynum")) : null; c.asOf = TODAY; c.dayLabel = g("e-daylabel");
+        c.diagnosis = g("e-dx"); c.plan = g("e-plan");
+      });
+      S.editing = null;
+    };
+    return h("article", { class: "card" },
+      h("div", { class: "label" }, p.name ? "Edit " + p.name : "New patient"), form,
+      h("div", { class: "card-actions" },
+        h("button", { class: "btn ghost danger", onclick: () => { if (S.confirmDel === p.id) { S.editing = null; deletePatient(p.id); } else { S.confirmDel = p.id; render(); } } }, S.confirmDel === p.id ? "Tap again to delete" : "Delete patient"),
+        h("button", { class: "btn ghost", onclick: () => { S.editing = null; S.confirmDel = null; if (!p.name && !(p.todos || []).length) deletePatient(p.id); else render(); } }, "Cancel"),
+        h("button", { class: "btn primary", onclick: save }, "Save")));
+  }
+
+  // ---------- render: views ----------
+  function renderWard() {
+    const list = shown();
+    const all = list.flatMap((p) => (p.todos || []).filter((t) => !t.done));
+    $("stats").replaceChildren(
+      h("span", { class: "stat" }, h("b", {}, list.length), " patients"),
+      h("span", { class: "stat" }, h("b", {}, all.filter((t) => t.type === "todo").length), " to-dos"),
+      h("span", { class: "stat" }, h("b", {}, all.filter((t) => t.type === "followup").length), " follow-ups"),
+      h("span", { class: "stat u" }, h("b", {}, all.filter((t) => t.urgent).length), " urgent"));
+    const ward = $("ward");
+    if (!S.ready) { ward.replaceChildren(h("div", { class: "empty" }, h("strong", {}, "Loading your ward…"))); return; }
+    const sorted = [...list].sort((a, b) => String(a.bed || "zz").localeCompare(String(b.bed || "zz"), undefined, { numeric: true }));
+    ward.replaceChildren(h("div", { class: "grid" }, sorted.map(patientCard)));
+    const gone = S.patients.filter((p) => p.status === "discharged");
+    $("discharged").replaceChildren(gone.length ? h("div", { style: "margin-top:24px" },
+      h("button", { class: "btn ghost", onclick: () => { S.showDischarged = !S.showDischarged; render(); } }, (S.showDischarged ? "Hide" : "Show") + ` discharged (${gone.length})`),
+      S.showDischarged ? h("ul", { class: "items", style: "margin-top:8px" }, gone.map((p) => h("li", {},
+        h("span", { class: "txt" }, `${p.name || "Unnamed"} · ${p.diagnosis || ""} · discharged ${p.dischargedOn ? fmtDate(p.dischargedOn) : ""}`),
+        h("button", { class: "btn ghost", onclick: () => mutate(p.id, (c) => { c.status = "active"; }) }, "Readmit"),
+        h("button", { class: "btn ghost danger", onclick: () => deletePatient(p.id) }, "Delete")))) : null) : "");
+  }
+
+  const FILTERS = [["all", "All"], ["todo", "To-dos"], ["followup", "Follow-ups"], ["urgent", "Urgent"]];
+  const passes = (t) => !t.done && (S.filter === "all" || (S.filter === "urgent" ? t.urgent : t.type === S.filter));
+  function renderJobs() {
+    $("filters").replaceChildren(...FILTERS.map(([k, l]) => h("button", { "aria-pressed": S.filter === k ? "true" : "false", onclick: () => { S.filter = k; render(); } }, l)));
+    const groups = shown().map((p) => ({ p, items: (p.todos || []).filter(passes).sort((a, b) => b.urgent - a.urgent) })).filter((g) => g.items.length);
+    $("jobs").replaceChildren(groups.length
+      ? h("div", { class: "sheet" }, groups.map(({ p, items }) => h("div", { class: "sheet-group" },
+          h("div", { class: "sheet-who" }, h("div", { class: "bed" }, p.bed || ""), h("div", { class: "name" }, p.name || "Unnamed"),
+            h("div", { class: "meta" }, [metaLine(p), dayInfo(p)?.main].filter(Boolean).join(" · ")), p.diagnosis ? h("div", { class: "plan" }, p.diagnosis) : null),
+          h("ul", { class: "items" }, items.map((t) => itemRow(p, t, { noDelete: true }))))))
+      : h("div", { class: "empty" }, h("strong", {}, "All clear"), "No open jobs match this filter."));
+  }
+  function jobsText() {
+    return shown().map((p) => {
+      const items = (p.todos || []).filter(passes); if (!items.length) return null;
+      const head = [p.bed, p.name, metaLine(p), dayInfo(p)?.main].filter(Boolean).join(" | ") + (p.diagnosis ? `\n  ${p.diagnosis}` : "");
+      return head + "\n" + items.map((t) => `  [ ] ${t.urgent ? "URGENT: " : t.type === "followup" ? "F/U: " : ""}${t.text}`).join("\n");
+    }).filter(Boolean).join("\n\n") || "No open jobs.";
+  }
+
+  function renderReview() {
+    const pv = $("preview");
+    if (S.preview) {
+      const items = S.preview;
+      pv.replaceChildren(
+        ...items.map((x, i) => h("div", { class: "preview-card" },
+          h("div", { class: "row", style: "justify-content:space-between" },
+            h("strong", {}, [x.bed, x.name].filter(Boolean).join(" · ") || "Unnamed patient"),
+            h("div", { class: "row", style: "gap:6px" },
+              h("span", { class: "pill " + (x.match ? "upd" : "new") }, x.match ? "Update" : "New"),
+              h("button", { class: "del", title: "Drop this patient", "aria-label": "Drop " + (x.name || "patient"), onclick: () => { S.preview.splice(i, 1); if (!S.preview.length) S.preview = null; render(); } }, "×"))),
+          h("div", { class: "meta" }, [x.age ? x.age + "y" : null, x.parity, x.day_kind === "POD" && x.day_number != null ? "POD " + x.day_number : x.day_kind === "Admission" && x.day_number != null ? "Day " + x.day_number : x.day_label].filter(Boolean).join(" · ")),
+          x.diagnosis ? h("div", { class: "dx" }, x.diagnosis) : null,
+          h("ul", { class: "items" }, (x.todos || []).map((t, j) => h("li", {},
+            h("span", { class: "tag " + (t.urgent ? "urgent" : t.type) }, t.urgent ? "Urgent" : t.type === "followup" ? "F/U" : "To-do"),
+            h("span", { class: "txt" }, t.text),
+            h("button", { class: "del", title: "Drop item", "aria-label": "Drop " + t.text, onclick: () => { x.todos.splice(j, 1); render(); } }, "×")))))),
+        h("div", { class: "row" },
+          h("button", { class: "btn primary", onclick: commitPreview }, `Add to ward state (${items.length})`),
+          h("button", { class: "btn ghost", onclick: () => { S.preview = null; render(); } }, "Discard")));
+    }
+    const hist = S.reviews.slice(0, 8);
+    $("history").replaceChildren(hist.length ? h("div", {}, h("div", { class: "label", style: "margin-top:8px" }, "Past reviews"),
+      h("ul", {}, hist.map((r) => h("li", {}, h("span", { class: "d" }, fmtDate(r.date) + (r.found ? ` · ${r.found} patients` : "")), h("span", { class: "s" }, r.text))))) : "");
+  }
+
+  function render() {
+    for (const v of ["ward", "review", "jobs"]) { $("view-" + v).hidden = S.view !== v; $("tab-" + v).setAttribute("aria-selected", S.view === v ? "true" : "false"); }
+    const list = shown();
+    $("c-ward").textContent = S.ready ? list.length : "";
+    $("c-jobs").textContent = S.ready ? list.flatMap((p) => (p.todos || []).filter((t) => !t.done)).length : "";
+    const notes = [];
+    if (S.offline) notes.push(h("div", { class: "banner warn" }, "This browser is blocking storage, so changes last only until you close the page. Try a normal (not private) browser tab."));
+    if (isExample()) notes.push(h("div", { class: "banner" }, h("span", {}, "These three patients are examples so you can see how it works. Post your first review and they disappear."),
+      h("button", { class: "btn", onclick: () => go("review") }, "Post a review")));
+    $("notice").replaceChildren(...notes);
+    renderWard(); renderJobs(); renderReview();
+  }
+  function go(v) { S.view = v; render(); window.scrollTo({ top: 0 }); }
+  document.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => go(b.dataset.view)));
+  document.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => go(b.dataset.goto)));
+  $("add-patient").addEventListener("click", async () => {
+    const id = uid();
+    S.editing = id;
+    await savePatient({ id, name: "", todos: [], status: "active" });
+    render();
+  });
+  $("load-sample").addEventListener("click", () => { $("review-text").value = SAMPLE_NOTES; });
+  $("copy-list").addEventListener("click", () => copyText(jobsText()));
+  $("copy-handover").addEventListener("click", () => copyText($("handover").textContent));
+
+  // ---------- Claude API (key stays on this device) ----------
+  const MODEL = "claude-sonnet-5-5";
+  const getKey = () => { try { return localStorage.getItem(KEY_KEY) || ""; } catch { return ""; } };
+  function showKeyState() {
+    const k = getKey();
+    $("api-key").value = "";
+    $("api-key").placeholder = k ? "Saved (…" + k.slice(-4) + "). Paste a new key to replace it" : "sk-ant-…";
+  }
+  $("save-key").addEventListener("click", () => {
+    const v = $("api-key").value.trim();
+    if (!v) { toast("Paste your API key first."); return; }
+    try { localStorage.setItem(KEY_KEY, v); toast("Key saved on this phone"); } catch { toast("Couldn't save the key in this browser."); }
+    showKeyState();
+  });
+  async function callClaude(prompt, { signal, maxTokens = 8000 } = {}) {
+    const key = getKey();
+    if (!key) throw { code: "no_key" };
+    let res;
+    try {
+      res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", signal,
+        headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+        body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, messages: [{ role: "user", content: prompt }] }),
+      });
+    } catch (e) { throw { code: e && e.name === "AbortError" ? "cancelled" : "network" }; }
+    if (!res.ok) throw { code: res.status === 401 ? "bad_key" : res.status === 429 || res.status === 529 ? "rate_limited" : "api_error", status: res.status };
+    const data = await res.json();
+    return (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  }
+  function parseJson(text) {
+    try { return JSON.parse(text); } catch {}
+    const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/); if (fence) { try { return JSON.parse(fence[1]); } catch {} }
+    const a = text.indexOf("{"), b = text.lastIndexOf("}");
+    if (a >= 0 && b > a) { try { return JSON.parse(text.slice(a, b + 1)); } catch {} }
+    throw { code: "invalid_json" };
+  }
+  const sampleApi = {
+    json: async (prompt, opts) => parseJson(await callClaude(prompt, opts)),
+    text: (prompt, opts) => callClaude(prompt, opts),
+  };
+
+  // ---------- AI: extract patients + to-dos ----------
+  let ctl = null;
+  function errCopy(e) {
+    switch (e && e.code) {
+      case "no_key": return "Add your Claude API key above first.";
+      case "bad_key": return "Claude didn't accept that API key. Check it and save it again.";
+      case "network": return "Couldn't reach Claude. Check your internet connection.";
+      case "rate_limited": return "Claude is busy for you right now. Wait a minute and try again.";
+      case "invalid_json": return "The answer came back in the wrong shape. Try again, or split the notes into smaller parts.";
+      case "prompt_too_large": return "Those notes are too long for one go. Post them in two parts.";
+      case "cancelled": return "Stopped.";
+      default: return "Something went wrong reading the review. Try again.";
+    }
+  }
+  $("extract").addEventListener("click", async () => {
+    const text = $("review-text").value.trim();
+    const st = $("extract-status");
+    if (!text) { st.textContent = "Paste your review notes first."; st.className = "status err"; return; }
+    const date = $("review-date").value || TODAY;
+    const known = active().map((p) => ({ id: p.id, name: p.name, bed: p.bed, age: p.age, diagnosis: p.diagnosis }));
+    const prompt = `You help an obstetrics & gynaecology doctor keep a "ward state": the list of inpatients and the jobs for each.
+Read the ward round review notes below (review date ${date}) and pull out every patient mentioned.
+
+Existing patients already on the ward (match to one of these when it is clearly the same person, by name and/or bed; put their id in "match"):
+${JSON.stringify(known)}
+
+For each patient return:
+- match: existing patient id, or null if new
+- name, age (number), parity (as written, e.g. "G3P2+0", "P4+1", "Primigravida"), bed, hosp_no (admission or hospital number if given)
+- day_kind: "POD" if a post-op day is stated or can be worked out (day of surgery = 0), "Admission" if day of admission is stated or can be worked out from "admitted N days ago"/"yesterday" (admission day = 1), otherwise "Other"
+- day_number: number for POD/Admission, else null
+- day_label: short label for "Other" such as gestational age "30+2 wks" or "Booked for TAH", else null
+- diagnosis: the condition she is being managed for, short clinical phrase
+- review_summary: one or two short sentences on today's status (vitals, key results)
+- todos: array of {text, type, urgent}. type "todo" = a job to do today (procedures, prescriptions, bloods to send, calls, consents, bookings). type "followup" = something to check or chase later (results, reviews on a later day, repeat tests tomorrow). urgent true only when the notes say urgent/stat/now or it is clearly time-critical. text is a short imperative, keep drug names, doses and times.
+Use null for anything not stated. Do not invent findings. Keep abbreviations the doctor used.
+
+Reply with only JSON: {"patients":[{"match":null,"name":"","age":0,"parity":"","bed":"","hosp_no":null,"day_kind":"POD","day_number":1,"day_label":null,"diagnosis":"","review_summary":"","todos":[{"text":"","type":"todo","urgent":false}]}]}
+
+REVIEW NOTES:
+${text.slice(0, 60000)}`;
+    ctl = new AbortController();
+    $("extract").disabled = true; $("stop").hidden = false;
+    st.className = "status"; st.textContent = "Reading the review… this can take up to a minute.";
+    try {
+      const out = await sampleApi.json(prompt, { signal: ctl.signal });
+      const pts = Array.isArray(out?.patients) ? out.patients : [];
+      if (!pts.length) { st.textContent = "No patients found in those notes. Check that each patient has a name or bed."; st.className = "status err"; return; }
+      S.preview = pts.map((x) => ({ ...x, match: x.match && getP(x.match) ? x.match : null,
+        todos: (Array.isArray(x.todos) ? x.todos : []).filter((t) => t && t.text).map((t) => ({ text: String(t.text), type: t.type === "followup" ? "followup" : "todo", urgent: !!t.urgent })) }));
+      S.previewMeta = { date, text };
+      st.textContent = `Found ${pts.length} patient${pts.length === 1 ? "" : "s"}. Check them on the right, then add them.`;
+      render();
+    } catch (e) {
+      st.textContent = errCopy(e); st.className = e.code === "cancelled" ? "status" : "status err";
+    } finally { $("extract").disabled = false; $("stop").hidden = true; ctl = null; }
+  });
+  $("stop").addEventListener("click", () => ctl?.abort());
+
+  async function commitPreview() {
+    const { date, text } = S.previewMeta || { date: TODAY, text: "" };
+    const items = S.preview || [];
+    for (const x of items) {
+      const base = x.match ? JSON.parse(JSON.stringify(getP(x.match))) : { id: uid(), todos: [], status: "active", createdAt: Date.now() };
+      const set = (k, v) => { if (v !== null && v !== undefined && v !== "") base[k] = v; };
+      set("name", x.name); set("age", Number.isFinite(+x.age) && +x.age > 0 ? +x.age : null); set("parity", x.parity); set("bed", x.bed); set("hospNo", x.hosp_no);
+      set("diagnosis", x.diagnosis); set("plan", x.review_summary);
+      if ((x.day_kind === "POD" || x.day_kind === "Admission") && Number.isFinite(+x.day_number) && x.day_number !== null) {
+        base.dayKind = x.day_kind; base.dayNum = +x.day_number; base.asOf = date; base.dayLabel = "";
+      } else if (x.day_label) { base.dayKind = "Other"; base.dayLabel = x.day_label; }
+      base.lastReview = date; base.status = "active";
+      base.todos = base.todos || [];
+      const openSet = new Set(base.todos.filter((t) => !t.done).map((t) => norm(t.text)));
+      for (const t of x.todos || []) if (!openSet.has(norm(t.text))) { base.todos.push({ id: uid(), text: t.text, type: t.type, urgent: t.urgent, done: false, addedOn: date }); openSet.add(norm(t.text)); }
+      await savePatient(base);
+    }
+    await saveReview({ id: uid(), date, text, found: items.length });
+    S.preview = null; S.previewMeta = null; $("review-text").value = ""; $("extract-status").textContent = "";
+    toast(`Added ${items.length} patient${items.length === 1 ? "" : "s"} to the ward state`);
+    go("ward");
+  }
+
+  // ---------- AI: handover summary ----------
+  $("summarize").addEventListener("click", async () => {
+    const btn = $("summarize"), out = $("handover");
+    const data = shown().map((p) => ({ bed: p.bed, name: p.name, age: p.age, parity: p.parity, day: dayInfo(p)?.main, managing_for: p.diagnosis, status: p.plan,
+      open: (p.todos || []).filter((t) => !t.done).map((t) => (t.urgent ? "URGENT " : t.type === "followup" ? "F/U " : "") + t.text) }));
+    $("handover-wrap").hidden = false; out.textContent = "Thinking…"; btn.disabled = true;
+    try {
+      out.textContent = await sampleApi.text(`Write a concise ward handover summary for an O&G doctor from this ward state (today ${TODAY}).
+Start with a 1-line overview (number of patients, number of urgent jobs). Then "Urgent first:" listing urgent jobs with bed and name. Then one short line per patient: bed, name, age/parity, day, condition, and their outstanding jobs in a compact semicolon list. End with "Results to chase:" gathering all follow-ups. Plain text, no markdown symbols like ** or #. Don't add anything not in the data.
+
+${JSON.stringify(data)}`, { maxTokens: 3000 });
+    } catch (e) { out.textContent = errCopy(e); }
+    finally { btn.disabled = false; }
+  });
+
+  // ---------- backup / restore ----------
+  $("export").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify({ app: "ward-state", exportedAt: new Date().toISOString(), patients: S.patients, reviews: S.reviews }, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = `ward-state-${TODAY}.json`;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  });
+  $("import-btn").addEventListener("click", () => $("import-file").click());
+  $("import-file").addEventListener("change", async (e) => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text());
+      if (!Array.isArray(d.patients)) throw 0;
+      S.patients = d.patients; S.reviews = d.reviews || []; persist(); render();
+      toast(`Restored ${d.patients.length} patients`);
+    } catch { toast("That file isn't a Ward State backup."); }
+    e.target.value = "";
+  });
+
+  // ---------- boot ----------
+  loadStore();
+  S.ready = true;
+  showKeyState();
+  render();
+})();
+</script>
+</body>
+</html>
