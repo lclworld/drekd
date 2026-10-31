@@ -162,8 +162,7 @@ ol.arrange li { display: flex; align-items: center; gap: 10px; background: var(-
 ol.arrange .pos { font-family: var(--font-data); font-size: 0.8rem; color: var(--muted); width: 1.8em; text-align: right; flex: none; font-variant-numeric: tabular-nums; }
 ol.arrange .who { flex: 1; min-width: 0; }
 ol.arrange .aname { font-weight: 600; overflow-wrap: anywhere; }
-ol.arrange .mv { flex: none; width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
-ol.arrange .mv:disabled { opacity: 0.3; cursor: default; }
+ol.arrange .num { flex: none; width: 64px; height: 44px; text-align: center; font-family: var(--font-data); font-size: 1.1rem; font-weight: 600; background: var(--bg); }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 0.9rem; z-index: 20; max-width: calc(100% - 32px); }
 @media (prefers-reduced-motion: no-preference) { .card, .preview-card { transition: border-color .15s; } }
 </style>
@@ -460,13 +459,17 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
     if (sortMode === "custom") return arr.sort((a, b) => ((a.order ?? 1e9) - (b.order ?? 1e9)) || bedCmp(a, b));
     return arr.sort(bedCmp);
   }
-  async function move(id, dir) {
+  // Typed numbers set the order; a box left empty keeps the patient's current place, after anyone typed into the same number.
+  async function saveNumbers() {
     const arr = ordered(active());
-    const i = arr.findIndex((p) => p.id === id), j = i + dir;
-    if (i < 0 || j < 0 || j >= arr.length) return;
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-    for (let k = 0; k < arr.length; k++) {
-      if (arr[k].order !== k) { const c = JSON.parse(JSON.stringify(arr[k])); c.order = k; await savePatient(c); }
+    const keyed = arr.map((p, i) => {
+      const v = parseInt(($("num-" + p.id) || {}).value, 10);
+      return { p, n: Number.isFinite(v) ? v : i + 1, typed: Number.isFinite(v), i };
+    });
+    keyed.sort((a, b) => (a.n - b.n) || (b.typed - a.typed) || (a.i - b.i));
+    for (let k = 0; k < keyed.length; k++) {
+      const p = keyed[k].p;
+      if (p.order !== k) { const c = JSON.parse(JSON.stringify(p)); c.order = k; await savePatient(c); }
     }
   }
   function renderSortbar() {
@@ -479,7 +482,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
       h("span", { class: "label" }, "Order"),
       h("div", { class: "filters" }, seg("bed", "Bed number"), seg("custom", "My bed arrangement")),
       sortMode === "custom" && !isExample() && active().length > 1
-        ? h("button", { class: "btn" + (S.arranging ? " primary" : ""), onclick: () => { S.arranging = !S.arranging; render(); } }, S.arranging ? "Done" : "Rearrange")
+        ? h("button", { class: "btn" + (S.arranging ? " primary" : ""), onclick: async () => { if (S.arranging) { await saveNumbers(); S.arranging = false; render(); toast("Order saved"); } else { S.arranging = true; render(); } } }, S.arranging ? "Save order" : "Set order")
         : null);
   }
 
@@ -496,12 +499,14 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
     if (S.arranging && sortMode === "custom" && !isExample()) {
       const arr = ordered(active());
       ward.replaceChildren(
-        h("p", { class: "hint", style: "margin:0 0 10px" }, "Move patients up or down to match the beds as you walk the ward. Tap Done when finished."),
+        h("p", { class: "hint", style: "margin:0 0 10px" }, "Type a number next to each name for where she is on the ward (1 = first bed you see). Then tap Save order. Boxes you leave empty keep their current place."),
         h("ol", { class: "arrange" }, arr.map((p, i) => h("li", {},
-          h("span", { class: "pos" }, i + 1),
           h("div", { class: "who" }, h("div", { class: "bed" }, p.bed || "No bed set"), h("div", { class: "aname" }, p.name || "Unnamed patient")),
-          h("button", { class: "mv", "aria-label": "Move " + (p.name || "patient") + " up", disabled: i === 0, onclick: () => move(p.id, -1) }, "↑"),
-          h("button", { class: "mv", "aria-label": "Move " + (p.name || "patient") + " down", disabled: i === arr.length - 1, onclick: () => move(p.id, 1) }, "↓")))));
+          h("input", { class: "num", type: "number", inputmode: "numeric", min: "1", id: "num-" + p.id, placeholder: String(i + 1), "aria-label": "Position for " + (p.name || "patient"),
+            onkeydown: (e) => { if (e.key === "Enter") { const nx = e.target.closest("li").nextElementSibling; if (nx) nx.querySelector("input").focus(); else e.target.blur(); } } })))),
+        h("div", { class: "row", style: "margin-top:12px" },
+          h("button", { class: "btn primary", onclick: async () => { await saveNumbers(); S.arranging = false; render(); toast("Order saved"); } }, "Save order"),
+          h("button", { class: "btn ghost", onclick: () => { S.arranging = false; render(); } }, "Cancel")));
       $("discharged").replaceChildren();
       return;
     }
