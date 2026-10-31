@@ -151,6 +151,11 @@ textarea { width: 100%; resize: vertical; }
 .empty strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 4px; }
 .key-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 8px; background: var(--bg); border: 1px solid var(--line); }
 .key-row input { flex: 1 1 200px; min-width: 0; font-family: var(--font-data); font-size: 0.8rem; }
+.search-wrap { position: relative; margin-bottom: 14px; }
+.search-wrap input { width: 100%; padding: 11px 40px 11px 14px; font-size: 1rem; background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; }
+.search-wrap input:focus { border-color: var(--accent); }
+.search-wrap input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+.search-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: var(--muted); font-size: 1.3rem; line-height: 1; padding: 6px 8px; cursor: pointer; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 0.9rem; z-index: 20; max-width: calc(100% - 32px); }
 @media (prefers-reduced-motion: no-preference) { .card, .preview-card { transition: border-color .15s; } }
 </style>
@@ -169,6 +174,10 @@ textarea { width: 100%; resize: vertical; }
 </header>
 
 <main class="wrap">
+  <div class="search-wrap" id="search-wrap">
+    <input type="search" id="search" placeholder="Search name, bed, hospital no. or condition" aria-label="Search patients" autocomplete="off">
+    <button class="search-clear" id="search-clear" aria-label="Clear search" hidden>×</button>
+  </div>
   <div id="notice"></div>
 
   <section id="view-ward">
@@ -310,7 +319,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
 
   // ---------- state ----------
   const S = { patients: [], reviews: [], db: null, me: null, sample: null, ready: false, offline: false,
-              view: "ward", editing: null, preview: null, filter: "all", showDischarged: false };
+              view: "ward", query: "", editing: null, preview: null, filter: "all", showDischarged: false };
 
   const active = () => S.patients.filter((p) => p.status !== "discharged");
   const shown = () => (S.ready && S.patients.length === 0 ? EXAMPLES : active());
@@ -425,8 +434,15 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
   }
 
   // ---------- render: views ----------
+  // Every word typed must appear somewhere in the patient's name, bed, hospital no., parity or condition.
+  function matchQ(p) {
+    const words = norm(S.query).split(" ").filter(Boolean);
+    if (!words.length) return true;
+    const hay = norm([p.name, p.bed, p.hospNo, p.parity, p.diagnosis].join(" "));
+    return words.every((w) => hay.includes(w));
+  }
   function renderWard() {
-    const list = shown();
+    const list = shown().filter(matchQ);
     const all = list.flatMap((p) => (p.todos || []).filter((t) => !t.done));
     $("stats").replaceChildren(
       h("span", { class: "stat" }, h("b", {}, list.length), " patients"),
@@ -436,11 +452,13 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
     const ward = $("ward");
     if (!S.ready) { ward.replaceChildren(h("div", { class: "empty" }, h("strong", {}, "Loading your ward…"))); return; }
     const sorted = [...list].sort((a, b) => String(a.bed || "zz").localeCompare(String(b.bed || "zz"), undefined, { numeric: true }));
-    ward.replaceChildren(h("div", { class: "grid" }, sorted.map(patientCard)));
-    const gone = S.patients.filter((p) => p.status === "discharged");
+    ward.replaceChildren(sorted.length || !S.query ? h("div", { class: "grid" }, sorted.map(patientCard))
+      : h("div", { class: "empty" }, h("strong", {}, "No patient on the ward matches “" + S.query.trim() + "”"), "Check the spelling, or try the bed number or hospital number."));
+    const gone = S.patients.filter((p) => p.status === "discharged" && matchQ(p));
+    const showGone = S.showDischarged || (S.query && gone.length);
     $("discharged").replaceChildren(gone.length ? h("div", { style: "margin-top:24px" },
-      h("button", { class: "btn ghost", onclick: () => { S.showDischarged = !S.showDischarged; render(); } }, (S.showDischarged ? "Hide" : "Show") + ` discharged (${gone.length})`),
-      S.showDischarged ? h("ul", { class: "items", style: "margin-top:8px" }, gone.map((p) => h("li", {},
+      h("button", { class: "btn ghost", onclick: () => { S.showDischarged = !S.showDischarged; render(); } }, (showGone ? "Hide" : "Show") + ` discharged (${gone.length})` + (S.query ? " matching" : "")),
+      showGone ? h("ul", { class: "items", style: "margin-top:8px" }, gone.map((p) => h("li", {},
         h("span", { class: "txt" }, `${p.name || "Unnamed"} · ${p.diagnosis || ""} · discharged ${p.dischargedOn ? fmtDate(p.dischargedOn) : ""}`),
         h("button", { class: "btn ghost", onclick: () => mutate(p.id, (c) => { c.status = "active"; }) }, "Readmit"),
         h("button", { class: "btn ghost danger", onclick: () => deletePatient(p.id) }, "Delete")))) : null) : "");
@@ -450,7 +468,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
   const passes = (t) => !t.done && (S.filter === "all" || (S.filter === "urgent" ? t.urgent : t.type === S.filter));
   function renderJobs() {
     $("filters").replaceChildren(...FILTERS.map(([k, l]) => h("button", { "aria-pressed": S.filter === k ? "true" : "false", onclick: () => { S.filter = k; render(); } }, l)));
-    const groups = shown().map((p) => ({ p, items: (p.todos || []).filter(passes).sort((a, b) => b.urgent - a.urgent) })).filter((g) => g.items.length);
+    const groups = shown().filter(matchQ).map((p) => ({ p, items: (p.todos || []).filter(passes).sort((a, b) => b.urgent - a.urgent) })).filter((g) => g.items.length);
     $("jobs").replaceChildren(groups.length
       ? h("div", { class: "sheet" }, groups.map(({ p, items }) => h("div", { class: "sheet-group" },
           h("div", { class: "sheet-who" }, h("div", { class: "bed" }, p.bed || ""), h("div", { class: "name" }, p.name || "Unnamed"),
@@ -493,6 +511,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
   }
 
   function render() {
+    $("search-wrap").hidden = S.view === "review";
     for (const v of ["ward", "review", "jobs"]) { $("view-" + v).hidden = S.view !== v; $("tab-" + v).setAttribute("aria-selected", S.view === v ? "true" : "false"); }
     const list = shown();
     $("c-ward").textContent = S.ready ? list.length : "";
@@ -513,6 +532,8 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
     await savePatient({ id, name: "", todos: [], status: "active" });
     render();
   });
+  $("search").addEventListener("input", (e) => { S.query = e.target.value; $("search-clear").hidden = !S.query; render(); });
+  $("search-clear").addEventListener("click", () => { $("search").value = ""; S.query = ""; $("search-clear").hidden = true; render(); $("search").focus(); });
   $("load-sample").addEventListener("click", () => { $("review-text").value = SAMPLE_NOTES; });
   $("copy-list").addEventListener("click", () => copyText(jobsText()));
   $("copy-handover").addEventListener("click", () => copyText($("handover").textContent));
