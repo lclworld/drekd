@@ -11,6 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Ward State" />
 <meta name="theme-color" content="#0D1B3E" />
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Layout: a ward board. Sticky header with tabs; patient cards in a responsive grid like bed slots; jobs list as a printed handover sheet. */
 :root {
@@ -194,6 +195,8 @@ ol.arrange .num { flex: none; width: 64px; height: 44px; text-align: center; fon
         <button class="btn ghost" id="export">Back up</button>
         <button class="btn ghost" id="import-btn">Restore</button>
         <input type="file" id="import-file" accept="application/json,.json" hidden>
+        <button class="btn" id="copy-ward">Copy ward state</button>
+        <button class="btn" id="pdf-ward">Download PDF</button>
         <button class="btn" id="add-patient">+ Add patient</button>
         <button class="btn primary" data-goto="review">Post today's review</button>
       </div>
@@ -381,7 +384,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
     const d = dayInfo(p);
     const todos = p.todos || [];
     const open = todos.filter((t) => !t.done), done = todos.filter((t) => t.done);
-    const sorted = [...open.sort((a, b) => (b.urgent - a.urgent) || (a.type === "todo" ? -1 : 1)), ...done];
+    const sorted = [...open, ...done];
     const addInput = h("input", { type: "text", id: "add-" + p.id, placeholder: "Add a to-do…", "aria-label": "New item for " + (p.name || "patient") });
     const typeSel = h("select", { id: "add-type-" + p.id, "aria-label": "Item type" }, h("option", { value: "todo" }, "To-do"), h("option", { value: "followup" }, "Follow-up"), h("option", { value: "urgent" }, "Urgent"));
     const add = () => {
@@ -521,7 +524,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
   const passes = (t) => !t.done && (S.filter === "all" || (S.filter === "urgent" ? t.urgent : t.type === S.filter));
   function renderJobs() {
     $("filters").replaceChildren(...FILTERS.map(([k, l]) => h("button", { "aria-pressed": S.filter === k ? "true" : "false", onclick: () => { S.filter = k; render(); } }, l)));
-    const groups = ordered(shown().filter(matchQ)).map((p) => ({ p, items: (p.todos || []).filter(passes).sort((a, b) => b.urgent - a.urgent) })).filter((g) => g.items.length);
+    const groups = ordered(shown().filter(matchQ)).map((p) => ({ p, items: (p.todos || []).filter(passes) })).filter((g) => g.items.length);
     $("jobs").replaceChildren(groups.length
       ? h("div", { class: "sheet" }, groups.map(({ p, items }) => h("div", { class: "sheet-group" },
           h("div", { class: "sheet-who" }, h("div", { class: "bed" }, p.bed || ""), h("div", { class: "name" }, p.name || "Unnamed"),
@@ -589,6 +592,64 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
   $("search-clear").addEventListener("click", () => { $("search").value = ""; S.query = ""; $("search-clear").hidden = true; render(); $("search").focus(); });
   $("load-sample").addEventListener("click", () => { $("review-text").value = SAMPLE_NOTES; });
   $("copy-list").addEventListener("click", () => copyText(jobsText()));
+
+  // ---------- whole ward state, bed by bed (copy as text or download as PDF) ----------
+  const tagText = (t) => (t.urgent ? "URGENT: " : t.type === "followup" ? "F/U: " : "");
+  const metaFull = (p) => [metaLine(p), dayInfo(p)?.main, p.hospNo ? "Hosp no. " + p.hospNo : null].filter(Boolean).join(" · ");
+  function wardText() {
+    const list = ordered(shown());
+    if (!list.length) return "No patients on the ward.";
+    return `WARD STATE - ${fmtDate(TODAY)} (${list.length} patients)\n\n` + list.map((p) => {
+      const lines = [[p.bed || "No bed", p.name || "Unnamed"].join(" - ")];
+      if (metaFull(p)) lines.push(metaFull(p));
+      if (p.diagnosis) lines.push("Managing for: " + p.diagnosis);
+      if (p.plan) lines.push("Review: " + p.plan);
+      const open = (p.todos || []).filter((t) => !t.done);
+      lines.push(open.length ? "To-dos:\n" + open.map((t, i) => `  ${i + 1}. ${tagText(t)}${t.text}`).join("\n") : "To-dos: none");
+      return lines.join("\n");
+    }).join("\n\n");
+  }
+  async function saveFile(blob, name) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast("PDF downloaded");
+  }
+  async function downloadPdf() {
+    if (!window.jspdf) { toast("The PDF maker didn't load. Check your connection and reload the page."); return; }
+    const doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
+    const W = 210, H = 297, M = 14;
+    let y = M;
+    // The built-in PDF font only covers Latin-1, so swap common symbols for plain equivalents.
+    const clean = (t) => String(t ?? "").replace(/≥/g, ">=").replace(/≤/g, "<=").replace(/[–—]/g, "-").replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/…/g, "...").replace(/[^\x00-\xFF]/g, "");
+    const need = (hgt) => { if (y + hgt > H - M) { doc.addPage(); y = M; } };
+    const write = (text, { size = 10, bold = false, indent = 0, gap = 0.6, grey = 25 } = {}) => {
+      doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setFontSize(size); doc.setTextColor(grey);
+      const lh = size * 0.42;
+      for (const l of doc.splitTextToSize(clean(text), W - 2 * M - indent)) { need(lh); doc.text(l, M + indent, y + lh * 0.8); y += lh; }
+      y += gap;
+    };
+    const list = ordered(shown());
+    write("Ward State", { size: 16, bold: true });
+    write(`${fmtDate(TODAY)} · ${list.length} patients`, { size: 10, grey: 100, gap: 3 });
+    for (const p of list) {
+      need(20);
+      doc.setDrawColor(190); doc.line(M, y, W - M, y); y += 3;
+      write([p.bed || "No bed", p.name || "Unnamed"].join("  -  "), { size: 12, bold: true });
+      if (metaFull(p)) write(metaFull(p), { size: 9.5, grey: 90 });
+      if (p.diagnosis) write("Managing for: " + p.diagnosis);
+      if (p.plan) write("Review" + (p.lastReview ? " " + fmtDate(p.lastReview) : "") + ": " + p.plan, { grey: 60 });
+      const open = (p.todos || []).filter((t) => !t.done);
+      if (open.length) {
+        write("To-dos", { size: 9, bold: true, gap: 0.3 });
+        open.forEach((t, i) => write(`${i + 1}. ${tagText(t)}${t.text}`, { indent: 3, gap: 0.3 }));
+      } else write("No open to-dos", { size: 9.5, grey: 120 });
+      y += 3;
+    }
+    await saveFile(doc.output("blob"), `ward-state-${TODAY}.pdf`);
+  }
+  $("copy-ward").addEventListener("click", () => copyText(wardText()));
+  $("pdf-ward").addEventListener("click", downloadPdf);
   $("copy-handover").addEventListener("click", () => copyText($("handover").textContent));
 
   // ---------- Claude API (key stays on this device) ----------
