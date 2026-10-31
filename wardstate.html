@@ -156,6 +156,14 @@ textarea { width: 100%; resize: vertical; }
 .search-wrap input:focus { border-color: var(--accent); }
 .search-wrap input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 .search-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: var(--muted); font-size: 1.3rem; line-height: 1; padding: 6px 8px; cursor: pointer; }
+.sortbar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; margin-bottom: 14px; }
+ol.arrange { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-width: 560px; }
+ol.arrange li { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+ol.arrange .pos { font-family: var(--font-data); font-size: 0.8rem; color: var(--muted); width: 1.8em; text-align: right; flex: none; font-variant-numeric: tabular-nums; }
+ol.arrange .who { flex: 1; min-width: 0; }
+ol.arrange .aname { font-weight: 600; overflow-wrap: anywhere; }
+ol.arrange .mv { flex: none; width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 1.1rem; cursor: pointer; }
+ol.arrange .mv:disabled { opacity: 0.3; cursor: default; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 0.9rem; z-index: 20; max-width: calc(100% - 32px); }
 @media (prefers-reduced-motion: no-preference) { .card, .preview-card { transition: border-color .15s; } }
 </style>
@@ -191,6 +199,7 @@ textarea { width: 100%; resize: vertical; }
         <button class="btn primary" data-goto="review">Post today's review</button>
       </div>
     </div>
+    <div class="sortbar" id="sortbar"></div>
     <div id="ward"></div>
     <div id="discharged"></div>
   </section>
@@ -441,6 +450,39 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
     const hay = norm([p.name, p.bed, p.hospNo, p.parity, p.diagnosis].join(" "));
     return words.every((w) => hay.includes(w));
   }
+  // ---------- ordering: by bed number, or the doctor's own bed arrangement ----------
+  const SORT_KEY = "ward_state_sort";
+  let sortMode = "bed";
+  try { sortMode = localStorage.getItem(SORT_KEY) || "bed"; } catch {}
+  const bedCmp = (a, b) => String(a.bed || "zz").localeCompare(String(b.bed || "zz"), undefined, { numeric: true });
+  function ordered(list) {
+    const arr = [...list];
+    if (sortMode === "custom") return arr.sort((a, b) => ((a.order ?? 1e9) - (b.order ?? 1e9)) || bedCmp(a, b));
+    return arr.sort(bedCmp);
+  }
+  async function move(id, dir) {
+    const arr = ordered(active());
+    const i = arr.findIndex((p) => p.id === id), j = i + dir;
+    if (i < 0 || j < 0 || j >= arr.length) return;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+    for (let k = 0; k < arr.length; k++) {
+      if (arr[k].order !== k) { const c = JSON.parse(JSON.stringify(arr[k])); c.order = k; await savePatient(c); }
+    }
+  }
+  function renderSortbar() {
+    const seg = (k, l) => h("button", { "aria-pressed": sortMode === k ? "true" : "false", onclick: () => {
+      sortMode = k; try { localStorage.setItem(SORT_KEY, k); } catch {}
+      if (k === "bed") S.arranging = false;
+      render();
+    } }, l);
+    $("sortbar").replaceChildren(
+      h("span", { class: "label" }, "Order"),
+      h("div", { class: "filters" }, seg("bed", "Bed number"), seg("custom", "My bed arrangement")),
+      sortMode === "custom" && !isExample() && active().length > 1
+        ? h("button", { class: "btn" + (S.arranging ? " primary" : ""), onclick: () => { S.arranging = !S.arranging; render(); } }, S.arranging ? "Done" : "Rearrange")
+        : null);
+  }
+
   function renderWard() {
     const list = shown().filter(matchQ);
     const all = list.flatMap((p) => (p.todos || []).filter((t) => !t.done));
@@ -451,7 +493,19 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
       h("span", { class: "stat u" }, h("b", {}, all.filter((t) => t.urgent).length), " urgent"));
     const ward = $("ward");
     if (!S.ready) { ward.replaceChildren(h("div", { class: "empty" }, h("strong", {}, "Loading your ward…"))); return; }
-    const sorted = [...list].sort((a, b) => String(a.bed || "zz").localeCompare(String(b.bed || "zz"), undefined, { numeric: true }));
+    if (S.arranging && sortMode === "custom" && !isExample()) {
+      const arr = ordered(active());
+      ward.replaceChildren(
+        h("p", { class: "hint", style: "margin:0 0 10px" }, "Move patients up or down to match the beds as you walk the ward. Tap Done when finished."),
+        h("ol", { class: "arrange" }, arr.map((p, i) => h("li", {},
+          h("span", { class: "pos" }, i + 1),
+          h("div", { class: "who" }, h("div", { class: "bed" }, p.bed || "No bed set"), h("div", { class: "aname" }, p.name || "Unnamed patient")),
+          h("button", { class: "mv", "aria-label": "Move " + (p.name || "patient") + " up", disabled: i === 0, onclick: () => move(p.id, -1) }, "↑"),
+          h("button", { class: "mv", "aria-label": "Move " + (p.name || "patient") + " down", disabled: i === arr.length - 1, onclick: () => move(p.id, 1) }, "↓")))));
+      $("discharged").replaceChildren();
+      return;
+    }
+    const sorted = ordered(list);
     ward.replaceChildren(sorted.length || !S.query ? h("div", { class: "grid" }, sorted.map(patientCard))
       : h("div", { class: "empty" }, h("strong", {}, "No patient on the ward matches “" + S.query.trim() + "”"), "Check the spelling, or try the bed number or hospital number."));
     const gone = S.patients.filter((p) => p.status === "discharged" && matchQ(p));
@@ -468,7 +522,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
   const passes = (t) => !t.done && (S.filter === "all" || (S.filter === "urgent" ? t.urgent : t.type === S.filter));
   function renderJobs() {
     $("filters").replaceChildren(...FILTERS.map(([k, l]) => h("button", { "aria-pressed": S.filter === k ? "true" : "false", onclick: () => { S.filter = k; render(); } }, l)));
-    const groups = shown().filter(matchQ).map((p) => ({ p, items: (p.todos || []).filter(passes).sort((a, b) => b.urgent - a.urgent) })).filter((g) => g.items.length);
+    const groups = ordered(shown().filter(matchQ)).map((p) => ({ p, items: (p.todos || []).filter(passes).sort((a, b) => b.urgent - a.urgent) })).filter((g) => g.items.length);
     $("jobs").replaceChildren(groups.length
       ? h("div", { class: "sheet" }, groups.map(({ p, items }) => h("div", { class: "sheet-group" },
           h("div", { class: "sheet-who" }, h("div", { class: "bed" }, p.bed || ""), h("div", { class: "name" }, p.name || "Unnamed"),
@@ -477,7 +531,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
       : h("div", { class: "empty" }, h("strong", {}, "All clear"), "No open jobs match this filter."));
   }
   function jobsText() {
-    return shown().map((p) => {
+    return ordered(shown()).map((p) => {
       const items = (p.todos || []).filter(passes); if (!items.length) return null;
       const head = [p.bed, p.name, metaLine(p), dayInfo(p)?.main].filter(Boolean).join(" | ") + (p.diagnosis ? `\n  ${p.diagnosis}` : "");
       return head + "\n" + items.map((t) => `  [ ] ${t.urgent ? "URGENT: " : t.type === "followup" ? "F/U: " : ""}${t.text}`).join("\n");
@@ -521,7 +575,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
     if (isExample()) notes.push(h("div", { class: "banner" }, h("span", {}, "These three patients are examples so you can see how it works. Post your first review and they disappear."),
       h("button", { class: "btn", onclick: () => go("review") }, "Post a review")));
     $("notice").replaceChildren(...notes);
-    renderWard(); renderJobs(); renderReview();
+    renderSortbar(); renderWard(); renderJobs(); renderReview();
   }
   function go(v) { S.view = v; render(); window.scrollTo({ top: 0 }); }
   document.querySelectorAll("[data-view]").forEach((b) => b.addEventListener("click", () => go(b.dataset.view)));
