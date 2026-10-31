@@ -451,12 +451,14 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
   }
   // ---------- ordering: by bed number, or the doctor's own bed arrangement ----------
   const SORT_KEY = "ward_state_sort";
-  let sortMode = "bed";
-  try { sortMode = localStorage.getItem(SORT_KEY) || "bed"; } catch {}
+  // Once a bed arrangement has been saved it is the default everywhere, unless "Bed number" was picked on this device.
+  let sortPref = null;
+  try { sortPref = localStorage.getItem(SORT_KEY); } catch {}
+  const sortMode = () => sortPref || (active().some((p) => p.order != null) ? "custom" : "bed");
   const bedCmp = (a, b) => String(a.bed || "zz").localeCompare(String(b.bed || "zz"), undefined, { numeric: true });
   function ordered(list) {
     const arr = [...list];
-    if (sortMode === "custom") return arr.sort((a, b) => ((a.order ?? 1e9) - (b.order ?? 1e9)) || bedCmp(a, b));
+    if (sortMode() === "custom") return arr.sort((a, b) => ((a.order ?? 1e9) - (b.order ?? 1e9)) || bedCmp(a, b));
     return arr.sort(bedCmp);
   }
   // Typed numbers set the order; a box left empty keeps the patient's current place, after anyone typed into the same number.
@@ -467,21 +469,22 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
       return { p, n: Number.isFinite(v) ? v : i + 1, typed: Number.isFinite(v), i };
     });
     keyed.sort((a, b) => (a.n - b.n) || (b.typed - a.typed) || (a.i - b.i));
+    sortPref = "custom"; try { localStorage.setItem(SORT_KEY, "custom"); } catch {}
     for (let k = 0; k < keyed.length; k++) {
       const p = keyed[k].p;
       if (p.order !== k) { const c = JSON.parse(JSON.stringify(p)); c.order = k; await savePatient(c); }
     }
   }
   function renderSortbar() {
-    const seg = (k, l) => h("button", { "aria-pressed": sortMode === k ? "true" : "false", onclick: () => {
-      sortMode = k; try { localStorage.setItem(SORT_KEY, k); } catch {}
+    const seg = (k, l) => h("button", { "aria-pressed": sortMode() === k ? "true" : "false", onclick: () => {
+      sortPref = k; try { localStorage.setItem(SORT_KEY, k); } catch {}
       if (k === "bed") S.arranging = false;
       render();
     } }, l);
     $("sortbar").replaceChildren(
       h("span", { class: "label" }, "Order"),
       h("div", { class: "filters" }, seg("bed", "Bed number"), seg("custom", "My bed arrangement")),
-      sortMode === "custom" && !isExample() && active().length > 1
+      sortMode() === "custom" && !isExample() && active().length > 1
         ? h("button", { class: "btn" + (S.arranging ? " primary" : ""), onclick: async () => { if (S.arranging) { await saveNumbers(); S.arranging = false; render(); toast("Order saved"); } else { S.arranging = true; render(); } } }, S.arranging ? "Save order" : "Set order")
         : null);
   }
@@ -496,7 +499,7 @@ Bed 9: Mrs R.D., 51yrs, P5+0, admitted yesterday with post-menopausal bleeding. 
       h("span", { class: "stat u" }, h("b", {}, all.filter((t) => t.urgent).length), " urgent"));
     const ward = $("ward");
     if (!S.ready) { ward.replaceChildren(h("div", { class: "empty" }, h("strong", {}, "Loading your ward…"))); return; }
-    if (S.arranging && sortMode === "custom" && !isExample()) {
+    if (S.arranging && sortMode() === "custom" && !isExample()) {
       const arr = ordered(active());
       ward.replaceChildren(
         h("p", { class: "hint", style: "margin:0 0 10px" }, "Type a number next to each name for where she is on the ward (1 = first bed you see). Then tap Save order. Boxes you leave empty keep their current place."),
@@ -688,6 +691,8 @@ ${text.slice(0, 60000)}`;
       if (!pts.length) { st.textContent = "No patients found in those notes. Check that each patient has a name or bed."; st.className = "status err"; return; }
       S.preview = pts.map((x) => ({ ...x, match: x.match && getP(x.match) ? x.match : null,
         todos: (Array.isArray(x.todos) ? x.todos : []).filter((t) => t && t.text).map((t) => ({ text: String(t.text), type: t.type === "followup" ? "followup" : "todo", urgent: !!t.urgent })) }));
+      const rank = new Map(ordered(active()).map((p, i) => [p.id, i]));
+      S.preview.sort((a, b) => (rank.get(a.match) ?? 1e9) - (rank.get(b.match) ?? 1e9));
       S.previewMeta = { date, text };
       st.textContent = `Found ${pts.length} patient${pts.length === 1 ? "" : "s"}. Check them on the right, then add them.`;
       render();
@@ -723,12 +728,12 @@ ${text.slice(0, 60000)}`;
   // ---------- AI: handover summary ----------
   $("summarize").addEventListener("click", async () => {
     const btn = $("summarize"), out = $("handover");
-    const data = shown().map((p) => ({ bed: p.bed, name: p.name, age: p.age, parity: p.parity, day: dayInfo(p)?.main, managing_for: p.diagnosis, status: p.plan,
+    const data = ordered(shown()).map((p) => ({ bed: p.bed, name: p.name, age: p.age, parity: p.parity, day: dayInfo(p)?.main, managing_for: p.diagnosis, status: p.plan,
       open: (p.todos || []).filter((t) => !t.done).map((t) => (t.urgent ? "URGENT " : t.type === "followup" ? "F/U " : "") + t.text) }));
     $("handover-wrap").hidden = false; out.textContent = "Thinking…"; btn.disabled = true;
     try {
       out.textContent = await sampleApi.text(`Write a concise ward handover summary for an O&G doctor from this ward state (today ${TODAY}).
-Start with a 1-line overview (number of patients, number of urgent jobs). Then "Urgent first:" listing urgent jobs with bed and name. Then one short line per patient: bed, name, age/parity, day, condition, and their outstanding jobs in a compact semicolon list. End with "Results to chase:" gathering all follow-ups. Plain text, no markdown symbols like ** or #. Don't add anything not in the data.
+Start with a 1-line overview (number of patients, number of urgent jobs). Then "Urgent first:" listing urgent jobs with bed and name. Then one short line per patient, in exactly the order given (it is the order of beds on the ward): bed, name, age/parity, day, condition, and their outstanding jobs in a compact semicolon list. End with "Results to chase:" gathering all follow-ups. Plain text, no markdown symbols like ** or #. Don't add anything not in the data.
 
 ${JSON.stringify(data)}`, { maxTokens: 3000 });
     } catch (e) { out.textContent = errCopy(e); }
