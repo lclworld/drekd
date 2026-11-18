@@ -503,6 +503,20 @@
     transition: transform 0.3s ease;
     pointer-events: none;
   }
+  /* Gynae Reception checklist */
+  .gr-patient-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; cursor: pointer; }
+  .gr-patient-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+  .gr-patient-bed { font-size: 11px; font-weight: 600; color: var(--navy-light); background: var(--accent-light); border-radius: 6px; padding: 2px 6px; margin-left: 4px; }
+  .gr-patient-surg { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .gr-progress { font-size: 12px; font-weight: 700; color: var(--navy-light); background: var(--accent-light); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+  .gr-progress.complete { color: var(--success); background: var(--success-bg); }
+  .gr-bar { height: 5px; background: var(--border); border-radius: 999px; margin: 10px 0 4px; overflow: hidden; }
+  .gr-bar > div { height: 100%; background: var(--accent); transition: width 0.2s ease; }
+  .gr-patient.complete .gr-bar > div { background: var(--success); }
+  .gr-check-items { display: flex; flex-direction: column; gap: 2px; margin-top: 8px; }
+  .gr-check-item { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid var(--off-white); font-size: 13px; font-weight: 500; cursor: pointer; }
+  .gr-check-item input { width: 20px; height: 20px; accent-color: var(--success); flex-shrink: 0; }
+  .gr-check-item.done span { color: var(--muted); text-decoration: line-through; }
   .toast.show { transform: translateX(-50%) translateY(0); }
 </style>
 </head>
@@ -532,6 +546,7 @@
   <button class="sel-btn" onclick="showTemplate('gynaeclinic')">Gynae Clinic</button>
   <button class="sel-btn" onclick="showTemplate('lwcs')">LW C/S Note</button>
   <button class="sel-btn" onclick="showTemplate('gynaetheatre')">Gynae Theatre</button>
+  <button class="sel-btn" onclick="showTemplate('gynaerec')">Gynae Reception</button>
   <button class="sel-btn" onclick="showTemplate('history')">📋 History</button>
 </div>
 
@@ -2243,6 +2258,215 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════ GYNAE RECEPTION ═══ -->
+  <div id="tpl-gynaerec" class="hidden">
+    <div class="card">
+      <div class="card-title">Mode</div>
+      <div class="mode-toggle">
+        <button class="active" id="gr-mode-note" onclick="setGRMode('note')">Admission Note</button>
+        <button id="gr-mode-check" onclick="setGRMode('check')">Pre-op Checklist <span id="gr-check-count"></span></button>
+      </div>
+    </div>
+
+    <!-- ───── NOTE VIEW ───── -->
+    <div id="gr-note-view">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="gr-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="gr-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Gravidity</label><input type="number" id="gr-g"></div>
+        <div class="field"><label>Parity (e.g. 2, 2D, 1A 1D)</label><input type="text" id="gr-p" placeholder="e.g. 2"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="gr-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('gr')">+ Add Loss</button>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>LMP</label><input type="text" id="gr-lmp" placeholder="DD/MM/26"></div>
+        <div class="field"><label>Street Address</label><input type="text" id="gr-address"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Planned Surgery</label><input type="text" id="gr-surgery" placeholder="e.g. Myomectomy, TAH, Laparoscopy"></div>
+        <div class="field"><label>Date of Surgery</label><input type="text" id="gr-sdate" placeholder="DD/MM/26"></div>
+      </div>
+      <div class="field"><label>Indication / Diagnosis</label><input type="text" id="gr-indication" placeholder="e.g. Symptomatic uterine fibroids"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">History of Presenting Complaint</div>
+      <div class="field"><label>Presenting Complaint</label><input type="text" id="gr-pc"></div>
+      <div class="field"><label>HPC / ODQ</label><textarea id="gr-hpc" rows="4" placeholder="Type HPC narrative and ODQ details here..."></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Scan Results</div>
+      <div id="gr-scan-entries"></div>
+      <button type="button" class="btn-add-loss" onclick="addGRScan()">+ Add Scan</button>
+      <div class="reminder-note" style="margin-top:10px;">Paste each scan report in full. Add as many as the patient has, oldest to newest.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Systemic Enquiry</div>
+      <div class="odq-grid" id="odq-gr-se"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Gynaecological History</div>
+      <div class="field-row col2">
+        <div class="field"><label>Menarche (age)</label><input type="number" id="gr-menarche"></div>
+        <div class="field"><label>Cycle Length (days)</label><input type="number" id="gr-cycle"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Duration of Flow (days)</label><input type="number" id="gr-flowdur"></div>
+        <div class="field"><label>Dysmenorrhoea</label><select id="gr-dysm"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Vaginal Discharge</label><select id="gr-vd"><option value="-">No</option><option value="+">Yes</option></select></div>
+        <div class="field"><label>IMB</label><select id="gr-imb"><option value="-">No</option><option value="+">Yes</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Coitarche (age)</label><input type="number" id="gr-coitarche"></div>
+        <div class="field"><label>Lifetime Partners</label><input type="number" id="gr-partners"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pap Smear</label><input type="text" id="gr-pap" placeholder="e.g. Done 2023 / Never done"></div>
+        <div class="field"><label>Breast Exam</label><input type="text" id="gr-breast" placeholder="e.g. Done / Not done"></div>
+      </div>
+      <div class="field"><label>Contraceptive History</label><input type="text" id="gr-contra"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Obstetric History</div>
+      <div id="gr-obs-entries"></div>
+      <button type="button" style="background:var(--accent-light);color:var(--navy-light);border:1.5px solid var(--accent);border-radius:8px;padding:7px 14px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-top:4px;" onclick="addObsEntry('gr')">+ Add Pregnancy</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Past Medical / Surgical History</div>
+      <div class="field"><textarea id="gr-pmhx" placeholder="e.g. HPT-, DM-, SCD-, Asthma-, No previous surgeries" rows="2"></textarea></div>
+      <div class="field"><label>Drug History / Allergies</label><input type="text" id="gr-drug" placeholder="e.g. No known allergies"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Family History</div>
+      <div class="field"><input type="text" id="gr-fhx" placeholder="e.g. NIL of note"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Social History</div>
+      <div class="field-row col2">
+        <div class="field"><label>Marital Status</label><select id="gr-marital"><option value="MARRIED">Married</option><option value="SINGLE">Single</option><option value="COHABITING">Cohabiting</option><option value="DIVORCED">Divorced</option><option value="WIDOWED">Widowed</option></select></div>
+        <div class="field"><label>Level of Education</label><input type="text" id="gr-edu"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Occupation</label><input type="text" id="gr-occ"></div>
+        <div class="field"><label>Husband's Occupation</label><input type="text" id="gr-husbocc"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>NHIS</label><select id="gr-nhis"><option value="+">Yes</option><option value="-">No</option></select></div>
+        <div class="field"><label>Accepts Transfusion</label><select id="gr-transfuse"><option value="ACCEPTS BLOOD TRANSFUSION">Yes</option><option value="DECLINES BLOOD TRANSFUSION">No</option></select></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="gr-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="gr-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="gr-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="gr-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="gr-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>SpO2 (%)</label><input type="number" id="gr-spo2"></div>
+        <div class="field"><label>Pallor</label><select id="gr-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select></div>
+      </div>
+      <div class="field"><label>Abdominal Mass (leave blank if none)</label><textarea id="gr-abdmass" rows="2" placeholder="e.g. 16-week size mass, smooth surface, firm, extending to the umbilicus"></textarea></div>
+      <div class="field"><label>Pelvic / Other Findings</label><textarea id="gr-exam-extra" rows="2" placeholder="Optional"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Investigations</div>
+      <div class="field"><label>Date of Labs</label><input type="text" id="gr-labdate" placeholder="DD/MM/26"></div>
+      <div class="card-title" style="margin-top:6px">Full Blood Count</div>
+      <div class="field-row col3">
+        <div class="field"><label>HB (g/dL)</label><input type="number" step="0.1" id="gr-hb"></div>
+        <div class="field"><label>PLT (×10⁹)</label><input type="number" id="gr-plt"></div>
+        <div class="field"><label>WBC (×10⁹)</label><input type="number" step="0.1" id="gr-wbc"></div>
+      </div>
+      <div class="card-title" style="margin-top:6px">BUE / Creatinine</div>
+      <div class="field-row col2">
+        <div class="field"><label>Urea / BUN</label><input type="number" step="0.1" id="gr-urea"></div>
+        <div class="field"><label>Creatinine</label><input type="number" step="0.1" id="gr-creat"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>Na</label><input type="number" step="0.1" id="gr-na"></div>
+        <div class="field"><label>K</label><input type="number" step="0.1" id="gr-k"></div>
+        <div class="field"><label>Cl</label><input type="number" step="0.1" id="gr-cl"></div>
+      </div>
+      <div class="field"><label>eGFR</label><input type="number" step="0.1" id="gr-egfr"></div>
+      <div class="field"><label>Other Labs (blood group, sickling, LFT, clotting, etc.)</label><textarea id="gr-otherlabs" rows="3" placeholder="Paste or type any other results"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Anaesthesia Clearance</div>
+      <div class="field"><label>Status</label>
+        <select id="gr-ana-status">
+          <option value="CLEARED FOR ANAESTHESIA">Cleared</option>
+          <option value="AWAITING ANAESTHESIA REVIEW">Awaiting review</option>
+          <option value="NOT YET CLEARED">Not yet cleared</option>
+        </select>
+      </div>
+      <div class="field"><label>Anaesthesia Instructions</label><textarea id="gr-ana-instr" rows="4" placeholder="e.g. NPO from midnight, IV fluids on call to theatre, continue antihypertensives morning of surgery"></textarea></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="gr-doc" oninput="updateDocDropdown('gr-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-gr"></div>
+      <div class="field"><label>Management Plan (pre-filled, edit as needed)</label><textarea id="gr-plan" rows="6"></textarea></div>
+      <button type="button" class="btn-add-loss" onclick="resetGRPlan()">Reset to standard plan</button>
+    </div>
+
+    <button class="btn-generate" onclick="generateGynaeReception()">Generate Gynae Reception Note</button>
+    <div class="output-box" id="out-gynaerec">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-gynaerec"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-gynaerec', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Gynae Reception', 'outtext-gynaerec')">Save to History</button>
+        <button class="btn-save-history" onclick="addGRPatientFromNote()">Add to Checklist</button>
+      </div>
+    </div>
+    </div>
+
+    <!-- ───── CHECKLIST VIEW ───── -->
+    <div id="gr-check-view" class="hidden">
+      <div class="card">
+        <div class="card-title">Add Patient</div>
+        <div class="field-row col2">
+          <div class="field"><label>Name</label><input type="text" id="grc-name"></div>
+          <div class="field"><label>Bed / Ward</label><input type="text" id="grc-bed" placeholder="e.g. Bed 12"></div>
+        </div>
+        <div class="field"><label>Surgery</label><input type="text" id="grc-surgery" placeholder="e.g. Myomectomy"></div>
+        <button type="button" class="btn-generate" style="margin:0" onclick="addGRPatient()">+ Add to Checklist</button>
+      </div>
+
+      <div class="card" style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn-add-loss" onclick="copyGRChecklist()">Copy outstanding items</button>
+        <button type="button" class="btn-add-loss" onclick="clearGRDone()">Remove completed patients</button>
+      </div>
+
+      <div id="gr-check-list"></div>
+    </div>
+  </div>
+
   <!-- ═══════════════════════════════════════════ HISTORY ═══ -->
   <div id="tpl-history" class="hidden">
     <div class="history-section">
@@ -2402,7 +2626,7 @@ function getGPLString(prefix) {
 }
 
 // ── TEMPLATE NAVIGATION ──
-const templates = ['labs','transfusion','ppsvd','ppcs','antepartum','rounds','discharge','reception','anc','obser','gynaeclinic','lwcs','gynaetheatre','history'];
+const templates = ['labs','transfusion','ppsvd','ppcs','antepartum','rounds','discharge','reception','anc','obser','gynaeclinic','lwcs','gynaetheatre','gynaerec','history'];
 
 function showTemplate(name) {
   templates.forEach(t => document.getElementById('tpl-' + t).classList.add('hidden'));
@@ -2478,7 +2702,7 @@ function updateDocDropdown(inputId) {
 }
 
 function renderAllDocDropdowns() {
-  ['svd','cs','ap','rnd','dc','rec','anc','er','gc','lw','gt'].forEach(p => {
+  ['svd','cs','ap','rnd','dc','rec','anc','er','gc','lw','gt','gr'].forEach(p => {
     const el = document.getElementById(p + '-doc');
     if (el) updateDocDropdown(p + '-doc');
   });
@@ -3468,6 +3692,285 @@ PLAN + ${doc || surgeon || '?'}`;
   renderAllDocDropdowns();
 }
 
+// ─── GYNAE RECEPTION ───
+const GR_STANDARD_PLAN = `TO PREPARE FOR SURGERY\nTO GET ITEMS FOR SURGERY\nTO SIGN CONSENT FORM\nTO RETRIEVE DONATION SLIPS\nTO DO GROUPING AND CROSS-MATCHING (GXM)`;
+
+function resetGRPlan() {
+  const el = document.getElementById('gr-plan');
+  if (el) el.value = GR_STANDARD_PLAN;
+}
+
+function setGRMode(mode) {
+  document.getElementById('gr-mode-note').classList.toggle('active', mode === 'note');
+  document.getElementById('gr-mode-check').classList.toggle('active', mode === 'check');
+  document.getElementById('gr-note-view').classList.toggle('hidden', mode !== 'note');
+  document.getElementById('gr-check-view').classList.toggle('hidden', mode !== 'check');
+  if (mode === 'check') renderGRChecklist();
+}
+
+let grScanCount = 0;
+function addGRScan() {
+  grScanCount++;
+  const n = grScanCount;
+  const div = document.createElement('div');
+  div.className = 'card gr-scan';
+  div.style.cssText = 'border:1.5px dashed var(--border);margin-bottom:10px;';
+  div.id = 'gr-scan-' + n;
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <span style="font-size:12px;font-weight:700;color:var(--navy-light);">Scan</span>
+      <button type="button" onclick="document.getElementById('gr-scan-${n}').remove()" style="background:none;border:none;color:var(--danger);font-size:12px;font-weight:600;cursor:pointer;">Remove</button>
+    </div>
+    <div class="field-row col2">
+      <div class="field"><label>Date</label><input type="text" id="gr-scan${n}-date" placeholder="DD/MM/26"></div>
+      <div class="field"><label>Type</label><input type="text" id="gr-scan${n}-type" placeholder="e.g. Pelvic USS, TVS, MRI"></div>
+    </div>
+    <div class="field"><label>Findings (paste report)</label><textarea id="gr-scan${n}-findings" rows="5"></textarea></div>`;
+  document.getElementById('gr-scan-entries').appendChild(div);
+}
+
+function getGRScansString() {
+  const blocks = [];
+  document.querySelectorAll('#gr-scan-entries .gr-scan').forEach(el => {
+    const n = el.id.replace('gr-scan-', '');
+    const date = document.getElementById(`gr-scan${n}-date`)?.value.trim();
+    const type = document.getElementById(`gr-scan${n}-type`)?.value.trim();
+    const findings = document.getElementById(`gr-scan${n}-findings`)?.value.trim();
+    if (!date && !type && !findings) return;
+    blocks.push(`${type || 'SCAN'} (${date || '?'})\n${findings || '?'}`);
+  });
+  return blocks.join('\n\n');
+}
+
+function buildGRLabsBlock() {
+  const date = v('gr-labdate') || today();
+  const parts = [];
+  const hb = v('gr-hb'), plt = v('gr-plt'), wbc = v('gr-wbc');
+  if (hb || plt || wbc) {
+    parts.push(`FBC (${date})\nHB - ${hb || '?'} G/DL\nPLT - ${plt || '?'} X10^9/L\nWBC - ${wbc || '?'} X10^9/L`);
+  }
+  const urea = v('gr-urea'), creat = v('gr-creat'), na = v('gr-na'), k = v('gr-k');
+  if (urea || creat || na || k) {
+    let b = `BUE/CR (${date})\nUREA - ${urea || '?'}\nCREATININE - ${creat || '?'}\nNA - ${na || '?'}\nK - ${k || '?'}`;
+    if (v('gr-cl')) b += `\nCL - ${v('gr-cl')}`;
+    if (v('gr-egfr')) b += `\neGFR - ${v('gr-egfr')}`;
+    parts.push(b);
+  }
+  if (v('gr-otherlabs')) parts.push(v('gr-otherlabs'));
+  return parts.length ? parts.join('\n\n') : 'PENDING';
+}
+
+function generateGynaeReception() {
+  const doc = v('gr-doc').toUpperCase();
+  saveDoctorName(doc);
+  const seStr = getODQString('odq-gr-se', ODQ_SE);
+  const abdMass = v('gr-abdmass');
+  const abdLine = abdMass
+    ? `ABD: FULL SOFT, MWR, NON-TENDER, ${abdMass}`
+    : `ABD: FULL SOFT, MWR, NON-TENDER, LIVER NOT ENLARGED, SPLEEN NOT ENLARGED AND KIDNEYS NOT BALLOTABLE`;
+  const scans = getGRScansString();
+  const anaInstr = v('gr-ana-instr');
+
+  const out = `GYNAE RECEPTION NOTES
+
+NAME: ${v('gr-name') || '?'}
+AGE: ${v('gr-age') || '?'} YEARS
+GRAVIDITY & PARITY: ${getGPLString('gr')}
+LMP: ${v('gr-lmp') || '?'}
+STREET ADDRESS: ${v('gr-address') || '?'}
+
+ADMITTED FOR ${v('gr-surgery') || '?'}${v('gr-sdate') ? ' ON ' + v('gr-sdate') : ''} O/A ${v('gr-indication') || '?'}
+
+PC: ${v('gr-pc') || '?'}
+
+HPC:
+${v('gr-hpc') || '?'}
+
+SCAN RESULTS
+${scans || 'NIL AVAILABLE'}
+
+SYSTEMIC ENQUIRY
+${seStr}
+
+GYNAECOLOGICAL HISTORY
+MENSTRUAL HISTORY: MENARCHE AT ${v('gr-menarche') || '?'}
+CYCLE LENGTH: ${v('gr-cycle') || '?'} DAYS, DURATION OF FLOW: ${v('gr-flowdur') || '?'} DAYS, DYSMENORRHOEA${v('gr-dysm') || '-'}, VAGINAL DISCHARGE${v('gr-vd') || '-'}, INTERMENSTRUAL BLEEDING${v('gr-imb') || '-'}
+
+SEXUAL HISTORY: COITARCHE AT ${v('gr-coitarche') || '?'}, NUMBER OF LIFETIME SEXUAL PARTNERS: ${v('gr-partners') || '?'}
+PAP SMEAR: ${v('gr-pap') || '?'}
+BREAST EXAM: ${v('gr-breast') || '?'}
+
+CONTRACEPTIVE HISTORY: ${v('gr-contra') || 'NIL'}
+
+PAST OBSTETRIC HISTORY
+${getObsHistoryString('gr')}
+
+PAST MEDICAL / SURGICAL HISTORY:
+${v('gr-pmhx') || 'NIL OF NOTE'}
+DRUG HISTORY: ${v('gr-drug') || 'NO KNOWN DRUG ALLERGIES'}
+
+FAMILY HISTORY: ${v('gr-fhx') || 'NIL OF NOTE'}
+
+SOCIAL HISTORY
+${v('gr-marital') || 'MARRIED'}, LEVEL OF EDUCATION: ${v('gr-edu') || '?'}, OCCUPATION: ${v('gr-occ') || '?'}, HUSBAND'S OCCUPATION: ${v('gr-husbocc') || '?'}, NHIS${v('gr-nhis') || '+'}, ${v('gr-transfuse') || 'ACCEPTS BLOOD TRANSFUSION'}
+
+O/E: WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('gr-pale') || 'NOT PALE'}, ANICTERIC, AFEBRILE (${v('gr-temp') || '?'}°C), HYDRATION FAIR
+
+CVS: P- ${v('gr-pr') || '?'} BPM, BP- ${v('gr-bps') || '?'}/${v('gr-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v('gr-rr') || '?'} CPM, SPO2- ${v('gr-spo2') || '?'}%, CHEST CLINICALLY CLEAR
+${abdLine}
+CNS: ALERT AND CONSCIOUS, ORIENTED IN TPP${v('gr-exam-extra') ? '\n' + v('gr-exam-extra') : ''}
+
+INVESTIGATIONS
+${buildGRLabsBlock()}
+
+ANAESTHESIA: ${v('gr-ana-status') || 'CLEARED FOR ANAESTHESIA'}${anaInstr ? '\nINSTRUCTIONS:\n' + anaInstr : ''}
+
+PLAN + ${doc || '?'}
+${v('gr-plan') || GR_STANDARD_PLAN}`;
+
+  document.getElementById('outtext-gynaerec').textContent = U(out);
+  document.getElementById('out-gynaerec').classList.add('visible');
+  document.getElementById('out-gynaerec').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
+// ── GYNAE RECEPTION: PRE-OP CHECKLIST (multi-patient, saved on this device) ──
+const GR_CHECK_ITEMS = [
+  'Prescriptions given',
+  'History taken',
+  'Examination done',
+  'Consent form signed',
+  'Anaesthesia clearance checked',
+  'Lab samples taken',
+  'Lab results in',
+  'GXM samples sent',
+  'Donation slip pictures taken',
+  'Deposit paid',
+  'Name & details added to list'
+];
+const GR_KEY = 'mat4_gynaerec_checklist';
+
+function getGRPatients() {
+  try { return JSON.parse(localStorage.getItem(GR_KEY) || '[]'); } catch { return []; }
+}
+function saveGRPatients(list) {
+  try { localStorage.setItem(GR_KEY, JSON.stringify(list)); } catch {}
+  updateGRCount();
+}
+function updateGRCount() {
+  const list = getGRPatients();
+  const el = document.getElementById('gr-check-count');
+  if (el) el.textContent = list.length ? `(${list.length})` : '';
+}
+
+function pushGRPatient(name, bed, surgery, preTicked) {
+  if (!name) { showToast('Enter a patient name'); return false; }
+  const list = getGRPatients();
+  list.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name: name.toUpperCase(), bed: (bed || '').toUpperCase(), surgery: (surgery || '').toUpperCase(),
+    checks: GR_CHECK_ITEMS.map((_, i) => (preTicked || []).includes(i)),
+    open: true
+  });
+  saveGRPatients(list);
+  return true;
+}
+
+function addGRPatient() {
+  const ok = pushGRPatient(v('grc-name'), v('grc-bed'), v('grc-surgery'));
+  if (!ok) return;
+  ['grc-name', 'grc-bed', 'grc-surgery'].forEach(id => document.getElementById(id).value = '');
+  renderGRChecklist();
+  showToast('Patient added');
+}
+
+function addGRPatientFromNote() {
+  // History taken (1) and Examination done (2) are ticked since the note was just written
+  const ok = pushGRPatient(v('gr-name'), '', v('gr-surgery'), [1, 2]);
+  if (!ok) return;
+  showToast('Added to checklist');
+}
+
+function toggleGRCheck(id, idx) {
+  const list = getGRPatients();
+  const p = list.find(x => x.id === id);
+  if (!p) return;
+  p.checks[idx] = !p.checks[idx];
+  saveGRPatients(list);
+  renderGRChecklist();
+}
+
+function toggleGROpen(id) {
+  const list = getGRPatients();
+  const p = list.find(x => x.id === id);
+  if (!p) return;
+  p.open = !p.open;
+  saveGRPatients(list);
+  renderGRChecklist();
+}
+
+function deleteGRPatient(id) {
+  if (!confirm('Remove this patient from the checklist?')) return;
+  saveGRPatients(getGRPatients().filter(x => x.id !== id));
+  renderGRChecklist();
+}
+
+function clearGRDone() {
+  const list = getGRPatients();
+  const remaining = list.filter(p => !p.checks.every(Boolean));
+  if (remaining.length === list.length) { showToast('No completed patients yet'); return; }
+  saveGRPatients(remaining);
+  renderGRChecklist();
+}
+
+function copyGRChecklist() {
+  const list = getGRPatients();
+  if (!list.length) { showToast('Checklist is empty'); return; }
+  const text = list.map(p => {
+    const pending = GR_CHECK_ITEMS.filter((_, i) => !p.checks[i]);
+    const head = `${p.name}${p.bed ? ' (' + p.bed + ')' : ''}${p.surgery ? ' · ' + p.surgery : ''}`;
+    return pending.length ? `${head}\nOUTSTANDING:\n${pending.map(x => '• ' + x.toUpperCase()).join('\n')}` : `${head}\nALL DONE ✓`;
+  }).join('\n\n');
+  navigator.clipboard.writeText('GYNAE PRE-OP CHECKLIST\n\n' + text).then(() => showToast('Copied to clipboard'));
+}
+
+function escGR(s) { return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+function renderGRChecklist() {
+  updateGRCount();
+  const wrap = document.getElementById('gr-check-list');
+  if (!wrap) return;
+  const list = getGRPatients();
+  if (!list.length) {
+    wrap.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:24px 0;">No patients on the checklist yet.</p>';
+    return;
+  }
+  wrap.innerHTML = list.map(p => {
+    const done = p.checks.filter(Boolean).length;
+    const total = GR_CHECK_ITEMS.length;
+    const complete = done === total;
+    const items = GR_CHECK_ITEMS.map((label, i) => `
+      <label class="gr-check-item${p.checks[i] ? ' done' : ''}">
+        <input type="checkbox" ${p.checks[i] ? 'checked' : ''} onchange="toggleGRCheck('${p.id}', ${i})">
+        <span>${label}</span>
+      </label>`).join('');
+    return `
+    <div class="card gr-patient${complete ? ' complete' : ''}">
+      <div class="gr-patient-head" onclick="toggleGROpen('${p.id}')">
+        <div>
+          <div class="gr-patient-name">${escGR(p.name)}${p.bed ? ' <span class="gr-patient-bed">' + escGR(p.bed) + '</span>' : ''}</div>
+          ${p.surgery ? '<div class="gr-patient-surg">' + escGR(p.surgery) + '</div>' : ''}
+        </div>
+        <div class="gr-progress${complete ? ' complete' : ''}">${complete ? '✓ Done' : done + '/' + total}</div>
+      </div>
+      <div class="gr-bar"><div style="width:${Math.round(done / total * 100)}%"></div></div>
+      ${p.open ? `<div class="gr-check-items">${items}</div>
+      <button type="button" onclick="deleteGRPatient('${p.id}')" style="background:none;border:none;color:var(--danger);font-size:12px;font-weight:600;cursor:pointer;margin-top:8px;font-family:'Poppins',sans-serif;">Remove patient</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
 // ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
@@ -3496,6 +3999,12 @@ document.addEventListener('DOMContentLoaded', () => {
   buildODQ('odq-er', ODQ_OBSTETRIC);
   buildODQ('odq-er-se', ODQ_SE);
   buildODQ('odq-gc-se', ODQ_SE);
+  buildODQ('odq-gr-se', ODQ_SE);
+
+  // Gynae Reception: standard plan, one empty scan slot, checklist count
+  resetGRPlan();
+  addGRScan();
+  updateGRCount();
 
   // Bind EGA auto-calculation from EDD
   bindEGAFromEDD('anc-edd', 'anc-egaw', 'anc-egad');
