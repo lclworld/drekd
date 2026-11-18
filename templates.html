@@ -2629,11 +2629,29 @@ function getLossesString(prefix) {
 }
 
 // Builds "G2P1+1SA" style string from gravidity, parity (free text), and losses builder
+// Gravidity is required only for pregnant patients (ANC, OBS ER, Reception, antepartum rounds).
+// Everywhere else it is optional: left blank, the note prints parity only (e.g. P4).
+const GRAVIDITY_REQUIRED = ['anc', 'er', 'rec'];
+function gravidityRequired(prefix) {
+  if (GRAVIDITY_REQUIRED.includes(prefix)) return true;
+  if (prefix === 'rnd') return document.getElementById('rnd-type')?.value === 'ANTEPARTUM';
+  return false;
+}
+
 function getGPLString(prefix) {
-  const g = document.getElementById(prefix + '-g')?.value || '?';
+  const gVal = (document.getElementById(prefix + '-g')?.value || '').trim();
   const p = document.getElementById(prefix + '-p')?.value || '?';
   const losses = getLossesString(prefix);
-  return `G${g}P${p}${losses}`;
+  if (!gVal && !gravidityRequired(prefix)) return `P${p}${losses}`;
+  return `G${gVal || '?'}P${p}${losses}`;
+}
+
+function updateGravidityLabels() {
+  ['svd','cs','rnd','dc','rec','anc','er','gc','lw','gt','gr'].forEach(prefix => {
+    const input = document.getElementById(prefix + '-g');
+    const label = input?.closest('.field')?.querySelector('label');
+    if (label) label.textContent = gravidityRequired(prefix) ? 'Gravidity' : 'Gravidity (optional)';
+  });
 }
 
 // ── TEMPLATE NAVIGATION ──
@@ -4032,6 +4050,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Render saved doctors
   renderAllDocDropdowns();
+
+  // Gravidity labels (optional outside pregnancy templates)
+  updateGravidityLabels();
+  document.getElementById('rnd-type')?.addEventListener('change', updateGravidityLabels);
 });
 </script>
 </body>
