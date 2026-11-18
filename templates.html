@@ -334,6 +334,10 @@
   }
   .btn-hist-copy { color: var(--navy); }
   .btn-hist-del { color: var(--danger); border-color: #FADBD8; }
+  .hist-edit-text { width: 100%; font-family: 'Poppins', sans-serif; font-size: 12px; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; resize: vertical; }
+  #edit-banner { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #FFF4DE; border: 1.5px solid #E8B44C; color: #6B4A00; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; font-size: 12.5px; font-weight: 600; }
+  #edit-banner.hidden { display: none !important; }
+  #edit-banner button { background: #fff; border: 1.5px solid #E8B44C; color: #6B4A00; border-radius: 8px; padding: 6px 10px; font: 600 12px 'Poppins', sans-serif; cursor: pointer; white-space: nowrap; }
 
   /* SECTION TOGGLE (rounds) */
   .mode-toggle {
@@ -551,6 +555,11 @@
 </div>
 
 <div class="main">
+
+  <div id="edit-banner" class="hidden">
+    <span id="edit-banner-text"></span>
+    <button type="button" onclick="stopEditing()">Stop editing</button>
+  </div>
 
   <!-- ═══════════════════════════════════════════ LABS ═══ -->
   <div id="tpl-labs">
@@ -2741,53 +2750,176 @@ function renderAllDocDropdowns() {
   });
 }
 
-// ── HISTORY ──
+// ── HISTORY (with edit: each saved note keeps its form so it can be reopened) ──
+let editingHistoryId = null;
+
+function loadHistory() {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
+  let changed = false;
+  history.forEach(h => { if (!h.id) { h.id = 'h' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); changed = true; } });
+  if (changed) storeHistory(history);
+  return history;
+}
+function storeHistory(history) {
+  try { localStorage.setItem('mat4_history', JSON.stringify(history)); }
+  catch { showToast('Storage full: delete some saved notes'); }
+}
+function histTime() {
+  return new Date().toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+
+// Capture every field in a template, plus dynamic rows, ODQ toggles and mode state
+function captureForm(tpl) {
+  const root = document.getElementById('tpl-' + tpl);
+  if (!root) return null;
+  const values = {};
+  root.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => {
+    values[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? el.checked : el.value;
+  });
+  const dynamic = {};
+  root.querySelectorAll('[id$="-loss-entries"], [id$="-obs-entries"], #gr-scan-entries').forEach(c => {
+    dynamic[c.id] = Array.from(c.children).map(ch => ch.id).filter(Boolean);
+  });
+  const odqPos = Array.from(root.querySelectorAll('.odq-toggle button.pos-active')).map(b => b.id);
+  return { tpl, values, dynamic, odqPos, recDeliveryType, roundsMode };
+}
+
+function rebuildDynamic(containerId, ids) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = '';
+  let m;
+  if ((m = containerId.match(/^(.+)-loss-entries$/))) {
+    const prefix = m[1];
+    ids.forEach(id => { const n = parseInt(id.split('-').pop(), 10); lossEntries[prefix] = n - 1; addLossEntry(prefix); });
+  } else if ((m = containerId.match(/^(.+)-obs-entries$/))) {
+    const prefix = m[1];
+    ids.forEach(id => { const n = parseInt(id.split('-').pop(), 10); obsEntries[prefix] = n - 1; addObsEntry(prefix); });
+  } else if (containerId === 'gr-scan-entries') {
+    ids.forEach(id => { const n = parseInt(id.split('-').pop(), 10); grScanCount = n - 1; addGRScan(); });
+  }
+}
+
+function restoreForm(state) {
+  showTemplate(state.tpl);
+  if (state.tpl === 'reception' && state.recDeliveryType) setRecDeliveryType(state.recDeliveryType);
+  if (state.tpl === 'rounds' && state.roundsMode) setRoundsMode(state.roundsMode);
+  if (state.tpl === 'gynaerec') setGRMode('note');
+  Object.entries(state.dynamic || {}).forEach(([cid, ids]) => rebuildDynamic(cid, ids));
+
+  const apply = fire => {
+    Object.entries(state.values || {}).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!val; else el.value = val;
+      if (fire && (el.tagName === 'SELECT' || el.type === 'checkbox')) el.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  };
+  apply(true);   // runs show/hide toggles and auto-plans
+  apply(false);  // puts back any text an auto-plan overwrote
+
+  const root = document.getElementById('tpl-' + state.tpl);
+  root.querySelectorAll('.odq-toggle button[id$="_pos"]').forEach(b => setODQ(b.id.replace(/_pos$/, ''), 'neg'));
+  (state.odqPos || []).forEach(id => { if (document.getElementById(id)) setODQ(id.replace(/_pos$/, ''), 'pos'); });
+
+  root.querySelectorAll('.output-box').forEach(b => b.classList.remove('visible'));
+  updateGravidityLabels();
+  renderAllDocDropdowns();
+}
+
+function showEditBanner(h) {
+  document.getElementById('edit-banner-text').textContent = `Editing saved ${h.type} (${h.time}). Generate, then Save to update it.`;
+  document.getElementById('edit-banner').classList.remove('hidden');
+}
+function stopEditing() {
+  editingHistoryId = null;
+  document.getElementById('edit-banner').classList.add('hidden');
+}
+
 function saveToHistory(type, textId) {
   const text = document.getElementById(textId).textContent;
   if (!text) return;
-  let history = [];
-  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
-  history.unshift({ type, text, time: new Date().toLocaleString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) });
+  const tpl = textId.replace('outtext-', '');
+  const state = captureForm(tpl);
+  let history = loadHistory();
+  const existing = editingHistoryId ? history.find(h => h.id === editingHistoryId && h.tpl === tpl) : null;
+  if (existing) {
+    existing.text = text; existing.state = state; existing.time = histTime() + ' (edited)';
+    history = [existing, ...history.filter(h => h !== existing)];
+    storeHistory(history);
+    stopEditing();
+    showToast('Saved note updated');
+    return;
+  }
+  history.unshift({ id: 'h' + Date.now().toString(36), type, tpl, text, state, time: histTime() });
   if (history.length > 50) history = history.slice(0, 50);
-  localStorage.setItem('mat4_history', JSON.stringify(history));
+  storeHistory(history);
   showToast('Saved to history');
 }
 
 function renderHistory() {
-  let history = [];
-  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
+  const history = loadHistory();
   const list = document.getElementById('history-list');
   if (!history.length) { list.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:24px 0;">No saved notes yet.</p>'; return; }
-  list.innerHTML = history.map((h, i) => `
-    <div class="history-item">
+  list.innerHTML = history.map(h => `
+    <div class="history-item" id="hist-${h.id}">
       <div class="history-item-meta">
         <span class="history-item-type">${h.type}</span>
         <span class="history-item-time">${h.time}</span>
       </div>
-      <div class="history-item-preview">${h.text.slice(0, 80)}...</div>
+      <div class="history-item-preview">${escGR(h.text.slice(0, 80))}...</div>
       <div class="history-item-actions">
-        <button class="btn-hist-copy" onclick="copyHistItem(${i})">Copy</button>
-        <button class="btn-hist-del" onclick="deleteHistItem(${i})">Delete</button>
+        <button class="btn-hist-copy" onclick="copyHistItem('${h.id}')">Copy</button>
+        <button class="btn-hist-copy" onclick="editHistItem('${h.id}')">Edit</button>
+        <button class="btn-hist-del" onclick="deleteHistItem('${h.id}')">Delete</button>
       </div>
     </div>`).join('');
 }
 
-function copyHistItem(i) {
-  let history = [];
-  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
-  navigator.clipboard.writeText(history[i].text).then(() => showToast('Copied to clipboard'));
+function copyHistItem(id) {
+  const h = loadHistory().find(x => x.id === id);
+  if (h) navigator.clipboard.writeText(h.text).then(() => showToast('Copied to clipboard'));
 }
 
-function deleteHistItem(i) {
-  let history = [];
-  try { history = JSON.parse(localStorage.getItem('mat4_history') || '[]'); } catch {}
-  history.splice(i, 1);
-  localStorage.setItem('mat4_history', JSON.stringify(history));
+function editHistItem(id) {
+  const h = loadHistory().find(x => x.id === id);
+  if (!h) return;
+  if (h.state && document.getElementById('tpl-' + h.state.tpl)) {
+    editingHistoryId = id;
+    restoreForm(h.state);
+    showEditBanner(h);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  // Notes saved before this update have no form saved: edit the text directly
+  const item = document.getElementById('hist-' + id);
+  item.querySelector('.history-item-preview').outerHTML =
+    `<textarea class="hist-edit-text" id="histtext-${id}" rows="14">${escGR(h.text)}</textarea>`;
+  item.querySelector('.history-item-actions').innerHTML = `
+    <button class="btn-hist-copy" onclick="saveHistText('${id}')">Save</button>
+    <button class="btn-hist-del" onclick="renderHistory()">Cancel</button>`;
+}
+
+function saveHistText(id) {
+  const history = loadHistory();
+  const h = history.find(x => x.id === id);
+  if (!h) return;
+  h.text = document.getElementById('histtext-' + id).value;
+  h.time = histTime() + ' (edited)';
+  storeHistory(history);
+  renderHistory();
+  showToast('Saved note updated');
+}
+
+function deleteHistItem(id) {
+  storeHistory(loadHistory().filter(x => x.id !== id));
+  if (editingHistoryId === id) stopEditing();
   renderHistory();
 }
 
 function clearAllHistory() {
-  if (confirm('Clear all saved notes?')) { localStorage.removeItem('mat4_history'); renderHistory(); }
+  if (confirm('Clear all saved notes?')) { localStorage.removeItem('mat4_history'); stopEditing(); renderHistory(); }
 }
 
 // ── ROUNDS MODE ──
