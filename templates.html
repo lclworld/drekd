@@ -334,6 +334,7 @@
   }
   .btn-hist-copy { color: var(--navy); }
   .btn-hist-del { color: var(--danger); border-color: #FADBD8; }
+  .btn-new-patient { width: 100%; background: var(--white); color: var(--navy); border: 2px solid var(--navy); border-radius: 10px; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin: -6px 0 16px; }
   .hist-edit-text { width: 100%; font-family: 'Poppins', sans-serif; font-size: 12px; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; resize: vertical; }
   #edit-banner { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #FFF4DE; border: 1.5px solid #E8B44C; color: #6B4A00; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; font-size: 12.5px; font-weight: 600; }
   #edit-banner.hidden { display: none !important; }
@@ -4018,6 +4019,40 @@ PLAN + ${doc || surgeon || '?'}`;
   renderAllDocDropdowns();
 }
 
+// ── NEW PATIENT (clear form) ──
+// A snapshot of every template as it looks on first load; clearing restores it.
+const BLANK_FORMS = {};
+
+function setupNewPatientButtons() {
+  templates.filter(t => t !== 'history').forEach(t => {
+    BLANK_FORMS[t] = captureForm(t);
+    const gen = Array.from(document.querySelectorAll('#tpl-' + t + ' .btn-generate'))
+      .find(b => /generate/i.test(b.getAttribute('onclick') || ''));
+    if (!gen) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-new-patient';
+    btn.textContent = 'Clear for New Patient';
+    btn.onclick = () => clearForNewPatient(t);
+    gen.insertAdjacentElement('afterend', btn);
+  });
+}
+
+function clearForNewPatient(tpl) {
+  if (!confirm('Clear this form for a new patient? Save the current note first if you need it.')) return;
+  const blank = BLANK_FORMS[tpl];
+  if (!blank) return;
+  // keep the senior doctor's name, since the same consultant usually covers the whole list
+  const keep = {};
+  document.querySelectorAll('#tpl-' + tpl + ' input[id$="-doc"]').forEach(el => keep[el.id] = el.value);
+  stopEditing();
+  restoreForm(JSON.parse(JSON.stringify(blank)));
+  Object.entries(keep).forEach(([id, val]) => { document.getElementById(id).value = val; });
+  if (tpl === 'pnc') pnUterusTouched = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('Form cleared');
+}
+
 // ─── POSTNATAL CLINIC ───
 const ODQ_PN = ['LAP', 'BPV'];
 const ODQ_PN_BP = ['HEADACHE', 'BLURRED VISION', 'EPIGASTRIC PAIN'];
@@ -4460,6 +4495,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Gravidity labels (optional outside pregnancy templates)
   updateGravidityLabels();
   document.getElementById('rnd-type')?.addEventListener('change', updateGravidityLabels);
+
+  // New Patient: remember each blank form, add a clear button under every Generate button
+  setupNewPatientButtons();
 });
 </script>
 </body>
