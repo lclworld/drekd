@@ -551,6 +551,7 @@
   <button class="sel-btn" onclick="showTemplate('lwcs')">LW C/S Note</button>
   <button class="sel-btn" onclick="showTemplate('gynaetheatre')">Gynae Theatre</button>
   <button class="sel-btn" onclick="showTemplate('gynaerec')">Gynae Reception</button>
+  <button class="sel-btn" onclick="showTemplate('pnc')">Postnatal Clinic</button>
   <button class="sel-btn" onclick="showTemplate('history')">📋 History</button>
 </div>
 
@@ -2487,6 +2488,169 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════ POSTNATAL CLINIC ═══ -->
+  <div id="tpl-pnc" class="hidden">
+    <div class="card">
+      <div class="card-title">Patient Info</div>
+      <div class="field-row col2">
+        <div class="field"><label>Name</label><input type="text" id="pn-name"></div>
+        <div class="field"><label>Age (yrs)</label><input type="number" id="pn-age"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Gravidity</label><input type="number" id="pn-g"></div>
+        <div class="field"><label>Parity (e.g. 3, 2 (1D))</label><input type="text" id="pn-p" placeholder="e.g. 3"></div>
+      </div>
+      <div class="field">
+        <label>Losses (SA / TOP)</label>
+        <div class="loss-entries" id="pn-loss-entries"></div>
+        <button type="button" class="btn-add-loss" onclick="addLossEntry('pn')">+ Add Loss</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Delivery</div>
+      <input type="hidden" id="pn-dtype" value="cs">
+      <div class="mode-toggle">
+        <button type="button" class="active" id="pn-dtype-cs" onclick="setPNDelivery('cs')">C/S</button>
+        <button type="button" id="pn-dtype-svd" onclick="setPNDelivery('svd')">SVD</button>
+      </div>
+      <div class="field" style="margin-top:12px"><label>Weeks Since Delivery</label><input type="number" id="pn-weeks" oninput="pnWeeksChanged()"></div>
+      <div id="pn-cs-fields">
+        <div class="field"><label>Type of C/S</label>
+          <select id="pn-cs-type">
+            <option value="">Not stated</option>
+            <option value="EMERGENCY">Emergency</option>
+            <option value="ELECTIVE">Elective</option>
+          </select>
+        </div>
+        <div class="field"><label>Indication (O/A)</label><input type="text" id="pn-indication" placeholder="e.g. Failure to progress, 2 prev CS"></div>
+      </div>
+      <div class="field"><label>Extra Line (optional)</label><input type="text" id="pn-extra-line" placeholder="e.g. 4 weeks post secondary PPH o/a RPOC"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Medications &amp; Complaints</div>
+      <div class="field"><label>Currently On</label><textarea id="pn-meds" rows="3">HEMATINICS
+VITAMIN C</textarea></div>
+      <div class="field"><label>Complaints (blank = nil complaints)</label><input type="text" id="pn-co"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">ODQ</div>
+      <div class="odq-grid" id="odq-pn"></div>
+      <div class="field" style="margin-top:10px"><label>Anaemia</label>
+        <select id="pn-anaemia">
+          <option value="ASYMPTOMATIC OF ANAEMIA">Asymptomatic</option>
+          <option value="SYMPTOMATIC OF ANAEMIA">Symptomatic</option>
+        </select>
+      </div>
+      <div class="sub-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="pn-bp-toggle" onchange="document.getElementById('pn-bp-odq-wrap').classList.toggle('hidden', !this.checked)">
+          <span class="switch-slider"></span>
+        </label>
+        <span class="switch-label">BP follow-up (headache, blurred vision, epigastric pain)</span>
+      </div>
+      <div id="pn-bp-odq-wrap" class="hidden"><div class="odq-grid" id="odq-pn-bp"></div></div>
+      <div class="field" style="margin-top:10px"><label>Other ODQ (optional)</label><input type="text" id="pn-odq-extra"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Examination</div>
+      <div class="field-row col2">
+        <div class="field"><label>Temp (°C)</label><input type="number" step="0.1" id="pn-temp"></div>
+        <div class="field"><label>Pulse (BPM)</label><input type="number" id="pn-pr"></div>
+      </div>
+      <div class="field-row col3">
+        <div class="field"><label>BP Sys</label><input type="number" id="pn-bps"></div>
+        <div class="field"><label>BP Dia</label><input type="number" id="pn-bpd"></div>
+        <div class="field"><label>RR (CPM)</label><input type="number" id="pn-rr"></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Pallor</label><select id="pn-pale"><option value="NOT PALE">Not Pale</option><option value="PALE">Pale</option></select></div>
+        <div class="field"><label>Pedal Oedema</label><select id="pn-oedema"><option value="NO PEDAL OEDEMA">No</option><option value="PEDAL OEDEMA+">Yes</option></select></div>
+      </div>
+      <div class="field-row col2">
+        <div class="field"><label>Urine Protein</label><select id="pn-uprot"><option value="">Not done</option><option value="-">Negative</option><option value="TRACE">Trace</option><option value="+">+</option><option value="++">++</option><option value="+++">+++</option></select></div>
+        <div class="field"><label>Urine Sugar</label><select id="pn-usugar"><option value="">Not done</option><option value="-">Negative</option><option value="+">+</option><option value="++">++</option></select></div>
+      </div>
+      <div class="field"><label>Uterus</label>
+        <select id="pn-uterus" onchange="pnUterusTouched = true">
+          <option value="NOT PALPABLE">Not palpable</option>
+          <option value="12">12 weeks size</option>
+          <option value="14">14 weeks size</option>
+          <option value="16">16 weeks size</option>
+          <option value="18">18 weeks size</option>
+          <option value="20">20 weeks size</option>
+        </select>
+      </div>
+      <div class="field-row col2">
+        <div class="field" id="pn-wound-field"><label>Wound</label>
+          <select id="pn-wound">
+            <option value="WOUND HEALED">Healed</option>
+            <option value="WOUND CLEAN AND DRY">Clean and dry</option>
+            <option value="WOUND CLEAN">Clean</option>
+            <option value="WOUND HEALED WITH SOME WET AREAS">Healed, some wet areas</option>
+          </select>
+        </div>
+        <div class="field hidden" id="pn-perineum-field"><label>Perineum</label>
+          <select id="pn-perineum">
+            <option value="PERINEUM HEALED">Healed</option>
+            <option value="EPISIOTOMY HEALED">Episiotomy healed</option>
+            <option value="EPISIOTOMY GAPED">Episiotomy gaped</option>
+            <option value="">Not examined</option>
+          </select>
+        </div>
+        <div class="field"><label>Lochia</label>
+          <select id="pn-lochia">
+            <option value="LOCHIA NONE">None</option>
+            <option value="LOCHIA SEROUS AND ODOURLESS">Serous, odourless</option>
+            <option value="LOCHIA RUBRA">Rubra</option>
+            <option value="LOCHIA OFFENSIVE">Offensive</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Other Findings (optional)</label><input type="text" id="pn-exam-extra"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Results &amp; Baby</div>
+      <div class="field"><label>Check HB (g/dL)</label><input type="number" step="0.1" id="pn-hb"></div>
+      <div class="field"><label>BP Profile (optional)</label><input type="text" id="pn-bpprofile" placeholder="e.g. 139-150/86-101 over one week"></div>
+      <div class="field"><label>Other Results (optional)</label><textarea id="pn-results" rows="3" placeholder="e.g. Wound swab: E. coli, sensitive to ceftriaxone"></textarea></div>
+      <div class="field"><label>Diagnosis (optional)</label><input type="text" id="pn-dx"></div>
+      <div class="field"><label>Baby</label><input type="text" id="pn-baby" value="LACTATING, IN GOOD SHAPE"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Plan</div>
+      <div class="field"><label>Senior Doctor</label><input type="text" id="pn-doc" oninput="updateDocDropdown('pn-doc')"></div>
+      <div class="saved-doctors" id="saved-docs-pn"></div>
+      <div class="field"><label>Outcome</label>
+        <select id="pn-outcome" onchange="pnOutcomeChanged()">
+          <option value="DISCHARGED">Discharged</option>
+          <option value="REVIEW">Review</option>
+          <option value="">None (use extra lines only)</option>
+        </select>
+      </div>
+      <div class="field-row col2 hidden" id="pn-review-fields">
+        <div class="field"><label>Review In (weeks)</label><input type="number" id="pn-review-wks" oninput="pnReviewDate()"></div>
+        <div class="field"><label>Review Date</label><input type="text" id="pn-review-date" placeholder="DD/MM/26"></div>
+      </div>
+      <div class="field"><label>Extra Plan Lines (optional)</label><textarea id="pn-plan" rows="3" placeholder="e.g. To do FBC&#10;To continue medications"></textarea></div>
+    </div>
+
+    <button class="btn-generate" onclick="generatePostnatal()">Generate Postnatal Clinic Note</button>
+    <div class="output-box" id="out-pnc">
+      <div class="output-label">Generated Note</div>
+      <div class="output-text" id="outtext-pnc"></div>
+      <div class="output-actions">
+        <button class="btn-copy" onclick="copyOutput('outtext-pnc', this)">Copy to Clipboard</button>
+        <button class="btn-save-history" onclick="saveToHistory('Postnatal Clinic', 'outtext-pnc')">Save to History</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══════════════════════════════════════════ HISTORY ═══ -->
   <div id="tpl-history" class="hidden">
     <div class="history-section">
@@ -2656,7 +2820,7 @@ function getGPLString(prefix) {
 }
 
 function updateGravidityLabels() {
-  ['svd','cs','rnd','dc','rec','anc','er','gc','lw','gt','gr'].forEach(prefix => {
+  ['svd','cs','rnd','dc','rec','anc','er','gc','lw','gt','gr','pn'].forEach(prefix => {
     const input = document.getElementById(prefix + '-g');
     const label = input?.closest('.field')?.querySelector('label');
     if (label) label.textContent = gravidityRequired(prefix) ? 'Gravidity' : 'Gravidity (optional)';
@@ -2664,7 +2828,7 @@ function updateGravidityLabels() {
 }
 
 // ── TEMPLATE NAVIGATION ──
-const templates = ['labs','transfusion','ppsvd','ppcs','antepartum','rounds','discharge','reception','anc','obser','gynaeclinic','lwcs','gynaetheatre','gynaerec','history'];
+const templates = ['labs','transfusion','ppsvd','ppcs','antepartum','rounds','discharge','reception','anc','obser','gynaeclinic','lwcs','gynaetheatre','gynaerec','pnc','history'];
 
 function showTemplate(name) {
   templates.forEach(t => document.getElementById('tpl-' + t).classList.add('hidden'));
@@ -2740,7 +2904,7 @@ function updateDocDropdown(inputId) {
 }
 
 function renderAllDocDropdowns() {
-  ['svd','cs','ap','rnd','dc','rec','anc','er','gc','lw','gt','gr'].forEach(p => {
+  ['svd','cs','ap','rnd','dc','rec','anc','er','gc','lw','gt','gr','pn'].forEach(p => {
     const el = document.getElementById(p + '-doc');
     if (el) updateDocDropdown(p + '-doc');
   });
@@ -2806,6 +2970,7 @@ function restoreForm(state) {
   if (state.tpl === 'reception' && state.recDeliveryType) setRecDeliveryType(state.recDeliveryType);
   if (state.tpl === 'rounds' && state.roundsMode) setRoundsMode(state.roundsMode);
   if (state.tpl === 'gynaerec') setGRMode('note');
+  if (state.tpl === 'pnc') { setPNDelivery(state.values?.['pn-dtype'] || 'cs'); pnUterusTouched = true; }
   Object.entries(state.dynamic || {}).forEach(([cid, ids]) => rebuildDynamic(cid, ids));
 
   const apply = fire => {
@@ -3853,6 +4018,113 @@ PLAN + ${doc || surgeon || '?'}`;
   renderAllDocDropdowns();
 }
 
+// ─── POSTNATAL CLINIC ───
+const ODQ_PN = ['LAP', 'BPV'];
+const ODQ_PN_BP = ['HEADACHE', 'BLURRED VISION', 'EPIGASTRIC PAIN'];
+let pnUterusTouched = false;
+
+function setPNDelivery(type) {
+  document.getElementById('pn-dtype').value = type;
+  document.getElementById('pn-dtype-cs').classList.toggle('active', type === 'cs');
+  document.getElementById('pn-dtype-svd').classList.toggle('active', type === 'svd');
+  document.getElementById('pn-cs-fields').classList.toggle('hidden', type !== 'cs');
+  document.getElementById('pn-wound-field').classList.toggle('hidden', type !== 'cs');
+  document.getElementById('pn-perineum-field').classList.toggle('hidden', type !== 'svd');
+}
+
+// From 4 weeks the uterus defaults to not palpable; earlier it defaults to 16 weeks size
+function pnWeeksChanged() {
+  if (pnUterusTouched) return;
+  const wk = parseFloat(v('pn-weeks'));
+  if (isNaN(wk)) return;
+  document.getElementById('pn-uterus').value = wk >= 4 ? 'NOT PALPABLE' : '16';
+}
+
+function pnOutcomeChanged() {
+  document.getElementById('pn-review-fields').classList.toggle('hidden', v('pn-outcome') !== 'REVIEW');
+}
+
+function pnReviewDate() {
+  const wk = parseFloat(v('pn-review-wks'));
+  if (isNaN(wk)) return;
+  const d = new Date(); d.setDate(d.getDate() + Math.round(wk * 7));
+  document.getElementById('pn-review-date').value =
+    `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(-2)}`;
+}
+
+function generatePostnatal() {
+  const doc = v('pn-doc').toUpperCase();
+  saveDoctorName(doc);
+  const isCS = v('pn-dtype') !== 'svd';
+  const wk = v('pn-weeks') || '?';
+
+  const deliveryLine = isCS
+    ? `POSTOP ${wk} WEEKS FOLLOWING ${v('pn-cs-type') ? v('pn-cs-type') + ' ' : ''}CS O/A ${v('pn-indication') || '?'}`
+    : `POST SVD ${wk} WEEKS`;
+
+  let odq = getODQString('odq-pn', ODQ_PN) + ', ' + v('pn-anaemia');
+  if (document.getElementById('pn-bp-toggle').checked) odq += ', ' + getODQString('odq-pn-bp', ODQ_PN_BP);
+  if (v('pn-odq-extra')) odq += ', ' + v('pn-odq-extra');
+
+  const urine = [];
+  if (v('pn-uprot')) urine.push(`PROTEIN ${v('pn-uprot')}`);
+  if (v('pn-usugar')) urine.push(`SUGAR ${v('pn-usugar')}`);
+
+  const ut = v('pn-uterus');
+  const uterusText = ut === 'NOT PALPABLE' ? 'UTERUS NOT PALPABLE ABDOMINALLY' : `UTERUS ${ut} WEEKS SIZE AND WELL CONTRACTED`;
+  const abdParts = ['FULL SOFT, MWR, NON-TENDER, LIVER AND SPLEEN NOT PALPABLE AND KIDNEYS NOT BALLOTABLE', uterusText];
+  const site = isCS ? v('pn-wound') : v('pn-perineum');
+  if (site) abdParts.push(site);
+  abdParts.push(v('pn-lochia'));
+  if (v('pn-exam-extra')) abdParts.push(v('pn-exam-extra'));
+
+  const results = [`CHECK HB: ${v('pn-hb') || '?'} G/DL`];
+  if (v('pn-bpprofile')) results.push(`BP PROFILE: ${v('pn-bpprofile')}`);
+  if (v('pn-results')) results.push(v('pn-results'));
+
+  const plan = [];
+  if (v('pn-plan')) plan.push(v('pn-plan'));
+  if (v('pn-outcome') === 'DISCHARGED') plan.push('DISCHARGED');
+  if (v('pn-outcome') === 'REVIEW') {
+    const w = v('pn-review-wks'), d = v('pn-review-date');
+    plan.push(`REVIEW${w ? ' IN ' + w + (w === '1' ? ' WEEK' : ' WEEKS') : ''}${d ? (w ? ' (' + d + ')' : ' ON ' + d) : ''}`);
+  }
+
+  const out = `POSTNATAL CLINIC
+
+NAME: ${v('pn-name') || '?'}
+AGE: ${v('pn-age') || '?'} YRS
+PARITY: ${getGPLString('pn')}
+
+${deliveryLine}${v('pn-extra-line') ? '\n' + v('pn-extra-line') : ''}
+
+CURRENTLY ON:
+${v('pn-meds') || 'NIL'}
+
+C/O: ${v('pn-co') || 'NIL COMPLAINTS'}
+
+ODQ: ${odq}
+
+O/E: WOMAN NOT IN RESPIRATORY DISTRESS OR OBVIOUS PAIN, ${v('pn-pale')}, ANICTERIC, AFEBRILE (${v('pn-temp') || '?'}°C), HYDRATION FAIR, ${v('pn-oedema')}${urine.length ? '\nURINE: ' + urine.join(', ') : ''}
+
+CVS: P- ${v('pn-pr') || '?'} BPM, BP- ${v('pn-bps') || '?'}/${v('pn-bpd') || '?'} MMHG, S1+, S2+, MO
+RESP: RR- ${v('pn-rr') || '?'} CPM, CHEST CLINICALLY CLEAR
+ABD: ${abdParts.join(', ')}
+CNS: ALERT AND CONSCIOUS, GCS- 15/15
+
+${results.join('\n')}
+${v('pn-dx') ? '\nDIAGNOSIS: ' + v('pn-dx') + '\n' : ''}
+BABY: ${v('pn-baby') || '?'}
+
+PLAN + ${doc || '?'}
+${plan.join('\n') || '?'}`;
+
+  document.getElementById('outtext-pnc').textContent = U(out);
+  document.getElementById('out-pnc').classList.add('visible');
+  document.getElementById('out-pnc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderAllDocDropdowns();
+}
+
 // ─── GYNAE RECEPTION ───
 const GR_STANDARD_PLAN = `TO PREPARE FOR SURGERY\nTO GET ITEMS FOR SURGERY\nTO SIGN CONSENT FORM\nTO RETRIEVE DONATION SLIPS\nTO DO GROUPING AND CROSS-MATCHING (GXM)`;
 
@@ -4155,6 +4427,8 @@ document.addEventListener('DOMContentLoaded', () => {
   buildODQ('odq-er-se', ODQ_SE);
   buildODQ('odq-gc-se', ODQ_SE);
   buildODQ('odq-gr-se', ODQ_SE);
+  buildODQ('odq-pn', ODQ_PN);
+  buildODQ('odq-pn-bp', ODQ_PN_BP);
 
   // Gynae Reception: standard plan, one empty scan slot, checklist count
   resetGRPlan();
